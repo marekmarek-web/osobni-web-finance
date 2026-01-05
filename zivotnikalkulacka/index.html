@@ -35,9 +35,11 @@
         :root {
             font-family: 'Inter', sans-serif;
         }
-        /* ZABRÁNĚNÍ HORIZONTÁLNÍMU POSUVU na body, řešení responzivity */
-        body {
+        /* ZABRÁNĚNÍ HORIZONTÁLNÍMU POSUVU - DŮLEŽITÁ OPRAVA */
+        html, body {
             overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
 
         .glass-header-top {
@@ -152,82 +154,76 @@
     <!-- Kontejner pro modální okno -->
     <div id="modal-root"></div>
 
-    <!-- --- HEADER --- -->
-    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 glass-header-top">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top top-0 left-0" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
                 
                 <!-- Logo -->
-                <a href="/" class="flex items-center gap-3 cursor-pointer shrink-0">
-                    <!-- LOGO IMAGE CONTAINER -->
-                    <div id="logo-icon" class="font-bold w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 shadow-sm overflow-hidden bg-white">
-                        <!-- PŘIDÁNO: Logo obrázek s inverzní logikou (na začátku invertovaný = černý v bílém kruhu) -->
-                        <img src="logo_M_white.png" id="logo-image" alt="Logo" class="w-full h-full object-contain p-1.5 transition-all duration-300 invert">
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
                     </div>
                     <div class="flex flex-col leading-tight">
-                        <span id="logo-text" class="text-lg font-bold transition-colors duration-300 text-white">Marek Marek<span class="text-brand-gold">.</span></span>
-                        <span id="logo-subtext" class="text-[0.6rem] font-bold tracking-widest uppercase transition-colors duration-300 text-slate-300">Finanční partner</span>
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
-                </a>
+                </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center justify-center flex-1 gap-6">
-                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10">Služby</a>
-                    <div id="nav-divider" class="h-4 w-px mx-2 transition-colors duration-300 bg-white/20"></div>
-                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10">Rodiny a jednotlivci</a>
-                    <div id="nav-divider-2" class="h-4 w-px mx-2 transition-colors duration-300 bg-white/20"></div>
-                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10">Podnikatelé a firmy</a>
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
                 </div>
 
-                <!-- Hamburger (Zobrazuje se VŠUDE) -->
+                <!-- Hamburger -->
                 <div class="flex items-center">
-                    <button id="mobile-menu-btn" class="hover:text-brand-lightgold focus:outline-none p-2 rounded-full transition-colors text-brand-gold">
-                        <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
-                        <i data-lucide="x" id="close-icon" class="w-6 h-6 hidden"></i>
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown (Nyní slouží jako hlavní navigace) -->
-        <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-slate-100 shadow-xl py-6 px-4 flex-col gap-4 z-40 hidden"> 
-            
-            <!-- Hlavní nabídka -->
-            <div>
-                <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
-                <div class="space-y-1">
-                    <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Služby</a>
-                    <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Rodiny a jednotlivci</a>
-                    <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Podnikatelé a firmy</a>
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Podnikatelé a firmy</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Nástroje -->
-            <div class="pt-4">
-                <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
-                <div class="space-y-2">
-                    <!-- Kalkulačky - Upravené cesty dle mapy -->
-                    <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50 hover:bg-brand-light mobile-nav-link">
-                        <i data-lucide="landmark" class="w-5 h-5 text-brand-gold mr-3"></i> Hypoteční kalkulačka
-                    </a>
-                    <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-brand-main mr-3"></i> Investiční kalkulačka
-                    </a>
-                    <a href="https://www.marek-marek.cz/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="piggy-bank" class="w-5 h-5 text-brand-main mr-3"></i> Penzijní kalkulačka
-                    </a>
-                    <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="heart-pulse" class="w-5 h-5 text-red-500 mr-3"></i> Kalkulačka životního pojištění
-                    </a>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50 mobile-nav-link">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- CTA - Kontakt -->
-            <div class="pt-8 px-4">
-                <a href="/#kontakt" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20 mobile-nav-link">KONTAKT</a>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20 mobile-nav-link">Kontaktovat</a>
+                </div>
             </div>
         </div>
-      </nav>
+    </nav>
 
     <!-- 1. HERO SECTION (UPRAVENÝ BLOK) -->
     <!-- UPRAVENO: mt-6 pro mobil, md:mt-16 pro desktop -->
@@ -275,7 +271,8 @@
                                6% Rentiér
                                
                                <!-- Tooltip (Nyní bude viditelný i mimo hranice hero sekce) -->
-                               <div class="absolute top-full left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-80 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left">
+                               <!-- UPRAVENO: Šířka na mobilu w-[280px], aby nepřetékala -->
+                               <div class="absolute top-full left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[280px] sm:w-80 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left">
                                    <p class="leading-relaxed"><strong>Rentiérský výpočet:</strong> Pojistná částka (např. 1 mil. Kč) se zainvestuje s výnosem 6 % p.a. To generuje rentu 60 000 Kč ročně (5 000 Kč měsíčně), která dlouhodobě dorovnává výpadek příjmu při invaliditě.</p>
                                    <div class="absolute -top-2 left-1/2 lg:left-6 -translate-x-1/2 lg:translate-x-0 w-4 h-4 bg-white transform rotate-45 border-t border-l border-slate-100"></div>
                                </div>
@@ -287,7 +284,8 @@
                                Dle metodiky EFPA
                                
                                <!-- Tooltip -->
-                               <div class="absolute top-full left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-72 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left">
+                               <!-- UPRAVENO: Šířka na mobilu w-[260px] -->
+                               <div class="absolute top-full left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[260px] sm:w-72 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0 text-left">
                                    <p class="leading-relaxed"><strong>EFPA (European Financial Planning Association)</strong> je organizace určující evropské standardy v oblasti finančního poradenství a plánování. Metodika zaručuje objektivní a profesionální výpočet.</p>
                                    <div class="absolute -top-2 left-1/2 lg:left-6 -translate-x-1/2 lg:translate-x-0 w-4 h-4 bg-white transform rotate-45 border-t border-l border-slate-100"></div>
                                </div>
@@ -535,15 +533,14 @@
         </div>
     </div>
 
-    <!-- === FOOTER (ZAČÁTEK) === -->
+    <!-- FOOTER -->
     <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <!-- PŘIDÁNO: Logo místo M, invertované aby bylo černé na bílém podkladu čtverečku -->
-                        <div class="bg-white w-8 h-8 flex items-center justify-center rounded">
-                             <img src="logo_M_white.png" alt="M" class="w-6 h-6 object-contain invert">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
                         </div>
                         <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
@@ -551,10 +548,10 @@
                         Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
-                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i data-lucide="message-circle" class="w-5 h-5"></i></a>
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
                     </div>
                 </div>
 
@@ -573,16 +570,16 @@
                     <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
                     <ul class="space-y-3 text-sm">
                         <li class="flex items-start">
-                            <i data-lucide="map-pin" class="w-4 h-4 mt-1 mr-3 text-brand-gold"></i>
-                            <span>Jana z Dražic 99<br/>Roudnice nad Labem</span>
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
                         </li>
                         <li class="flex items-center">
-                            <i data-lucide="phone" class="w-4 h-4 mr-3 text-brand-gold"></i>
+                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
                             <span>+420 778 511 166</span>
                         </li>
                         <li class="flex items-center">
-                            <i data-lucide="mail" class="w-4 h-4 mr-3 text-brand-gold"></i>
-                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-white transition">kontakt@marek-marek.cz</a>
+                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
                         </li>
                     </ul>
                 </div>
@@ -601,7 +598,6 @@
             </div>
         </div>
     </footer>
-    <!-- --- FOOTER (KONEC) --- -->
 
 
     <!-- JAVASCRIPT LOGIC -->
@@ -990,6 +986,12 @@
             runCalculations();
         };
 
+        // NEW: Function to open modal via mobile menu
+        const openModal = () => {
+            handleOpenModal('general');
+            toggleMobileMenu(); // Close mobile menu when opening modal
+        };
+
         const handleOpenModal = (type) => {
             const modalRoot = $('#modal-root');
             if (!modalRoot) return;
@@ -1202,7 +1204,7 @@
             const currentScroll = window.scrollY;
             const navbar = $('#navbar');
             const logoIcon = $('#logo-icon');
-            const logoImage = $('#logo-image'); // PŘIDÁNO: Reference na obrázek
+            const logoImage = $('#logo-img'); // OPRAVENO: Reference na nové ID obrázku
             const logoText = $('#logo-text');
             const logoSubtext = $('#logo-subtext');
             const navLinks = $$('.nav-link');
@@ -1268,20 +1270,12 @@
         const toggleMobileMenu = () => {
             isMobileMenuOpen = !isMobileMenuOpen;
             const menu = $('#mobile-menu');
-            const menuIcon = $('#menu-icon');
-            const closeIcon = $('#close-icon');
-
-            if (menu && menuIcon && closeIcon) {
+            // Nové tlačítko nemá měnící se ikony, takže jen toggle viditelnosti menu
+            if (menu) {
                 if (isMobileMenuOpen) {
                     menu.classList.remove('hidden');
-                    menu.classList.add('flex');
-                    menuIcon.classList.add('hidden');
-                    closeIcon.classList.remove('hidden');
                 } else {
                     menu.classList.add('hidden');
-                    menu.classList.remove('flex');
-                    menuIcon.classList.remove('hidden');
-                    closeIcon.classList.add('hidden');
                 }
             }
         };
@@ -1368,9 +1362,12 @@
             renderFaq();
             window.addEventListener('scroll', handleScroll);
             $('#mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+            // Přidána logika pro zavření mobilního menu po kliknutí na odkaz
             $$('.mobile-nav-link').forEach(link => {
                 link.addEventListener('click', () => {
-                    setTimeout(toggleMobileMenu, 200); // Zavřít menu po kliknutí s malou prodlevou
+                    if (isMobileMenuOpen) {
+                        toggleMobileMenu();
+                    }
                 });
             });
             // Inicializovat ikony po načtení stránky
