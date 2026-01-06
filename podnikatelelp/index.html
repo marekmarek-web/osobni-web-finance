@@ -209,6 +209,21 @@
             background-color: #fbbf24;
             border-color: #fbbf24;
         }
+
+        /* STICKY CARDS EFEKT */
+        .sticky-card {
+            position: sticky;
+            background-color: white;
+            border: 1px solid #D6E6FF;
+            border-radius: 40px;
+            padding: 40px;
+            /* Stín upraven do brand barvy pro lepší integraci */
+            box-shadow: 0 -10px 40px rgba(11, 58, 122, 0.08); 
+            margin-bottom: 40px;
+            min-height: 400px;
+            /* Zajištění, že obsah bude nad předchozí kartou */
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">
@@ -413,7 +428,7 @@
                          <ul class="space-y-4 text-slate-700">
                              <li class="flex items-start gap-3">
                                  <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
-                                 <span>Věci se platí „historicky“ a nikdo už neověřil, jestli to pořád sedí.</span>
+                                 <span>Věci se platí „ze zvyku“ a nikdo už neověřil, jestli to pořád sedí.</span>
                              </li>
                              <li class="flex items-start gap-3">
                                  <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
@@ -516,12 +531,129 @@
             </div>
         </section>
 
-        <!-- (3) ORIENTAČNÍ KALKULAČKA -->
-        <section id="kalkulacka" class="py-24 px-6 md:px-12 bg-brand-light border-t border-brand-border/50">
+        <!-- (3) NOVÁ SEKCE: LEGISLATIVNÍ ZMĚNY -->
+        <section class="py-24 px-6 md:px-12 bg-slate-50 border-t border-slate-200">
+            <div class="container mx-auto max-w-6xl">
+                
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-4">
+                        Proč se potkat se mnou: změny, které dnes reálně hýbou benefity
+                    </h2>
+                    <p class="text-slate-600 text-lg">
+                        Nejde o „novinky pro novinky“. V posouzení ověřím, jestli se to týká i vás a jak to nastavit čistě a obhajitelně pro účetní.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    
+                    <!-- Karta 1: DIP -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-brand-light text-brand-main text-xs font-bold uppercase tracking-wider mb-3">Od 1. 1. 2024</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">DIP: nový způsob, kam může firma přispívat</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                Od roku 2024 je DIP <strong>daňově podporovaný produkt</strong> na stáří a zaměstnavatel může přispívat zaměstnancům (v souhrnu s dalšími „produkty na stáří“ až do zákonného limitu).
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30 mb-4">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Zda u vás dává smysl DIP zařadit / nahradit část stávajícího nastavení a jak to procesně uchopit ve firmě (bez chaosu).
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Karta 2: Riziková práce 2026 -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3">Od 1. 1. 2026</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">Povinný příspěvek u rizikové práce</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                Zákon zavádí <strong>povinnost zaměstnavatele platit příspěvek zaměstnancům</strong> vykonávajícím rizikovou práci (typicky 3. kategorie); výše cca <strong>4 % z vyměřovacího základu</strong>.
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Jestli se vás to může týkat (kategorie prací, směny) a co to znamená pro nastavení benefitů a administrativu ve firmě.
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Karta 3: DPS 2024 -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-brand-light text-brand-main text-xs font-bold uppercase tracking-wider mb-3">Nové smlouvy</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">DPS: změna zdanění u nových smluv</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                U smluv od 1. 1. 2024 se v případě <strong>jednorázového vyrovnání nově nedodaňují příspěvky zaměstnavatele</strong>, což mění rozhodování „nechat / převést / založit nové“.
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Zda vám dává smysl upravit nastavení tak, aby to bylo férové vůči zaměstnanci a čisté vůči účetní.
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                </div>
+
+                <div class="text-center">
+                    <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden no-underline cursor-pointer">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <div class="relative flex items-center justify-center gap-3 text-lg">
+                            Požádat o krátké posouzení
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
+                        </div>
+                    </button>
+                    <p class="text-slate-500 text-sm mt-4 max-w-xl mx-auto">
+                        V prvním hovoru nic nenabízím a nic nepodepisujete. Ověříme jen, jestli se vás některá z těch změn týká a zda má smysl to řešit.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- (4) ORIENTAČNÍ KALKULAČKA -->
+        <section id="kalkulacka" class="py-24 px-6 md:px-12 bg-white border-t border-slate-100">
             <div class="container mx-auto max-w-4xl">
                 <h2 class="text-3xl font-bold text-brand-main mb-12 text-center">Spočítejte si sami o kolik peněz možná přicházíte.</h2>
                 
-                <div class="bg-white rounded-[2.5rem] p-8 md:p-12 border border-brand-border shadow-soft relative overflow-hidden mb-12">
+                <div class="bg-slate-50 rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-soft relative overflow-hidden mb-12">
                     <div class="grid gap-12 relative z-10">
                         
                         <!-- Step 1: Self-employed? -->
@@ -655,7 +787,7 @@
         <section id="audit-proces" class="py-24 bg-white relative overflow-hidden">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-            <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-center max-w-3xl mx-auto mb-20">
               <span class="text-brand-gold font-bold tracking-widest uppercase text-xs mb-3 block">Můj postup</span>
               <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark mb-6">
                 Tři kroky k chytrému nastavení benefitů (DIP/DPS/IŽP)
@@ -666,149 +798,137 @@
               </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <!-- STICKY CARDS CONTAINER -->
+            <div class="max-w-3xl mx-auto relative">
 
-              <!-- 1 -->
-              <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden flex flex-col">
-                <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border shadow-sm">
-                  <i class="fas fa-magnifying-glass-chart"></i>
+              <!-- KARTA 1 -->
+              <!-- top: 120px (aby to nebylo schované pod fixním headerem, který má cca 80px) -->
+              <div class="sticky-card group transition-all duration-300" style="top: 100px;">
+                <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">1</span>
                 </div>
 
-                <div class="relative z-10 flex flex-col h-full">
-                  <h3 class="text-lg font-bold text-brand-dark mb-3">1) Úvodní posouzení zdarma</h3>
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Úvodní konzultace zdarma</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Finanční analýza + audit smluv. Rychle zjistíme, jestli u vás dává smysl platit DIP/DPS/životko přes firmu místo mzdy.
+                </p>
 
-                  <p class="text-slate-600 leading-relaxed text-sm mb-5">
-                    Finanční analýza + audit smluv. Rychle zjistíme, jestli u vás dává smysl platit DIP/DPS/životko
-                    přes firmu místo mzdy.
-                  </p>
-
-                  <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                <ul class="space-y-3 text-slate-600 mb-8">
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Mzda vs. firma: jak to dnes platíte</span>
+                      <span class="flex-1 font-medium">Mzda vs. firma: jak to dnes platíte</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Limity + rizika + jednoduchá logika nastavení</span>
+                      <span class="flex-1 font-medium">Limity + rizika + jednoduchá logika nastavení</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Výstup: jasné „co upravit / co ponechat“</span>
+                      <span class="flex-1 font-medium">Výstup: jasné „co upravit / co ponechat“</span>
                     </li>
-                  </ul>
+                </ul>
 
-                  <!-- stejné zarovnání v každé kartě -->
-                  <div class="mt-auto flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-white border border-brand-border text-slate-700">
-                      <i class="far fa-clock text-slate-500"></i> 15–20 minut
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="far fa-clock"></i> 15–20 minut
                     </span>
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-white border border-brand-border text-slate-700">
-                      <i class="fas fa-check text-emerald-600"></i> Bez závazku
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-white border border-brand-border text-slate-600">
+                      <i class="fas fa-check text-emerald-500"></i> Bez závazku
                     </span>
-                  </div>
                 </div>
-
-                <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">
-                  1
-                </span>
               </div>
 
-              <!-- 2 -->
-              <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden flex flex-col">
-                <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border shadow-sm">
-                  <i class="fas fa-bullseye"></i>
+              <!-- KARTA 2 -->
+              <!-- top: 140px (překryje 1. kartu, ale nechá kousek nahoře) -->
+              <div class="sticky-card group transition-all duration-300" style="top: 140px;">
+                 <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">2</span>
                 </div>
 
-                <div class="relative z-10 flex flex-col h-full">
-                  <h3 class="text-lg font-bold text-brand-dark mb-3">2) Komplexní řešení</h3>
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Komplexní řešení</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Sestavím finanční plán tak, aby benefity, ochrana a investice dávaly ekonomicky smysl a byly čisté i pro účetní.
+                </p>
 
-                  <p class="text-slate-600 leading-relaxed text-sm mb-5">
-                    Sestavím finanční plán tak, aby benefity, ochrana a investice dávaly ekonomicky smysl
-                    a byly čisté i pro účetní.
-                  </p>
-
-                  <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                <ul class="space-y-3 text-slate-600 mb-8">
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Strategie: co měnit a v jakém pořadí</span>
+                      <span class="flex-1 font-medium">Strategie: co měnit a v jakém pořadí</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Benefity + životko + investice v jedné logice</span>
+                      <span class="flex-1 font-medium">Benefity + životko + investice v jedné logice</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Výstup: plán kroků + čísla + časová osa</span>
+                      <span class="flex-1 font-medium">Výstup: plán kroků + čísla + časová osa</span>
                     </li>
-                  </ul>
+                </ul>
 
-                  <div class="mt-auto flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-white border border-brand-border text-slate-700">
-                      <i class="fas fa-map text-slate-500"></i> Jasný plán
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="fas fa-map"></i> Jasný plán
                     </span>
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-white border border-brand-border text-slate-700">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-white border border-brand-border text-slate-600">
                       <i class="fas fa-envelope text-slate-500"></i> Výstup do e-mailu
                     </span>
-                  </div>
                 </div>
-
-                <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">
-                  2
-                </span>
               </div>
 
-              <!-- 3 -->
-              <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden flex flex-col">
-                <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border shadow-sm">
-                  <i class="fas fa-handshake"></i>
+              <!-- KARTA 3 -->
+              <!-- top: 180px -->
+              <div class="sticky-card group transition-all duration-300" style="top: 180px;">
+                 <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">3</span>
                 </div>
 
-                <div class="relative z-10 flex flex-col h-full">
-                  <h3 class="text-lg font-bold text-brand-dark mb-3">3) Zavedení a administrativa</h3>
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Zavedení a administrativa</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Připravím podklady, provedu vás podpisy a pohlídám zavedení tak, aby vše bylo čisté a správně nastavené.
+                </p>
 
-                  <p class="text-slate-600 leading-relaxed text-sm mb-5">
-                    Připravím podklady, provedu vás podpisy a pohlídám zavedení tak, aby vše bylo čisté
-                    a správně nastavené.
-                  </p>
-
-                  <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                <ul class="space-y-3 text-slate-600 mb-8">
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Podpisy + změny smluv (co jde, řeším za vás)</span>
+                      <span class="flex-1 font-medium">Podpisy + změny smluv (co jde, řeším za vás)</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Komunikace s účetní / dokumentace</span>
+                      <span class="flex-1 font-medium">Komunikace s účetní / dokumentace</span>
                     </li>
                     <li class="flex gap-3">
                       <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
-                      <span class="flex-1">Následná revize a průběžná péče</span>
+                      <span class="flex-1 font-medium">Následná revize a průběžná péče</span>
                     </li>
-                  </ul>
+                </ul>
 
-                  <div class="mt-auto flex flex-wrap gap-2">
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-white border border-brand-border text-slate-700">
-                      <i class="fas fa-receipt text-slate-500"></i> Administrativa
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="fas fa-receipt"></i> Administrativa
                     </span>
-                    <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-full bg-amber-50 border border-amber-100 text-amber-900">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-amber-50 border border-amber-100 text-amber-900">
                       <i class="fas fa-lock text-amber-700"></i> Podpisy až zde
                     </span>
-                  </div>
                 </div>
-
-                <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">
-                  3
-                </span>
               </div>
 
             </div>
 
             <div class="mt-16 text-center">
-              <a href="/#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-white sm:text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
+              <a href="#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
                 <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
                 <div class="relative flex items-center justify-center gap-3">
-                  <span class="text-lg text-slate-900">Chci úvodní posouzení</span>
-                  <i class="fas fa-arrow-right text-slate-900 group-hover:translate-x-1 transition-transform"></i>
+                  <span class="text-lg">Chci konzultaci zdarma</span>
+                  <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </div>
               </a>
               <p class="text-slate-500 text-sm mt-4">
@@ -1066,7 +1186,7 @@
         <!-- (6) NEW CONTACT SECTION (CTA) -->
         <section id="kontakt" class="py-24 bg-brand-light border-t border-brand-border">
             <div class="max-w-4xl mx-auto text-center px-4">
-                <h2 class="text-3xl font-bold mb-4 text-brand-dark">Úvodní posouzení vhodnosti zdarma</h2>
+                <h2 class="text-3xl font-bold mb-4 text-brand-dark">Úvodní konzultace zdarma</h2>
                 <p class="text-slate-600 mb-10 max-w-2xl mx-auto">
                     Zanechte kontakt. Ozvu se a domluvíme 15–20 minut. Probereme, zda u vás dává optimalizace smysl.
                 </p>
