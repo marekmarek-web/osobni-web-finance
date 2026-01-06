@@ -299,6 +299,7 @@
             <div class="absolute inset-0 z-0 bg-gradient-to-b from-brand-dark/20 via-brand-dark/40 to-brand-dark pointer-events-none"></div>
 
             <div class="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl">
+                <!-- Grid layout vrácen zpět (text vlevo) -->
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     
                     <!-- Left Content -->
@@ -310,55 +311,57 @@
                         </div>
 
                         <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2] mb-6">
-                            Máte penzijko, investice nebo životko? <br class="hidden xl:block" />
-                            <span class="bg-brand-gold text-brand-dark px-1 leading-normal box-decoration-clone">U majitelů s.r.o. často dává smysl platit to přes firmu.</span>
+                            Finanční partner pro majitele s.r.o.: <br class="hidden xl:block" />
+                            <span class="bg-brand-gold text-brand-dark px-1 leading-normal box-decoration-clone">pořádek, plán a jasná rozhodnutí.</span>
                         </h1>
                         
+                        <!-- Zarovnání zpět vlevo -->
                         <div class="mb-10 pl-2 space-y-4 max-w-xl">
                             <p class="text-lg md:text-xl text-brand-border/90 leading-relaxed">
-                                V úvodní konzultaci prověřím, jak to dnes platíte (mzda vs. firma), a pošlu vám stručné shrnutí: co upravit, co ponechat a proč.
+                                Nezačínám produktem. Nejdřív posoudím situaci a pošlu stručné shrnutí a doporučení dalšího kroku – použitelné i pro účetní.
                             </p>
                             <p class="text-sm text-slate-400 leading-relaxed italic">
-                                Volám firmám, kde běží benefity historicky bez revize — často stačí malá změna, aby čísla dávala větší smysl.
+                                V úvodním posouzení nic nenabízím a nic nepodepisujete.
                             </p>
                         </div>
 
+                        <!-- Bullets -->
                         <ul class="space-y-3 mb-10">
                             <li class="flex items-start gap-3">
                                 <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span class="text-slate-300"><strong>Porovnání:</strong> mzda vs. firemní příspěvek (na reálných číslech)</span>
+                                <span class="text-slate-300"><strong>Vhodnost:</strong> má to vůbec smysl?</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span class="text-slate-300"><strong>Kontrola nastavení</strong> (DIP/DPS + životní pojištění / investice)</span>
+                                <span class="text-slate-300"><strong>Kontrola nastavení:</strong> benefity, daně, možnosti</span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                <span class="text-slate-300"><strong>Výstup do e-mailu (1x A4)</strong></span>
+                                <span class="text-slate-300"><strong>Finanční plán:</strong> jasný, věcný a vysvětlený</span>
                             </li>
                         </ul>
 
-                        <!-- CTA Row -->
+                        <!-- CTA Row - zarovnání zpět vlevo (odstraněno justify-center) -->
                         <div class="flex flex-col sm:flex-row gap-4 mb-6">
                             <!-- New Design CTA Triggering Modal -->
                             <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden no-underline text-center cursor-pointer">
                                 <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
                                 <div class="relative flex items-center justify-center gap-3 text-lg">
-                                    Chci konzultaci zdarma
+                                    Chci úvodní posouzení
                                     <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm"></i>
                                 </div>
                             </button>
                             
                             <a href="#kalkulacka" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-medium rounded-2xl border border-white/20 transition-all backdrop-blur-sm flex items-center justify-center gap-2 text-center w-full sm:w-auto shadow-lg shadow-brand-dark/20">
-                                Spočítat orientační úsporu
+                                Spočítejte si sami
                             </a>
                         </div>
                         
                         <p class="text-xs text-slate-500 pl-4 mb-8 lg:mb-0">Zanecháte jen jméno a telefon. Ozvu se osobně.</p>
 
                         <!-- Mobile Hero Form (Visible only on mobile/tablet) -->
-                        <div class="lg:hidden mt-6 p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm">
-                            <h3 class="text-lg font-bold text-white mb-4">Rychlá konzultace</h3>
+                        <div class="lg:hidden mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm max-w-md mx-auto text-left">
+                            <h3 class="text-lg font-bold text-white mb-4 text-center">Rychlá konzultace</h3>
                             <form id="heroLeadFormMobile" class="space-y-3"
                                 onsubmit="event.preventDefault(); document.getElementById('heroLeadFormMobile').classList.add('hidden'); document.getElementById('heroLeadSuccessMobile').classList.remove('hidden');">
                                 
@@ -388,43 +391,60 @@
 
                     </div>
 
-                    <!-- Right Content: Proof Card (Desktop) -->
-                    <div class="hidden lg:block relative">
-                        <div class="relative bg-brand-dark/40 backdrop-blur-md border border-white/5 p-8 rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-                            <div class="flex items-center gap-4 mb-6 pb-6 border-b border-white/10">
-                                <div class="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center text-brand-gold">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-white text-lg">Výstup z konzultace</h3>
-                                    <p class="text-slate-400 text-sm">Jasný plán na 1 A4</p>
-                                </div>
-                            </div>
-                            
-                            <div class="space-y-4 mb-8">
-                                <div class="flex items-center gap-3 text-sm text-slate-200">
-                                    <div class="h-5 w-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px]">✓</div>
-                                    7–15 min hovor
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-slate-200">
-                                    <div class="h-5 w-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px]">✓</div>
-                                    Jasný závěr: u vás to dává smysl / nedává smysl
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-slate-200">
-                                    <div class="h-5 w-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px]">✓</div>
-                                    Výstup do e-mailu
-                                </div>
-                            </div>
-                            
-                            <div class="mt-8 pt-6 border-t border-white/10 text-center">
-                                <p class="text-slate-300 text-sm mb-4">Chcete se poradit hned?</p>
-                                <button onclick="openModal()" class="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white font-medium transition-colors">
-                                    Otevřít formulář
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Right Column (Empty - removed the card) -->
+                    <div></div>
 
+                </div>
+            </div>
+        </section>
+
+        <!-- (2) NEW SECTION: Kdy to má smysl (a kdy ne) -->
+        <section class="py-16 px-6 md:px-12 bg-slate-50 border-b border-slate-100">
+            <div class="container mx-auto max-w-5xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-brand-dark">Kdy to má smysl (a kdy ne)</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Positive -->
+                    <div class="bg-white p-8 rounded-3xl border border-emerald-100 shadow-sm">
+                         <h3 class="text-xl font-bold text-emerald-700 mb-6 flex items-center gap-3">
+                            <i class="fas fa-check-circle text-2xl"></i> Má smysl, pokud:
+                         </h3>
+                         <ul class="space-y-4 text-slate-700">
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Věci se platí „historicky“ a nikdo už neověřil, jestli to pořád sedí.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Chcete mít jasno, co patří do firmy a co do soukromí (kvůli přehledu a účetní).</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Chcete rozhodovat podle čísel, ne podle dojmů.</span>
+                             </li>
+                         </ul>
+                    </div>
+                    <!-- Negative -->
+                    <div class="bg-white p-8 rounded-3xl border border-red-100 shadow-sm">
+                         <h3 class="text-xl font-bold text-red-700 mb-6 flex items-center gap-3">
+                            <i class="fas fa-times-circle text-2xl"></i> Nemá smysl, pokud:
+                         </h3>
+                         <ul class="space-y-4 text-slate-700">
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Chcete jen produkt „za lepší cenu“.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Nechcete nic měnit, jen „se pobavit“.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Čekáte garance úspor nebo výnosů (vždy záleží na trhu a situaci).</span>
+                             </li>
+                         </ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -596,7 +616,7 @@
                                         </div>
                                         
                                         <button onclick="openModal()" class="cta-home !text-[#0a0f29] !no-underline w-full md:w-auto cursor-pointer">
-                                            Chci ušetřit na odvodech
+                                            To chci
                                         </button>
                                     </div>
                                 </div>
@@ -655,7 +675,7 @@
                 </div>
 
                 <div class="relative z-10 flex flex-col h-full">
-                  <h3 class="text-lg font-bold text-brand-dark mb-3">1) Úvodní konzultace zdarma</h3>
+                  <h3 class="text-lg font-bold text-brand-dark mb-3">1) Úvodní posouzení zdarma</h3>
 
                   <p class="text-slate-600 leading-relaxed text-sm mb-5">
                     Finanční analýza + audit smluv. Rychle zjistíme, jestli u vás dává smysl platit DIP/DPS/životko
@@ -787,7 +807,7 @@
               <a href="/#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-white sm:text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
                 <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
                 <div class="relative flex items-center justify-center gap-3">
-                  <span class="text-lg text-slate-900">Chci konzultaci zdarma</span>
+                  <span class="text-lg text-slate-900">Chci úvodní posouzení</span>
                   <i class="fas fa-arrow-right text-slate-900 group-hover:translate-x-1 transition-transform"></i>
                 </div>
               </a>
@@ -1046,7 +1066,7 @@
         <!-- (6) NEW CONTACT SECTION (CTA) -->
         <section id="kontakt" class="py-24 bg-brand-light border-t border-brand-border">
             <div class="max-w-4xl mx-auto text-center px-4">
-                <h2 class="text-3xl font-bold mb-4 text-brand-dark">Úvodní konzultace zdarma</h2>
+                <h2 class="text-3xl font-bold mb-4 text-brand-dark">Úvodní posouzení vhodnosti zdarma</h2>
                 <p class="text-slate-600 mb-10 max-w-2xl mx-auto">
                     Zanechte kontakt. Ozvu se a domluvíme 15–20 minut. Probereme, zda u vás dává optimalizace smysl.
                 </p>
@@ -1055,7 +1075,7 @@
                     <div class="text-center space-y-6">
                         <div class="relative inline-block">
                             <div class="absolute inset-0 bg-brand-gold/20 rounded-full blur-xl transform translate-y-2"></div>
-                            <img src="/images/profilovaLP.png" alt="Marek Marek" class="relative w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mx-auto" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Marek+Marek&background=0B3A7A&color=fff&size=128';">
+                            <img src="images/profilovaLP.png" alt="Marek Marek" class="relative w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mx-auto" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Marek+Marek&background=0B3A7A&color=fff&size=128';">
                         </div>
                         
                         <h3 class="text-2xl font-bold text-brand-dark">Kontaktujte mě.</h3>
