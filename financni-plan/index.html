@@ -1,70 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, CheckCircle, ArrowRight, Shield, TrendingUp, Home, Phone, Mail, MapPin, Facebook, Linkedin, Instagram, MessageCircle, Send, Construction, PiggyBank, Calculator } from 'lucide-react';
-
-const LandingPage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Scroll effect pro Header
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Tailwind Config Injection (aby fungovaly brand barvy)
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.text = `
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: { sans: ['Inter', 'sans-serif'] },
-            colors: {
-              brand: {
-                dark: '#0a0f29',
-                gold: '#fbbf24',
-                lightgold: '#fde047',
-                darkgold: '#d97706',
-                main: '#0B3A7A',
-                light: '#EAF3FF',
-                border: '#D6E6FF',
-              },
-            },
-            animation: {
-              'shimmer': 'shimmer 2.5s infinite',
-              'fade-in-down': 'fadeInDown 0.3s ease-out forwards',
-            },
-            keyframes: {
-              shimmer: {
-                '0%': { transform: 'skewX(-20deg) translateX(-150%)' },
-                '100%': { transform: 'skewX(-20deg) translateX(150%)' }
-              },
-              fadeInDown: {
-                '0%': { opacity: '0', transform: 'translateY(-10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' }
-              }
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marek Marek - Finanční partner | Rodiny a jednotlivci</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0a0f29',       /* Midnight Blue */
+                            gold: '#fbbf24',       /* Amber 400 */
+                            lightgold: '#fde047',  /* Yellow 300 */
+                            darkgold: '#d97706',   /* Amber 700 */
+                            main: '#0B3A7A',       /* Dark Blue */
+                            light: '#EAF3FF',      /* Light Blue Bg */
+                            border: '#D6E6FF',     /* Light Blue Border */
+                        },
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2.5s infinite',
+                        'fade-in-down': 'fadeInDown 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'skewX(-20deg) translateX(-150%)' },
+                            '100%': { transform: 'skewX(-20deg) translateX(150%)' }
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
             }
-          }
         }
-      }
-    `;
-    document.head.appendChild(script);
-    return () => document.head.removeChild(script);
-  }, []);
+    </script>
 
-  return (
-    <div className="font-sans text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen bg-slate-50">
-      
-      {/* GLOBAL STYLES & FONTS */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
+    <style>
         body { overflow-x: hidden; }
+        body.modal-open { overflow: hidden; }
         
+        /* Glass Header Styles */
         .glass-header-top {
             background-color: rgba(10, 15, 41, 0.1); 
             backdrop-filter: blur(12px);
@@ -91,224 +85,186 @@ const LandingPage = () => {
             white-space: nowrap;
         }
 
-        .cta-home {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: .6rem;
-            padding: 1rem 2rem;
-            border-radius: 16px; 
-            font-weight: 800;
-            color: #0a0f29;
-            background: linear-gradient(90deg, #fbbf24 0%, #fde047 55%, #fbbf24 100%);
-            box-shadow: 0 10px 30px rgba(251,191,36,.22);
-            transform: translateY(0);
-            transition: transform .25s ease, box-shadow .25s ease;
-            overflow: hidden;
-            cursor: pointer;
+        /* Hover effect for buttons */
+        .hover-scale {
+            transition: transform 0.2s;
         }
-        
-        .cta-home:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 16px 40px rgba(251,191,36,.30);
+        .hover-scale:hover {
+            transform: scale(1.02);
         }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">
 
-        .sticky-card {
-            position: sticky;
-            background-color: white;
-            border: 1px solid #D6E6FF;
-            border-radius: 40px;
-            padding: 40px;
-            box-shadow: 0 -10px 40px rgba(11, 58, 122, 0.08); 
-            margin-bottom: 40px;
-            min-height: 400px;
-            z-index: 10;
-        }
-      `}</style>
-
-      {/* NAVIGATION HEADER */}
-      <nav 
-        id="navbar" 
-        className={`fixed w-full z-50 transition-all duration-500 ${
-            isScrolled ? 'glass-header-scrolled' : 'glass-header-top'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-20 items-center gap-4">
+    <!-- NAVIGATION HEADER -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 glass-header-top">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
                 
-                {/* Logo Section */}
-                <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={() => window.location.href='https://www.marek-marek.cz/'}>
-                    <div className={`font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden ${isScrolled ? 'bg-brand-dark text-white' : 'bg-white text-brand-dark'}`}>
-                        {/* Pokud nemáme obrázek, fallback na písmeno M */}
-                        <span className="font-serif font-bold">M</span>
-                        {/* <img src="https://www.marek-marek.cz/images/logo_M_white.png" className={`w-3/5 h-3/5 object-contain transition-all duration-300 ${!isScrolled && 'invert'}`} /> */}
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='https://www.marek-marek.cz/'">
+                    <div id="logo-bg" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <span class="font-serif font-bold">M</span>
                     </div>
-                    <div className="flex flex-col leading-tight">
-                        <span className={`text-lg font-bold transition-colors duration-300 ${isScrolled ? 'text-brand-dark' : 'text-white'}`}>
-                            Marek Marek<span className="text-brand-gold">.</span>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">
+                            Marek Marek<span class="text-brand-gold">.</span>
                         </span>
-                        <span className={`text-[0.6rem] font-bold tracking-widest uppercase transition-colors duration-300 ${isScrolled ? 'text-slate-500' : 'text-slate-300'}`}>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">
                             Finanční partner
                         </span>
                     </div>
                 </div>
                 
-                {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center justify-center flex-1 gap-1">
-                    <a href="https://www.marek-marek.cz/#sluzby" className={`nav-link ${isScrolled ? 'text-brand-main hover:bg-brand-light' : 'text-white hover:bg-white/10 hover:backdrop-blur-md'}`}>Služby</a>
-                    <div className={`h-4 w-px mx-2 transition-colors duration-300 ${isScrolled ? 'bg-brand-border' : 'bg-white/20'}`}></div>
-                    {/* Aktivní položka */}
-                    <a href="https://www.marek-marek.cz/financni-plan" className={`nav-link ${isScrolled ? 'text-brand-main bg-brand-light' : 'text-white bg-white/10'}`}>Rodiny a jednotlivci</a>
-                    <div className={`h-4 w-px mx-2 transition-colors duration-300 ${isScrolled ? 'bg-brand-border' : 'bg-white/20'}`}></div>
-                    <a href="https://www.marek-marek.cz/podnikatele" className={`nav-link ${isScrolled ? 'text-brand-main hover:bg-brand-light' : 'text-white hover:bg-white/10 hover:backdrop-blur-md'}`}>Podnikatelé a firmy</a>
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1" id="desktop-menu">
+                    <a href="https://www.marek-marek.cz/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300 divider"></div>
+                    <a href="https://www.marek-marek.cz/financni-plan" class="nav-link text-white bg-white/10">Rodiny a jednotlivci</a>
+                    <div class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300 divider"></div>
+                    <a href="https://www.marek-marek.cz/podnikatele" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
                 </div>
 
-                {/* Right Side Actions */}
-                <div className="flex items-center">
-                    <button onClick={() => setIsModalOpen(true)} className="hidden md:block px-6 py-2 bg-brand-gold text-brand-dark font-bold rounded-full hover:bg-brand-lightgold transition-colors text-sm shadow-lg shadow-brand-gold/20">
+                <!-- Actions -->
+                <div class="flex items-center">
+                    <button onclick="openModal()" class="hidden md:block px-6 py-2 bg-brand-gold text-brand-dark font-bold rounded-full hover:bg-brand-lightgold transition-colors text-sm shadow-lg shadow-brand-gold/20">
                         Kontaktovat
                     </button>
-                    <button 
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className={`md:hidden focus:outline-none p-2 transition-colors rounded-full ${isScrolled ? 'text-brand-gold hover:bg-brand-light' : 'text-brand-gold hover:bg-white/10'}`}
-                    >
-                        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                    <!-- Mobile Hamburger -->
+                    <button id="mobile-menu-btn" class="md:hidden text-brand-gold hover:bg-white/10 focus:outline-none p-2 transition-colors rounded-full">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-            <div className="bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
-                <div className="px-4 pt-6 space-y-4">
-                    <div>
-                        <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
-                        <div className="space-y-1">
-                            <a href="https://www.marek-marek.cz/#sluzby" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
-                            <a href="https://www.marek-marek.cz/financni-plan" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl bg-brand-light text-brand-main">Rodiny a jednotlivci</a>
-                            <a href="https://www.marek-marek.cz/podnikatele" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
-                        </div>
-                    </div>
-                    <div className="pt-8 px-4">
-                        <button onClick={() => setIsModalOpen(true)} className="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">
-                            Kontaktovat
-                        </button>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="https://www.marek-marek.cz/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="https://www.marek-marek.cz/financni-plan" class="block px-4 py-3 text-lg font-bold text-brand-main bg-brand-light rounded-xl">Rodiny a jednotlivci</a>
+                        <a href="https://www.marek-marek.cz/podnikatele" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
                     </div>
                 </div>
+                <div class="pt-8 px-4">
+                    <button onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">
+                        Kontaktovat
+                    </button>
+                </div>
             </div>
-        )}
-      </nav>
+        </div>
+    </nav>
 
-      <main className="w-full overflow-x-hidden">
+    <main class="w-full overflow-x-hidden">
         
-        {/* (1) HERO SECTION - RODINY A JEDNOTLIVCI */}
-        <section className="relative bg-brand-dark text-white pb-20 pt-32 md:pt-48 rounded-b-[3rem] overflow-hidden lg:min-h-[90vh] flex items-center">
+        <!-- (1) HERO SECTION -->
+        <section class="relative bg-brand-dark text-white pb-20 pt-32 md:pt-48 rounded-b-[3rem] overflow-hidden lg:min-h-[90vh] flex items-center">
             
-            {/* Background Image Placeholder */}
-            <div className="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center bg-no-repeat bg-[url('https://images.unsplash.com/photo-1591035897819-f4bdf739f446?q=80&w=2070&auto=format&fit=crop')] mix-blend-overlay"></div>
+            <!-- Background Image -->
+            <div class="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1591035897819-f4bdf739f446?q=80&w=2070&auto=format&fit=crop'); mix-blend-mode: overlay;"></div>
             
-            {/* Gradients */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-brand-dark/40 pointer-events-none"></div>
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-brand-dark/50 to-brand-dark pointer-events-none"></div>
+            <!-- Gradients -->
+            <div class="absolute inset-0 z-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-brand-dark/40 pointer-events-none"></div>
+            <div class="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-brand-dark/50 to-brand-dark pointer-events-none"></div>
 
-            <div className="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
                     
-                    {/* Left Content */}
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-sm text-sm font-medium text-brand-gold mb-8 animate-fade-in-down">
-                            <span className="flex h-2 w-2 rounded-full bg-brand-gold animate-pulse"></span>
+                    <!-- Left Content -->
+                    <div class="animate-fade-in-down">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-sm text-sm font-medium text-brand-gold mb-8">
+                            <span class="flex h-2 w-2 rounded-full bg-brand-gold animate-pulse"></span>
                             Finanční plánování pro život
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
-                            Budoucnost vaší rodiny <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-lightgold to-white">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+                            Budoucnost vaší rodiny <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-lightgold to-white">
                                 pevně ve vašich rukou.
                             </span>
                         </h1>
                         
-                        <div className="mb-10 pl-2 space-y-4 max-w-xl border-l-2 border-brand-gold/30">
-                            <p className="text-lg md:text-xl text-brand-border/90 leading-relaxed">
+                        <div class="mb-10 pl-2 space-y-4 max-w-xl border-l-2 border-brand-gold/30">
+                            <p class="text-lg md:text-xl text-brand-border/90 leading-relaxed">
                                 Hypotéka, investice, zajištění dětí i klidné stáří. Vše propojuji do jednoho srozumitelného plánu, který roste s vámi.
                             </p>
-                            <p className="text-sm text-slate-400 leading-relaxed italic">
+                            <p class="text-sm text-slate-400 leading-relaxed italic">
                                 Žádné "bankovní produkty" na sílu. Pouze strategie, která dává smysl vašim cílům.
                             </p>
                         </div>
 
-                        {/* Bullets */}
-                        <ul className="space-y-4 mb-10">
-                            <li className="flex items-start gap-3 group">
-                                <div className="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
-                                    <Home size={18} />
+                        <!-- Bullets -->
+                        <ul class="space-y-4 mb-10">
+                            <li class="flex items-start gap-3 group">
+                                <div class="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
+                                    <i data-lucide="home" class="w-5 h-5"></i>
                                 </div>
-                                <span className="text-slate-300"><strong>Bydlení:</strong> Hypotéky a jejich efektivní splácení.</span>
+                                <span class="text-slate-300"><strong>Bydlení:</strong> Hypotéky a jejich efektivní splácení.</span>
                             </li>
-                            <li className="flex items-start gap-3 group">
-                                <div className="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
-                                    <TrendingUp size={18} />
+                            <li class="flex items-start gap-3 group">
+                                <div class="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
+                                    <i data-lucide="trending-up" class="w-5 h-5"></i>
                                 </div>
-                                <span className="text-slate-300"><strong>Investice:</strong> Ochrana úspor před inflací a rentiérství.</span>
+                                <span class="text-slate-300"><strong>Investice:</strong> Ochrana úspor před inflací a rentiérství.</span>
                             </li>
-                            <li className="flex items-start gap-3 group">
-                                <div className="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
-                                    <Shield size={18} />
+                            <li class="flex items-start gap-3 group">
+                                <div class="p-1 rounded-full bg-brand-gold/10 text-brand-gold mt-1 group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors">
+                                    <i data-lucide="shield" class="w-5 h-5"></i>
                                 </div>
-                                <span className="text-slate-300"><strong>Bezpečí:</strong> Zajištění příjmu pro případ výpadku.</span>
+                                <span class="text-slate-300"><strong>Bezpečí:</strong> Zajištění příjmu pro případ výpadku.</span>
                             </li>
                         </ul>
 
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                            <button onClick={() => setIsModalOpen(true)} className="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden">
-                                <div className="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
-                                <div className="relative flex items-center justify-center gap-3 text-lg">
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                            <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                                <div class="relative flex items-center justify-center gap-3 text-lg">
                                     Chci finanční plán
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                                 </div>
                             </button>
                             
-                            <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl border border-white/10 transition-all backdrop-blur-sm flex items-center justify-center gap-2 text-center w-full sm:w-auto shadow-lg">
+                            <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl border border-white/10 transition-all backdrop-blur-sm flex items-center justify-center gap-2 text-center w-full sm:w-auto shadow-lg">
                                 Hypoteční kalkulačka
                             </a>
                         </div>
                     </div>
 
-                    {/* Right Visual (Abstract / Image) */}
-                    <div className="hidden lg:block relative h-full min-h-[500px]">
-                         {/* Dekorativní prvky pro "Financial Plan" feel */}
-                         <div className="absolute top-10 right-10 w-64 h-64 bg-brand-gold/20 rounded-full blur-[80px]"></div>
-                         <div className="absolute bottom-10 left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
+                    <!-- Right Visual -->
+                    <div class="hidden lg:block relative h-full min-h-[500px]">
+                         <div class="absolute top-10 right-10 w-64 h-64 bg-brand-gold/20 rounded-full blur-[80px]"></div>
+                         <div class="absolute bottom-10 left-10 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px]"></div>
                          
-                         {/* Mockup karty nebo grafu - Placeholder */}
-                         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
-                            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-                                <div className="flex justify-between items-center mb-6">
+                         <!-- Mockup Card -->
+                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+                            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                                <div class="flex justify-between items-center mb-6">
                                     <div>
-                                        <p className="text-slate-400 text-xs uppercase tracking-wider">Cíl portfolia</p>
-                                        <h3 className="text-2xl font-bold text-white">Finanční nezávislost</h3>
+                                        <p class="text-slate-400 text-xs uppercase tracking-wider">Cíl portfolia</p>
+                                        <h3 class="text-2xl font-bold text-white">Finanční nezávislost</h3>
                                     </div>
-                                    <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                                        <TrendingUp size={14} /> +8.4% p.a.
+                                    <div class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                                        <i data-lucide="trending-up" class="w-4 h-4"></i> +8.4% p.a.
                                     </div>
                                 </div>
-                                {/* Simple Chart Visualization */}
-                                <div className="flex items-end gap-2 h-32 mb-4">
-                                    <div className="w-1/5 bg-brand-gold/30 rounded-t-lg h-[40%]"></div>
-                                    <div className="w-1/5 bg-brand-gold/50 rounded-t-lg h-[55%]"></div>
-                                    <div className="w-1/5 bg-brand-gold/70 rounded-t-lg h-[70%]"></div>
-                                    <div className="w-1/5 bg-brand-gold/90 rounded-t-lg h-[85%]"></div>
-                                    <div className="w-1/5 bg-brand-gold rounded-t-lg h-[100%] relative group cursor-pointer">
-                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-brand-dark font-bold text-xs py-1 px-2 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                <!-- Chart -->
+                                <div class="flex items-end gap-2 h-32 mb-4">
+                                    <div class="w-1/5 bg-brand-gold/30 rounded-t-lg h-[40%]"></div>
+                                    <div class="w-1/5 bg-brand-gold/50 rounded-t-lg h-[55%]"></div>
+                                    <div class="w-1/5 bg-brand-gold/70 rounded-t-lg h-[70%]"></div>
+                                    <div class="w-1/5 bg-brand-gold/90 rounded-t-lg h-[85%]"></div>
+                                    <div class="w-1/5 bg-brand-gold rounded-t-lg h-[100%] relative group cursor-pointer">
+                                        <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-brand-dark font-bold text-xs py-1 px-2 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                             Váš cíl
                                         </div>
                                     </div>
                                 </div>
-                                <div className="h-px bg-white/10 w-full mb-4"></div>
-                                <div className="flex justify-between text-xs text-slate-400">
+                                <div class="h-px bg-white/10 w-full mb-4"></div>
+                                <div class="flex justify-between text-xs text-slate-400">
                                     <span>Start</span>
                                     <span>5 let</span>
                                     <span>10 let</span>
@@ -317,14 +273,14 @@ const LandingPage = () => {
                                 </div>
                             </div>
                             
-                            {/* Floating Badge */}
-                            <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
-                                <div className="bg-green-100 p-2 rounded-full text-green-600">
-                                    <CheckCircle size={20} />
+                            <!-- Floating Badge -->
+                            <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce" style="animation-duration: 3s;">
+                                <div class="bg-green-100 p-2 rounded-full text-green-600">
+                                    <i data-lucide="check-circle" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Stav plánu</p>
-                                    <p className="text-brand-dark font-bold">Zajištěno</p>
+                                    <p class="text-xs text-slate-500 font-bold uppercase">Stav plánu</p>
+                                    <p class="text-brand-dark font-bold">Zajištěno</p>
                                 </div>
                             </div>
                          </div>
@@ -334,220 +290,330 @@ const LandingPage = () => {
             </div>
         </section>
 
-        {/* WORK IN PROGRESS SECTION */}
-        <section className="py-24 bg-white border-b border-slate-100">
-            <div className="max-w-4xl mx-auto px-6 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brand-gold/10 text-brand-dark mb-8 shadow-sm">
-                    <Construction size={40} />
+        <!-- (2) WORK IN PROGRESS SECTION -->
+        <section class="py-24 bg-white border-b border-slate-100">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brand-gold/10 text-brand-dark mb-8 shadow-sm">
+                    <i data-lucide="construction" class="w-10 h-10"></i>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-brand-dark mb-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-6">
                     Na této sekci se právě pracuje
                 </h2>
-                <p className="text-slate-600 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
+                <p class="text-slate-600 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
                     Připravuji pro vás detailní informace o finančním plánování, případové studie a další nástroje. 
-                    <br className="hidden md:block" />
+                    <br class="hidden md:block">
                     Prozatím můžete využít moje kalkulačky:
                 </p>
 
-                {/* CALCULATOR LINKS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10 text-left">
-                     <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" className="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
-                        <div className="bg-white p-3 rounded-lg text-brand-gold shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
-                            <Home size={24} />
+                <!-- CALCULATOR LINKS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10 text-left">
+                     <!-- Hypo -->
+                     <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
+                        <div class="bg-white p-3 rounded-lg text-brand-gold shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
+                            <i data-lucide="home" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <h3 className="font-bold text-brand-dark">Hypoteční kalkulačka</h3>
-                            <p className="text-xs text-slate-500">Spočítejte si splátku</p>
+                            <h3 class="font-bold text-brand-dark">Hypoteční kalkulačka</h3>
+                            <p class="text-xs text-slate-500">Spočítejte si splátku</p>
                         </div>
-                        <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-brand-gold transition-colors" />
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-gold transition-colors"></i>
                      </a>
 
-                     <a href="https://www.marek-marek.cz/investicnikalkulacka/" className="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
-                        <div className="bg-white p-3 rounded-lg text-brand-main shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
-                            <TrendingUp size={24} />
+                     <!-- Invest -->
+                     <a href="https://www.marek-marek.cz/investicnikalkulacka/" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
+                        <div class="bg-white p-3 rounded-lg text-brand-main shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
+                            <i data-lucide="trending-up" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <h3 className="font-bold text-brand-dark">Investiční kalkulačka</h3>
-                            <p className="text-xs text-slate-500">Složené úročení</p>
+                            <h3 class="font-bold text-brand-dark">Investiční kalkulačka</h3>
+                            <p class="text-xs text-slate-500">Složené úročení</p>
                         </div>
-                         <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-brand-gold transition-colors" />
+                         <i data-lucide="arrow-right" class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-gold transition-colors"></i>
                      </a>
 
-                     <a href="https://www.marek-marek.cz/penzijnikalkulacka/" className="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
-                        <div className="bg-white p-3 rounded-lg text-brand-dark shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
-                            <PiggyBank size={24} />
+                     <!-- Penze -->
+                     <a href="https://www.marek-marek.cz/penzijnikalkulacka/" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
+                        <div class="bg-white p-3 rounded-lg text-brand-dark shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
+                            <i data-lucide="piggy-bank" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <h3 className="font-bold text-brand-dark">Penzijní kalkulačka</h3>
-                            <p className="text-xs text-slate-500">Státní příspěvky</p>
+                            <h3 class="font-bold text-brand-dark">Penzijní kalkulačka</h3>
+                            <p class="text-xs text-slate-500">Státní příspěvky</p>
                         </div>
-                         <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-brand-gold transition-colors" />
+                         <i data-lucide="arrow-right" class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-gold transition-colors"></i>
                      </a>
 
-                     <a href="https://www.marek-marek.cz/zivotnikalkulacka/" className="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
-                        <div className="bg-white p-3 rounded-lg text-red-500 shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
-                            <Shield size={24} />
+                     <!-- Zivot -->
+                     <a href="https://www.marek-marek.cz/zivotnikalkulacka/" class="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-brand-gold hover:shadow-md transition-all bg-slate-50 hover:bg-white">
+                        <div class="bg-white p-3 rounded-lg text-red-500 shadow-sm group-hover:scale-110 transition-transform border border-slate-100">
+                            <i data-lucide="shield" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <h3 className="font-bold text-brand-dark">Životní pojištění</h3>
-                            <p className="text-xs text-slate-500">Kontrola smlouvy</p>
+                            <h3 class="font-bold text-brand-dark">Životní pojištění</h3>
+                            <p class="text-xs text-slate-500">Kontrola smlouvy</p>
                         </div>
-                         <ArrowRight size={16} className="ml-auto text-slate-300 group-hover:text-brand-gold transition-colors" />
+                         <i data-lucide="arrow-right" class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-gold transition-colors"></i>
                      </a>
                 </div>
 
                 <div>
-                    <button onClick={() => setIsModalOpen(true)} className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-light text-brand-main font-bold hover:bg-brand-border/50 transition-colors">
-                        <MessageCircle size={20} />
+                    <button onclick="openModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-light text-brand-main font-bold hover:bg-brand-border/50 transition-colors">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
                         Napište mi dotaz
                     </button>
                 </div>
             </div>
         </section>
 
-      </main>
+    </main>
 
-      {/* FOOTER - Absolutní cesty */}
-      <footer className="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-4 gap-12 mb-12">
-                <div className="col-span-1 md:col-span-1">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
-                            <span className="font-serif font-bold">M</span>
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <span class="font-serif font-bold">M</span>
                         </div>
-                        <span className="text-xl font-bold text-white">Marek Marek.</span>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
-                    <p className="text-sm text-slate-400 mb-4">
+                    <p class="text-sm text-slate-400 mb-4">
                         Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
                     </p>
-                    <div className="flex space-x-4">
-                        <a href="https://www.instagram.com/marekmarek_pfp/" className="text-slate-400 hover:text-white transition"><Instagram size={20} /></a>
-                        <a href="https://www.facebook.com/SMMarkx" className="text-slate-400 hover:text-white transition"><Facebook size={20} /></a>
-                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" className="text-slate-400 hover:text-white transition"><Linkedin size={20} /></a>
-                        <a href="http://wa.me/420778511166" className="text-slate-400 hover:text-white transition"><MessageCircle size={20} /></a>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i data-lucide="message-circle" class="w-5 h-5"></i></a>
                     </div>
                 </div>
 
+                <!-- Menu -->
                 <div>
-                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
-                    <ul className="space-y-2 text-sm">
-                        <li><a href="https://www.marek-marek.cz/#sluzby" className="hover:text-brand-gold transition">Služby</a></li>
-                        <li><a href="https://www.marek-marek.cz/hypotecnikalkulacka/" className="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
-                        <li><a href="https://www.marek-marek.cz/investicnikalkulacka/" className="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
-                        <li><a href="https://www.marek-marek.cz/financni-plan" className="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
-                        <li><a href="https://www.marek-marek.cz/podnikatele" className="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
+                        <li><a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/financni-plan" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="https://www.marek-marek.cz/podnikatele" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
                     </ul>
                 </div>
 
+                <!-- Kontakt -->
                 <div>
-                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
-                    <ul className="space-y-3 text-sm">
-                        <li className="flex items-start">
-                            <MapPin className="mt-1 mr-3 text-brand-gold" size={16} />
-                            <span>Jana z Dražic 99<br/>Roudnice nad Labem</span>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i data-lucide="map-pin" class="w-4 h-4 mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
                         </li>
-                        <li className="flex items-center">
-                            <Phone className="mr-3 text-brand-gold" size={16} />
+                        <li class="flex items-center">
+                            <i data-lucide="phone" class="w-4 h-4 mr-3 text-brand-gold"></i>
                             <span>+420 778 511 166</span>
                         </li>
-                        <li className="flex items-center">
-                            <Mail className="mr-3 text-brand-gold" size={16} />
-                            <a href="mailto:kontakt@marek-marek.cz" className="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
+                        <li class="flex items-center">
+                            <i data-lucide="mail" class="w-4 h-4 mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
                         </li>
                     </ul>
                 </div>
 
+                <!-- Info -->
                 <div>
-                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
-                    <ul className="space-y-2 text-sm">
-                        <li><a href="https://www.marek-marek.cz/gdpr/" className="hover:text-white transition">Ochrana osobních údajů</a></li>
-                        <li><a href="https://www.marek-marek.cz/cookies/" className="hover:text-white transition">Cookies</a></li>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="https://www.marek-marek.cz/cookies/" class="hover:text-white transition">Cookies</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
                 <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
             </div>
         </div>
-      </footer>
+    </footer>
 
-      {/* MODAL WINDOW */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            {/* Backdrop */}
-            <div className="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm transition-opacity" onClick={() => setIsModalOpen(false)}></div>
-        
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-              <div className="flex min-h-full items-center justify-center p-4 text-center">
-                
-                {/* Modal panel */}
-                <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all w-full max-w-md">
-                  
-                  {/* Close button */}
-                  <div className="absolute right-4 top-4 z-10">
-                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-brand-dark transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
-                      <X size={24} />
-                    </button>
+    <!-- MODAL WINDOW -->
+    <div id="contactModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop" onclick="closeModal()"></div>
+    
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto pointer-events-none">
+          <div class="flex min-h-full items-center justify-center p-4 text-center pointer-events-auto">
+            
+            <!-- Modal panel -->
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all w-full max-w-md scale-95 opacity-0" id="modalContent">
+              
+              <!-- Close button -->
+              <div class="absolute right-4 top-4 z-10">
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-brand-dark transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+              </div>
+    
+              <!-- Content -->
+              <div>
+                  <div class="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
+                    <div class="sm:flex sm:items-start">
+                      <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-2xl font-bold leading-6 text-brand-dark uppercase tracking-wide">Nezávazná konzultace</h3>
+                        <p class="text-sm text-slate-600 mt-2 flex items-center gap-2 justify-center sm:justify-start">
+                            <i data-lucide="message-circle" class="w-4 h-4 text-brand-gold"></i>
+                            <span>Rád s Vámi proberu Vaše možnosti</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
-        
-                  {/* Content */}
-                  <div>
-                      <div className="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
-                        <div className="sm:flex sm:items-start">
-                          <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 className="text-2xl font-bold leading-6 text-brand-dark uppercase tracking-wide">Nezávazná konzultace</h3>
-                            <p className="text-sm text-slate-600 mt-2 flex items-center gap-2 justify-center sm:justify-start">
-                                <MessageCircle size={16} className="text-brand-gold" />
-                                <span>Rád s Vámi proberu Vaše možnosti</span>
-                            </p>
-                          </div>
+
+                  <div class="p-8">
+                      <form id="leadForm" class="space-y-5" onsubmit="event.preventDefault(); alert('Formulář odeslán (demo)'); closeModal();">
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Jméno <span class="text-red-500">*</span></label>
+                            <input type="text" required placeholder="Jan Novák" class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
                         </div>
-                      </div>
 
-                      <div className="p-8">
-                          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); alert("Formulář odeslán (demo)"); setIsModalOpen(false); }}>
-                            
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Jméno <span className="text-red-500">*</span></label>
-                                <input type="text" required placeholder="Jan Novák" className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white" />
-                            </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span class="text-red-500">*</span></label>
+                            <input type="tel" required placeholder="+420 777 ..." class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span className="text-red-500">*</span></label>
-                                <input type="tel" required placeholder="+420 777 ..." className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white" />
-                            </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span class="text-red-500">*</span></label>
+                            <input type="email" required placeholder="vas@email.cz" class="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                        </div>
+                        
+                        <div class="flex items-start gap-3 mt-2 bg-brand-light/50 p-3 rounded-lg">
+                            <input type="checkbox" id="consent" required class="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer accent-brand-gold">
+                            <label for="consent" class="text-xs text-slate-600 cursor-pointer select-none">
+                                Souhlasím se zpracováním osobních údajů.
+                            </label>
+                        </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span className="text-red-500">*</span></label>
-                                <input type="email" required placeholder="vas@email.cz" className="w-full border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white" />
-                            </div>
-                            
-                            <div className="flex items-start gap-3 mt-2 bg-brand-light/50 p-3 rounded-lg">
-                                <input type="checkbox" id="consent" required className="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer accent-brand-gold" />
-                                <label htmlFor="consent" className="text-xs text-slate-600 cursor-pointer select-none">
-                                    Souhlasím se zpracováním osobních údajů.
-                                </label>
-                            </div>
-
-                            <div className="pt-2">
-                                <button type="submit" className="group relative w-full bg-brand-dark hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-dark/20 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg overflow-hidden">
-                                    <span>Odeslat nezávazně</span>
-                                    <Send size={18} />
-                                </button>
-                            </div>
-                          </form>
-                      </div>
+                        <div class="pt-2">
+                            <button type="submit" class="group relative w-full bg-brand-dark hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-dark/20 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg overflow-hidden">
+                                <span>Odeslat nezávazně</span>
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                      </form>
                   </div>
-                </div>
               </div>
             </div>
+          </div>
         </div>
-      )}
-
     </div>
-  );
-};
 
-export default LandingPage;
+    <!-- SCRIPTS -->
+    <script>
+        // Inicializace ikon
+        lucide.createIcons();
+
+        // Scroll Logic
+        const navbar = document.getElementById('navbar');
+        const logoBg = document.getElementById('logo-bg');
+        const logoText = document.getElementById('logo-text');
+        const logoSubtext = document.getElementById('logo-subtext');
+        const desktopMenuLinks = document.querySelectorAll('#desktop-menu .nav-link');
+        const dividers = document.querySelectorAll('.divider');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+
+        function updateHeader() {
+            if (window.scrollY > 20) {
+                navbar.classList.remove('glass-header-top');
+                navbar.classList.add('glass-header-scrolled');
+                
+                logoBg.classList.remove('bg-white', 'text-brand-dark');
+                logoBg.classList.add('bg-brand-dark', 'text-white');
+                
+                logoText.classList.remove('text-white');
+                logoText.classList.add('text-brand-dark');
+                
+                logoSubtext.classList.remove('text-slate-300');
+                logoSubtext.classList.add('text-slate-500');
+
+                desktopMenuLinks.forEach(link => {
+                    link.classList.remove('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                    link.classList.add('text-brand-main', 'hover:bg-brand-light');
+                });
+
+                dividers.forEach(div => {
+                    div.classList.remove('bg-white/20');
+                    div.classList.add('bg-brand-border');
+                });
+
+                menuBtn.classList.remove('hover:bg-white/10');
+                menuBtn.classList.add('hover:bg-brand-light');
+
+            } else {
+                navbar.classList.add('glass-header-top');
+                navbar.classList.remove('glass-header-scrolled');
+                
+                logoBg.classList.add('bg-white', 'text-brand-dark');
+                logoBg.classList.remove('bg-brand-dark', 'text-white');
+                
+                logoText.classList.add('text-white');
+                logoText.classList.remove('text-brand-dark');
+                
+                logoSubtext.classList.add('text-slate-300');
+                logoSubtext.classList.remove('text-slate-500');
+
+                desktopMenuLinks.forEach(link => {
+                    link.classList.add('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                    link.classList.remove('text-brand-main', 'hover:bg-brand-light');
+                });
+
+                dividers.forEach(div => {
+                    div.classList.add('bg-white/20');
+                    div.classList.remove('bg-brand-border');
+                });
+
+                menuBtn.classList.add('hover:bg-white/10');
+                menuBtn.classList.remove('hover:bg-brand-light');
+            }
+        }
+        window.addEventListener('scroll', updateHeader);
+        updateHeader();
+
+        // Mobile Menu
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('contactModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Small delay to allow transition
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalContent.classList.remove('opacity-0', 'scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+            document.body.classList.add('modal-open');
+            // Close mobile menu if open
+            mobileMenu.classList.add('hidden');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
