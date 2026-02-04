@@ -284,21 +284,21 @@
                 <div class="text-center mb-8">
                     <div class="w-20 h-20 bg-gradient-to-br from-brand-orange to-brand-gold text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg"><i class="fas fa-chart-pie"></i></div>
                     <h2 class="text-3xl font-bold text-slate-900 mb-2">Má to smysl?</h2>
-                    <p class="text-slate-500">Diagnostika + rizika + orientační potenciál.</p>
+                    <p class="text-slate-500">Rychlá diagnostika: benefity, rizika a úspory. 3 minuty.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="exec-card">
-                        <div class="exec-card-header bg-gradient-to-r from-green-500 to-emerald-500">Úspory a optimalizace (benefity)</div>
-                        <div class="exec-card-body" id="output-box-benefits"></div>
+                        <div class="exec-card-header bg-gradient-to-r from-green-500 to-emerald-500">Úspory a benefity</div>
+                        <div class="exec-card-body"><p class="text-xs text-slate-500 mb-2">Kolik může firma ušetřit a kolik může posílat zaměstnancům efektivněji.</p><div id="output-box-benefits"></div></div>
                     </div>
                     <div class="exec-card">
                         <div class="exec-card-header bg-gradient-to-r from-blue-500 to-indigo-500">Krytí firemních rizik</div>
-                        <div class="exec-card-body" id="output-box-risks"></div>
+                        <div class="exec-card-body"><p class="text-xs text-slate-500 mb-2">Co typicky chybí: odpovědnost, D&O, majetek, flotila.</p><div id="output-box-risks"></div></div>
                     </div>
                     <div class="exec-card">
                         <div class="exec-card-header bg-gradient-to-r from-amber-500 to-orange-500">Ochrana jednatele</div>
-                        <div class="exec-card-body" id="output-box-director"></div>
+                        <div class="exec-card-body"><p class="text-xs text-slate-500 mb-2">Rezerva, osobní rizika, závazky a rychlá doporučení.</p><div id="output-box-director"></div></div>
                     </div>
                 </div>
 
@@ -311,8 +311,8 @@
                                 <div id="semafor-green" class="semafor-light semafor-green"></div>
                             </div>
                             <div id="output-biggest-hole" class="text-lg font-bold mb-1">Největší díra: —</div>
-                            <div id="output-quick-win" class="text-blue-200 mb-1">Největší rychlá výhra: —</div>
-                            <div id="output-next-meeting" class="text-blue-300 text-sm">Co je potřeba doplnit na další schůzce: —</div>
+                            <div id="output-quick-win" class="text-blue-200 mb-1">Nejrychlejší výhra: —</div>
+                            <div id="output-next-meeting" class="text-blue-300 text-sm mt-2">Chcete přesný návrh? Na další schůzce to dopočítáme a připravím konkrétní řešení.</div>
                         </div>
                     </div>
                 </div>
@@ -324,16 +324,23 @@
                     </button>
                     <button id="btn-lead-capture" class="btn-secondary px-8 py-4 rounded-xl flex items-center gap-3">
                         <i class="fas fa-envelope"></i>
-                        <span class="font-bold">Poslat PDF na email</span>
+                        <span class="font-bold">Odeslat si výsledek e-mailem</span>
                     </button>
-                    <a id="btn-calendly" href="https://calendly.com/" target="_blank" rel="noopener" class="btn-primary px-8 py-4 rounded-xl flex items-center gap-3">
+                    <a id="btn-calendly" href="#" target="_blank" rel="noopener" class="btn-primary px-8 py-4 rounded-xl flex items-center gap-3">
                         <i class="fas fa-phone"></i>
                         <span class="font-bold">Rezervovat call</span>
                     </a>
                 </div>
 
+                <div id="upload-section" class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
+                    <h4 class="font-bold text-slate-800 mb-2">Volitelné: nahrát smlouvu / pojistku</h4>
+                    <p class="text-sm text-slate-500 mb-4">Nahrajte dokument a já na další schůzce rychle zjistím, kde jsou mezery. (Zatím bez automatické analýzy.)</p>
+                    <input type="file" id="input-attachment" accept=".pdf,image/*" class="form-input w-full px-4 py-3 mb-2">
+                    <div id="attachment-list" class="text-sm text-slate-600 mt-2"></div>
+                </div>
+
                 <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                    <p class="text-sm text-slate-500">„Poslat PDF na email“ uloží email do localStorage a otevře mailto. Pro automatické odeslání je potřeba backend (Phase 2).</p>
+                    <p class="text-sm text-slate-500">„Odeslat si výsledek e-mailem“ otevře váš e-mail s připravenou zprávou. Automatické odeslání přidáme později.</p>
                 </div>
             </div>
 
@@ -350,6 +357,47 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://bqevrmtonpbmbyvvynev.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZXZybXRvbnBibWJ5dnZ5bmV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzA1NTYsImV4cCI6MjA4NTgwNjU1Nn0.c2QPg9cE2dhpLq6dIMiWG3z0Gla93M_oRquCoHpzW2Q";
+        window.DIAG_SUPABASE = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        async function testInsertLead() {
+            var supabase = window.DIAG_SUPABASE;
+            if (!supabase) { console.error("Supabase not loaded"); return; }
+            const { data, error } = await supabase.from("leads")
+                .insert([{
+                    name: "Test Lead",
+                    email: "test@example.com",
+                    company_name: "Test s.r.o.",
+                    phone: "420777111222",
+                    employees_count: 12,
+                    industry: "Stavebnictví"
+                }])
+                .select("id")
+                .single();
+            if (error) console.error("INSERT error:", error);
+            else console.log("INSERT OK:", data);
+        }
+
+        async function insertAssessment(leadId) {
+            var supabase = window.DIAG_SUPABASE;
+            if (!supabase) { console.error("Supabase not loaded"); return; }
+            const { data, error } = await supabase.from("assessments")
+                .insert([{
+                    lead_id: leadId,
+                    input_json: { has_benefits: true, benefits_types: ["DIP"] },
+                    output_json: { score: 68, top_findings: ["Chybí optimalizace benefitů"] },
+                    score: 68,
+                    status: "done"
+                }])
+                .select("id")
+                .single();
+            if (error) console.error("assessment error:", error);
+            else console.log("assessment OK:", data);
+        }
+    </script>
     <script>
         // === CONFIG ===
         var DIAG_CONFIG = {
@@ -405,33 +453,39 @@
                 }).join('');
                 var savingsText = benefitResult.yearlySavings > 0 ? 'Orientační potenciál úspor: ' + fmt(benefitResult.yearlySavings) + ' ročně.' : 'Vyplňte benefity.';
                 if (hasCat3) savingsText += ' Firma má 3. kategorii – prověřit Úrazové pojištění.';
+                var topFindings = (calc && calc.companyRisks && calc.companyRisks.gaps) ? calc.companyRisks.gaps.slice(0, 3) : [];
+                var topFindingsHtml = topFindings.length ? '<ul style="font-size:9pt;margin:4mm 0;padding-left:6mm;">' + topFindings.map(function(g) { return '<li>' + g + '</li>'; }).join('') + '</ul>' : '<p style="font-size:9pt;color:#64748b;">Žádné kritické mezery.</p>';
+                var dir = d.director || {}, netInc = dir.netIncome || 0, reserve = (d.finance && d.finance.reserve) || 0;
+                var dirText = 'Jednatel: ' + directorName + '. Příjem: ' + fmt(netInc) + '/měs. Rezerva: ' + fmt(reserve) + '. Prověřit krytí smrt, invalidita, PN.';
+                var calUrl = (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/');
+                var contactEmail = (d.lead && d.lead.email) || '';
                 var cfg = DIAG_CONFIG && DIAG_CONFIG.images, logoFiles = (cfg && cfg.logoFiles) || [], basePath = ((cfg && cfg.basePath) || './images/').replace(/\/?$/, '/');
                 var logoHtml = logoFiles.map(function(f) { return '<img src="' + basePath + f + '" alt="" style="height:12mm;object-fit:contain;">'; }).join('');
+                var cardsHtml = '<div class="kpi" style="margin-bottom:6mm;">' +
+                    '<div class="box"><span class="lbl">Úspory a benefity</span><div class="val" style="color:#10b981;">' + (benefitResult.yearlySavings > 0 ? fmt(benefitResult.yearlySavings) : '—') + '</div><span class="sub">/rok</span></div>' +
+                    '<div class="box"><span class="lbl">Krytí rizik</span><div class="val" style="color:#0B3A7A;">' + (riskResult.score || '0/6') + '</div></div>' +
+                    '<div class="box"><span class="lbl">Jednatel</span><div class="val">' + (reserve > 0 ? fmt(reserve) : '—') + '</div><span class="sub">rezerva</span></div>' +
+                    '</div>';
+                var boxHtml = '<div style="background:linear-gradient(135deg,#0a0f29,#1e3a6e);color:white;padding:6mm;border-radius:4mm;margin:4mm 0;">' +
+                    '<div style="font-weight:700;font-size:11pt;margin-bottom:2mm;">Největší díra:</div><p style="font-size:9pt;opacity:0.9;">' + (topFindings[0] || '—') + '</p>' +
+                    '<div style="font-weight:700;font-size:11pt;margin:3mm 0 2mm;">Nejrychlejší výhra:</div><p style="font-size:9pt;opacity:0.9;">' + (benefitResult.yearlySavings > 0 ? 'Benefity – úspora ' + fmt(benefitResult.yearlySavings) : 'Vyplňte benefity') + '</p>' +
+                    '</div>';
                 var pages = [
-                    '<section class="pdf-page" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">' +
-                    '<div style="width:100px;height:100px;background:linear-gradient(135deg,#0a0f29,#1e3a6e);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:40px;"><i class="fas fa-building"></i></div>' +
-                    '<h1 class="h1" style="font-size:42px;">DIAGNOSTIKA</h1><p style="font-size:18px;color:#64748b;">s.r.o. pro jednatele</p>' +
-                    '<div style="background:#f8fafc;padding:40px 60px;border-radius:16px;border:1px solid #e2e8f0;margin-top:30px;">' +
-                    '<p style="color:#64748b;font-size:10px;text-transform:uppercase;">Společnost</p><h2 style="font-size:26px;color:#0f172a;margin:0 0 24px 0;">' + companyName + '</h2>' +
-                    '<p style="color:#64748b;font-size:10px;text-transform:uppercase;">Jednatel</p><h3 style="font-size:20px;color:#0f172a;margin:0;">' + directorName + '</h3>' +
-                    '<p style="color:#64748b;font-size:10px;margin-top:16px;">' + today + '</p></div>' + ftr(1) + '</section>',
-                    '<section class="pdf-page">' + hdr('KLÍČOVÉ UKAZATELE', today, companyName) +
-                    '<div class="h2">Přehled firmy</div><div class="kpi">' +
-                    '<div class="box"><span class="lbl">Zaměstnanci</span><div class="val" style="color:#0B3A7A;">' + employees + '</div></div>' +
-                    '<div class="box"><span class="lbl">3. kategorie</span><div class="val">' + cat3Val + '</div></div>' +
-                    '<div class="box"><span class="lbl">Mzdový fond</span><div class="val">' + fmtShort(wageFund) + '</div></div></div>' +
-                    '<div class="h2">Orientační potenciál úspor</div><div class="recommendation">' + savingsText + '</div>' + ftr(2) + '</section>',
-                    '<section class="pdf-page">' + hdr('KRITICKÉ MEZERY', today, companyName) +
-                    '<div class="h2">Risk Gap analýza</div><div class="kpi"><div class="box"><span class="lbl">Pokrytí</span><div class="val" style="color:' + ((riskResult.covered || 0) >= 4 ? '#10b981' : '#ef4444') + ';">' + (riskResult.score || '0/6') + '</div></div></div>' +
-                    '<div class="risk-matrix">' + riskMatrix + '</div>' + ftr(3) + '</section>',
-                    '<section class="pdf-page">' + hdr('MAJETEK', today, companyName) +
-                    '<div class="h2">Přehled</div><div class="recommendation">Inventura majetku, strojů a vozidel – zhodnotit pojistné limity.</div>' + ftr(4) + '</section>',
-                    '<section class="pdf-page">' + hdr('JEDNATEL', today, companyName) +
-                    '<div class="h2">Zajištění příjmů</div><p style="font-size:9pt;">Prověřit krytí smrt, invalidita, PN. Konzultace doporučena.</p>' + ftr(5) + '</section>',
-                    '<section class="pdf-page">' + hdr('DALŠÍ KROKY', today, companyName) +
-                    '<div class="h2">Doporučení</div><ul style="font-size:9pt;"><li>Vyhodnotit benefity (DIP/DPS/IŽP)</li><li>Doplnit krytí rizik</li><li>Rezervovat 15min call</li></ul>' + ftr(6) + '</section>'
+                    '<section class="pdf-page">' + hdr('Výsledek diagnostiky', today, companyName) +
+                    '<div class="h2">Přehled</div>' + cardsHtml + boxHtml +
+                    '<div class="h2">3 největší nálezy</div>' + topFindingsHtml +
+                    '<p style="font-size:8pt;color:#64748b;margin-top:4mm;">Konkrétní nastavení a výběr produktů doladíme společně.</p>' + ftr(1) + '</section>',
+                    '<section class="pdf-page">' + hdr('Co to znamená v praxi', today, companyName) +
+                    '<div class="h2">Benefity</div><p style="font-size:9pt;">' + savingsText + '</p>' +
+                    '<div class="h2">Rizika</div><div class="risk-matrix">' + riskMatrix + '</div>' +
+                    '<div class="h2">Jednatel</div><p style="font-size:9pt;">' + dirText + '</p>' +
+                    '<p style="font-size:8pt;color:#64748b;margin-top:4mm;">Konkrétní nastavení a výběr produktů doladíme společně.</p>' + ftr(2) + '</section>',
+                    '<section class="pdf-page">' + hdr('Další krok', today, companyName) +
+                    '<div class="h2">Rezervace call</div><p style="font-size:9pt;">Rezervujte si 15min call pro detailní rozbor: <strong>' + calUrl + '</strong></p>' +
+                    (contactEmail ? '<div class="h2">Kontakt</div><p style="font-size:9pt;">' + contactEmail + '</p>' : '') +
+                    '<div class="recommendation" style="margin-top:8mm;">Konkrétní nastavení a výběr produktů doladíme společně.</div>' +
+                    (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(3) + '</section>'
                 ];
-                if (logoHtml) pages.push('<section class="pdf-page">' + hdr('PARTNEŘI', today, companyName) + '<div class="h2">Doporučené produkty</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' + ftr(7) + '</section>');
                 return '<div class="pdf">' + pages.join('') + '</div>';
             }
             window.DIAG_REPORT = { buildReportHTML: buildReportHTML, fmt: fmt, fmtShort: fmtShort };
@@ -446,9 +500,10 @@
             return Promise.all(promises);
         }
 
+        var CALENDLY_URL = 'https://calendly.com/';
         var DiagnostikaApp = {
             step: 1, totalSteps: 6,
-            data: { company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova' }, risks: { employee: 'unknown', director: 'no', professional: 'no' }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0 } },
+            data: { company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova' }, risks: { employee: 'unknown', director: 'no', professional: 'no' }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0 }, pendingAttachments: [] },
             init: function() {
                 var self = this;
                 this.bindNav(); this.bindInputs();
@@ -497,6 +552,33 @@
                 self.bind('director-family-count', function(v) { self.data.director.familyCount = parseInt(v) || 0; });
                 self.bind('director-loan-payment', function(v) { self.data.director.loanPayment = parseFloat(v) || 0; self.updateStep5(); });
                 self.bind('director-loan-balance', function(v) { self.data.director.loanBalance = parseFloat(v) || 0; });
+                var inpAtt = document.getElementById('input-attachment');
+                if (inpAtt) inpAtt.addEventListener('change', function() {
+                    var files = this.files;
+                    if (!files || files.length === 0) return;
+                    for (var i = 0; i < files.length; i++) {
+                        var f = files[i];
+                        if (f && (f.type === 'application/pdf' || f.type.indexOf('image/') === 0)) {
+                            self.data.pendingAttachments.push(f);
+                        }
+                    }
+                    self.refreshAttachmentList();
+                    this.value = '';
+                });
+            },
+            refreshAttachmentList: function() {
+                var list = document.getElementById('attachment-list');
+                if (!list) return;
+                var arr = this.data.pendingAttachments || [];
+                list.innerHTML = arr.length ? arr.map(function(f, i) { return '<span class="inline-block bg-slate-200 px-2 py-1 rounded mr-2 mb-1">' + f.name + ' <button type="button" class="text-red-600 ml-1" data-idx="' + i + '">×</button></span>'; }).join('') : '';
+                var self = this;
+                list.querySelectorAll('button').forEach(function(btn) {
+                    btn.onclick = function() {
+                        var idx = parseInt(btn.getAttribute('data-idx'), 10);
+                        self.data.pendingAttachments.splice(idx, 1);
+                        self.refreshAttachmentList();
+                    };
+                });
             },
             updateStep2: function() {
                 var b = this.data.benefits, c = this.data.company, amount = (b.dps || 0) + (b.dip || 0) + (b.izp || 0), count = b.count || c.employees || 0;
@@ -541,13 +623,21 @@
                 var months = burn > 0 ? Math.floor(res / burn) : 0;
                 var od = document.getElementById('output-box-director'); if (od) od.innerHTML = '<p class="text-sm">Rezerva: ' + months + ' měsíců. Krit. hranice: ' + this.fmt(inc * 12 * 5) + '</p>';
                 document.getElementById('output-biggest-hole').textContent = 'Největší díra: ' + (r.director === 'no' ? 'D&O jednatele' : (r.professional === 'no' ? 'Profesní odpovědnost' : '—'));
-                document.getElementById('output-quick-win').textContent = 'Největší rychlá výhra: ' + (savings > 0 ? 'Benefity – úspora ' + this.fmt(savings) : 'Vyplňte benefity');
-                document.getElementById('output-next-meeting').textContent = 'Co doplnit na další schůzce: Prověřit mezery, rezervovat call';
+                document.getElementById('output-quick-win').textContent = 'Nejrychlejší výhra: ' + (savings > 0 ? 'Benefity – úspora ' + this.fmt(savings) : 'Vyplňte benefity');
+                var btnCal = document.getElementById('btn-calendly'); if (btnCal) btnCal.href = (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/');
             },
             sendPdfEmail: function() {
+                var self = this;
                 var email = this.data.lead.email || (document.getElementById('lead-email') && document.getElementById('lead-email').value) || '';
                 if (email) try { localStorage.setItem('diagnostika_lead_email', email); } catch (e) {}
-                window.location.href = 'mailto:' + (email || '') + '?subject=' + encodeURIComponent('Diagnostika s.r.o. pro jednatele – PDF') + '&body=' + encodeURIComponent('Dobrý den,\n\npřipojuji zprávu z diagnostiky.\n\nS pozdravem');
+                var score = 0, r = this.data.risks;
+                score = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
+                var findings = [];
+                if (r.director === 'no') findings.push('Chybí D&O jednatele');
+                if (r.professional === 'no') findings.push('Chybí profesní odpovědnost');
+                if (r.employee === 'unknown') findings.push('Neznámá odpovědnost zaměstnance');
+                var body = 'Shrnutí diagnostiky:\n- Skóre rizik: ' + score + '/100\n- Top nálezy: ' + (findings.slice(0,3).join('; ') || '—') + '\n\nRezervovat 15min call: ' + (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/') + '\n\n' + (this.data.pendingAttachments && this.data.pendingAttachments.length > 0 ? 'Pokud chcete, pošlete mi odpovědí smlouvy/pojistky.\n\n' : '') + 'S pozdravem';
+                window.location.href = 'mailto:' + (email || '') + '?subject=' + encodeURIComponent('Diagnostika „Má to smysl?“ – výsledek') + '&body=' + encodeURIComponent(body);
             },
             exportData: function() { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' })); a.download = 'diagnostika-' + (this.data.company.name || 'klient') + '.json'; a.click(); },
             importData: function(e) { var f = e.target.files[0]; if (!f) return; var self = this; var r = new FileReader(); r.onload = function(ev) { try { self.data = JSON.parse(ev.target.result); location.reload(); } catch (err) { alert('Chyba.'); } }; r.readAsText(f); },
@@ -556,23 +646,64 @@
                 var self = this, root = document.getElementById('report-root');
                 var amount = (self.data.benefits.dps || 0) + (self.data.benefits.dip || 0) + (self.data.benefits.izp || 0), count = self.data.benefits.count || self.data.company.employees || 0;
                 var calc = {}; if (amount > 0 && count > 0 && window.DIAG_BENEFITS) calc.benefitSavings = DIAG_BENEFITS.calcBenefitSavings(amount, count, (self.data.company.cat3 || '0') !== '0'); else calc.benefitSavings = {};
-                var r = self.data.risks; calc.companyRisks = { covered: (r.director === 'yes' ? 1 : 0) + (r.professional === 'yes' ? 1 : 0), gaps: r.director === 'no' ? ['D&O'] : [], score: '0/2' };
-                var normData = { company: self.data.company, director: { name: self.data.lead.name, netIncome: self.data.director.netIncome }, benefits: { amount: amount, count: count }, risks: { property: self.data.assets.premises === 'yes', interruption: self.data.assets.interruption === 'yes', liability: r.professional === 'yes', director: r.director === 'yes', fleet: (self.data.assets.fleet || 0) > 0, cyber: self.data.assets.cyber === 'yes' }, directorIns: {}, assets: self.data.assets, finance: {} };
-                root.innerHTML = DIAG_REPORT.buildReportHTML(normData, calc);
-                preloadImages(root).then(function() {
-                    if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
-                        var pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4' }), pages = root.querySelectorAll('.pdf-page'), i = 0;
-                        function next() {
-                            if (i >= pages.length) { pdf.save('diagnostika-' + (self.data.company.name || 'report').replace(/\s/g, '-') + '.pdf'); root.style.left = '-9999px'; return; }
-                            html2canvas(pages[i], { scale: 2, useCORS: true, allowTaint: true, logging: false }).then(function(canvas) {
-                                if (i > 0) pdf.addPage();
-                                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297, undefined, 'FAST');
-                                i++; next();
-                            }).catch(function() { i++; next(); });
+                var r = self.data.risks; var riskPts = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
+                calc.companyRisks = { covered: (r.director === 'yes' ? 1 : 0) + (r.professional === 'yes' ? 1 : 0), gaps: r.director === 'no' ? ['D&O'] : [], score: '0/2' };
+                var topFindings = []; if (r.director === 'no') topFindings.push('Chybí D&O'); if (r.professional === 'no') topFindings.push('Chybí prof. odpovědnost'); if (r.employee === 'unknown') topFindings.push('Neznámá odp. zaměstnance');
+                var outputJson = { score: riskPts, topFindings: topFindings.slice(0, 3), benefitSavings: calc.benefitSavings.yearlySavings || 0 };
+                var inputJson = { company: self.data.company, lead: self.data.lead, benefits: self.data.benefits, risks: self.data.risks, assets: self.data.assets, director: self.data.director };
+                var normData = { company: self.data.company, lead: self.data.lead, director: { name: self.data.lead.name, netIncome: self.data.director.netIncome }, benefits: { amount: amount, count: count }, risks: { property: self.data.assets.premises === 'yes', interruption: self.data.assets.interruption === 'yes', liability: r.professional === 'yes', director: r.director === 'yes', fleet: (self.data.assets.fleet || 0) > 0, cyber: self.data.assets.cyber === 'yes' }, directorIns: {}, assets: self.data.assets, finance: { reserve: self.data.director.reserve } };
+
+                var doPdf = function(dbSaved) {
+                    root.innerHTML = DIAG_REPORT.buildReportHTML(normData, calc);
+                    preloadImages(root).then(function() {
+                        if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
+                            var pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4' }), pages = root.querySelectorAll('.pdf-page'), i = 0;
+                            function next() {
+                                if (i >= pages.length) { pdf.save('diagnostika-' + (self.data.company.name || 'report').replace(/\s/g, '-') + '.pdf'); root.style.left = '-9999px'; if (!dbSaved) alert('Nepodařilo se uložit – PDF si stáhnete i tak.'); return; }
+                                html2canvas(pages[i], { scale: 2, useCORS: true, allowTaint: true, logging: false }).then(function(canvas) {
+                                    if (i > 0) pdf.addPage();
+                                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297, undefined, 'FAST');
+                                    i++; next();
+                                }).catch(function() { i++; next(); });
+                            }
+                            next();
+                        } else { root.style.left = '0'; root.style.position = 'absolute'; root.style.top = '0'; root.style.zIndex = '99999'; setTimeout(function() { window.print(); root.style.left = '-9999px'; }, 500); }
+                    });
+                };
+
+                var supabase = window.DIAG_SUPABASE;
+                if (supabase) {
+                    (async function() {
+                        var dbSaved = false;
+                        try {
+                            var leadPayload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false };
+                            var { data: leadData, error: leadErr } = await supabase.from('leads').insert([leadPayload]).select('id').single();
+                            if (leadErr) throw leadErr;
+                            var leadId = leadData && leadData.id;
+
+                            var attMeta = [];
+                            if (leadId && self.data.pendingAttachments && self.data.pendingAttachments.length > 0) {
+                                var ts = Date.now();
+                                for (var ai = 0; ai < self.data.pendingAttachments.length; ai++) {
+                                    var f = self.data.pendingAttachments[ai];
+                                    var path = leadId + '/' + ts + '-' + (f.name || 'file').replace(/[^a-zA-Z0-9._-]/g, '_');
+                                    var { error: upErr } = await supabase.storage.from('attachments').upload(path, f, { contentType: f.type || 'application/octet-stream' });
+                                    if (!upErr) attMeta.push({ path: path, mime: f.type || 'application/octet-stream', name: f.name || 'file', size: f.size || 0 });
+                                }
+                            }
+
+                            var assPayload = { lead_id: leadId, input_json: inputJson, output_json: outputJson, score: riskPts, status: 'done', attachments: attMeta };
+                            var { error: assErr } = await supabase.from('assessments').insert([assPayload]).select();
+                            if (assErr) throw assErr;
+                            dbSaved = true;
+                        } catch (err) {
+                            console.error('Supabase save error:', err);
                         }
-                        next();
-                    } else { root.style.left = '0'; root.style.position = 'absolute'; root.style.top = '0'; root.style.zIndex = '99999'; setTimeout(function() { window.print(); root.style.left = '-9999px'; }, 500); }
-                });
+                        doPdf(dbSaved);
+                    })();
+                } else {
+                    doPdf(false);
+                }
             }
         };
 
