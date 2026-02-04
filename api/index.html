@@ -283,8 +283,8 @@
             <div id="step-6" class="step-content">
                 <div class="text-center mb-8">
                     <div class="w-20 h-20 bg-gradient-to-br from-brand-orange to-brand-gold text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg"><i class="fas fa-chart-pie"></i></div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Má to smysl?</h2>
-                    <p class="text-slate-500">Rychlá diagnostika: benefity, rizika a úspory. 3 minuty.</p>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Rychlá diagnostika pro jednatele (3 min)</h2>
+                    <p class="text-slate-500">Ukáže, kde typicky utíkají peníze nebo hrozí průšvih. Konkrétní nastavení vám připravím na 15min call.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -320,11 +320,11 @@
                 <div class="flex flex-wrap gap-4 justify-center mb-8">
                     <button id="btn-pdf" class="btn-primary cta-shimmer px-8 py-4 rounded-xl flex items-center gap-3 shadow-lg">
                         <i class="fas fa-file-pdf text-xl"></i>
-                        <span class="font-bold">Stáhnout PDF</span>
+                        <span class="font-bold">Stáhnout shrnutí (PDF)</span>
                     </button>
                     <button id="btn-lead-capture" class="btn-secondary px-8 py-4 rounded-xl flex items-center gap-3">
                         <i class="fas fa-envelope"></i>
-                        <span class="font-bold">Odeslat si výsledek e-mailem</span>
+                        <span class="font-bold">Poslat shrnutí na e-mail</span>
                     </button>
                     <a id="btn-calendly" href="#" target="_blank" rel="noopener" class="btn-primary px-8 py-4 rounded-xl flex items-center gap-3">
                         <i class="fas fa-phone"></i>
@@ -340,7 +340,7 @@
                 </div>
 
                 <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                    <p class="text-sm text-slate-500">„Odeslat si výsledek e-mailem“ otevře váš e-mail s připravenou zprávou. Automatické odeslání přidáme později.</p>
+                    <p class="text-sm text-slate-500">„Poslat shrnutí na e-mail“ odešle shrnutí na váš e-mail. Při nasazeném backendu i tobě jako poradci.</p>
                 </div>
             </div>
 
@@ -501,9 +501,10 @@
         }
 
         var CALENDLY_URL = 'https://calendly.com/';
+        var API_BASE = ''; // např. 'https://tvoje-app.vercel.app' pro /api/send-report
         var DiagnostikaApp = {
             step: 1, totalSteps: 6,
-            data: { company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova' }, risks: { employee: 'unknown', director: 'no', professional: 'no' }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0 }, pendingAttachments: [] },
+            data: { meta: { leadId: null }, company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova' }, risks: { employee: 'unknown', director: 'no', professional: 'no' }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0 }, pendingAttachments: [] },
             init: function() {
                 var self = this;
                 this.bindNav(); this.bindInputs();
@@ -516,7 +517,7 @@
                 var self = this;
                 document.getElementById('btn-next').addEventListener('click', function() { if (self.step === self.totalSteps) self.generatePDF(); else { self.step++; self.updateView(); } });
                 document.getElementById('btn-prev').addEventListener('click', function() { if (self.step > 1) { self.step--; self.updateView(); } });
-                var cta = document.getElementById('cta-step1'); if (cta) cta.addEventListener('click', function() { if (self.step === 1) { self.step++; self.updateView(); } });
+                var cta = document.getElementById('cta-step1'); if (cta) cta.addEventListener('click', function() { if (self.step === 1) { self.createLeadThenNext(); } });
                 var lb = document.getElementById('btn-lead-capture'); if (lb) lb.addEventListener('click', function() { self.sendPdfEmail(); });
             },
             updateView: function() {
@@ -622,27 +623,56 @@
                 var inc = d.netIncome || 0, res = d.reserve || 0, burn = inc * 0.7 + (d.loanPayment || 0);
                 var months = burn > 0 ? Math.floor(res / burn) : 0;
                 var od = document.getElementById('output-box-director'); if (od) od.innerHTML = '<p class="text-sm">Rezerva: ' + months + ' měsíců. Krit. hranice: ' + this.fmt(inc * 12 * 5) + '</p>';
-                document.getElementById('output-biggest-hole').textContent = 'Největší díra: ' + (r.director === 'no' ? 'D&O jednatele' : (r.professional === 'no' ? 'Profesní odpovědnost' : '—'));
-                document.getElementById('output-quick-win').textContent = 'Nejrychlejší výhra: ' + (savings > 0 ? 'Benefity – úspora ' + this.fmt(savings) : 'Vyplňte benefity');
+                var holeText = r.director === 'no' ? 'Chybí D&O → reálné riziko osobního ručení jednatele' : (r.professional === 'no' ? 'Chybí profesní odpovědnost → riziko nároku' : '—');
+                var winText = savings > 0 ? 'Benefity: potenciál úspory ' + this.fmt(savings) + '/rok (detailní model dopočítám s mzdovkou)' : 'Vyplňte benefity pro orientační odhad';
+                document.getElementById('output-biggest-hole').textContent = 'Největší díra: ' + holeText;
+                document.getElementById('output-quick-win').textContent = 'Nejrychlejší výhra: ' + winText;
                 var btnCal = document.getElementById('btn-calendly'); if (btnCal) btnCal.href = (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/');
             },
             sendPdfEmail: function() {
                 var self = this;
                 var email = this.data.lead.email || (document.getElementById('lead-email') && document.getElementById('lead-email').value) || '';
                 if (email) try { localStorage.setItem('diagnostika_lead_email', email); } catch (e) {}
-                var score = 0, r = this.data.risks;
-                score = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
-                var findings = [];
-                if (r.director === 'no') findings.push('Chybí D&O jednatele');
-                if (r.professional === 'no') findings.push('Chybí profesní odpovědnost');
-                if (r.employee === 'unknown') findings.push('Neznámá odpovědnost zaměstnance');
-                var body = 'Shrnutí diagnostiky:\n- Skóre rizik: ' + score + '/100\n- Top nálezy: ' + (findings.slice(0,3).join('; ') || '—') + '\n\nRezervovat 15min call: ' + (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/') + '\n\n' + (this.data.pendingAttachments && this.data.pendingAttachments.length > 0 ? 'Pokud chcete, pošlete mi odpovědí smlouvy/pojistky.\n\n' : '') + 'S pozdravem';
-                window.location.href = 'mailto:' + (email || '') + '?subject=' + encodeURIComponent('Diagnostika „Má to smysl?“ – výsledek') + '&body=' + encodeURIComponent(body);
+                var apiBase = typeof API_BASE !== 'undefined' ? API_BASE : '';
+                if (apiBase) {
+                    if (!email) { alert('Pro odeslání na e-mail vyplňte e-mail v kroku 1.'); return; }
+                    self.generatePDF({
+                        onSuccess: function(r) {
+                            fetch(apiBase + '/api/send-report', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ lead: self.data.lead, assessmentId: r.assessmentId, reportPath: r.reportPath, attachmentsMeta: r.attMeta || [], outputJson: r.outputJson || {} })
+                            }).then(function(res) { return res.json(); }).then(function(data) {
+                                if (data.ok) alert('Shrnutí bylo odesláno na váš e-mail.');
+                                else alert('Chyba: ' + (data.error || 'Nepodařilo se odeslat.'));
+                            }).catch(function() { alert('Chyba odeslání. Zkuste mailto.'); });
+                        }
+                    });
+                } else {
+                    var r = this.data.risks, score = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
+                    var findings = []; if (r.director === 'no') findings.push('Chybí D&O jednatele'); if (r.professional === 'no') findings.push('Chybí profesní odpovědnost'); if (r.employee === 'unknown') findings.push('Neznámá odpovědnost zaměstnance');
+                    var body = 'Shrnutí diagnostiky:\n- Skóre rizik: ' + score + '/100\n- Top nálezy: ' + (findings.slice(0,3).join('; ') || '—') + '\n\nRezervovat 15min call: ' + (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/') + '\n\n' + (this.data.pendingAttachments && this.data.pendingAttachments.length > 0 ? 'Pokud chcete, pošlete mi odpovědí smlouvy/pojistky.\n\n' : '') + 'S pozdravem';
+                    window.location.href = 'mailto:' + (email || '') + '?subject=' + encodeURIComponent('Diagnostika „Má to smysl?“ – výsledek') + '&body=' + encodeURIComponent(body);
+                }
             },
             exportData: function() { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' })); a.download = 'diagnostika-' + (this.data.company.name || 'klient') + '.json'; a.click(); },
             importData: function(e) { var f = e.target.files[0]; if (!f) return; var self = this; var r = new FileReader(); r.onload = function(ev) { try { self.data = JSON.parse(ev.target.result); location.reload(); } catch (err) { alert('Chyba.'); } }; r.readAsText(f); },
             reset: function() { if (confirm('Vymazat všechna data?')) location.reload(); },
-            generatePDF: function() {
+            createLeadThenNext: function() {
+                var self = this;
+                var supabase = window.DIAG_SUPABASE;
+                if (supabase && !self.data.meta.leadId) {
+                    var payload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+                    supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
+                        if (res.data && res.data.id) self.data.meta.leadId = res.data.id;
+                        self.step++; self.updateView();
+                    }).catch(function() { self.step++; self.updateView(); });
+                } else {
+                    self.step++; self.updateView();
+                }
+            },
+            generatePDF: function(opts) {
+                opts = opts || {};
                 var self = this, root = document.getElementById('report-root');
                 var amount = (self.data.benefits.dps || 0) + (self.data.benefits.dip || 0) + (self.data.benefits.izp || 0), count = self.data.benefits.count || self.data.company.employees || 0;
                 var calc = {}; if (amount > 0 && count > 0 && window.DIAG_BENEFITS) calc.benefitSavings = DIAG_BENEFITS.calcBenefitSavings(amount, count, (self.data.company.cat3 || '0') !== '0'); else calc.benefitSavings = {};
@@ -653,13 +683,14 @@
                 var inputJson = { company: self.data.company, lead: self.data.lead, benefits: self.data.benefits, risks: self.data.risks, assets: self.data.assets, director: self.data.director };
                 var normData = { company: self.data.company, lead: self.data.lead, director: { name: self.data.lead.name, netIncome: self.data.director.netIncome }, benefits: { amount: amount, count: count }, risks: { property: self.data.assets.premises === 'yes', interruption: self.data.assets.interruption === 'yes', liability: r.professional === 'yes', director: r.director === 'yes', fleet: (self.data.assets.fleet || 0) > 0, cyber: self.data.assets.cyber === 'yes' }, directorIns: {}, assets: self.data.assets, finance: { reserve: self.data.director.reserve } };
 
-                var doPdf = function(dbSaved) {
-                    root.innerHTML = DIAG_REPORT.buildReportHTML(normData, calc);
-                    preloadImages(root).then(function() {
-                        if (typeof html2canvas !== 'undefined' && typeof jspdf !== 'undefined') {
+                function buildPdfBlob() {
+                    return new Promise(function(resolve, reject) {
+                        root.innerHTML = DIAG_REPORT.buildReportHTML(normData, calc);
+                        preloadImages(root).then(function() {
+                            if (typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') { resolve(null); return; }
                             var pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4' }), pages = root.querySelectorAll('.pdf-page'), i = 0;
                             function next() {
-                                if (i >= pages.length) { pdf.save('diagnostika-' + (self.data.company.name || 'report').replace(/\s/g, '-') + '.pdf'); root.style.left = '-9999px'; if (!dbSaved) alert('Nepodařilo se uložit – PDF si stáhnete i tak.'); return; }
+                                if (i >= pages.length) { root.style.left = '-9999px'; resolve(pdf); return; }
                                 html2canvas(pages[i], { scale: 2, useCORS: true, allowTaint: true, logging: false }).then(function(canvas) {
                                     if (i > 0) pdf.addPage();
                                     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297, undefined, 'FAST');
@@ -667,19 +698,23 @@
                                 }).catch(function() { i++; next(); });
                             }
                             next();
-                        } else { root.style.left = '0'; root.style.position = 'absolute'; root.style.top = '0'; root.style.zIndex = '99999'; setTimeout(function() { window.print(); root.style.left = '-9999px'; }, 500); }
+                        }).catch(function() { resolve(null); });
                     });
-                };
+                }
 
-                var supabase = window.DIAG_SUPABASE;
-                if (supabase) {
-                    (async function() {
-                        var dbSaved = false;
+                (async function() {
+                    var dbSaved = false, leadId = self.data.meta.leadId, pdf = null, reportPath = null;
+                    var supabase = window.DIAG_SUPABASE;
+
+                    if (supabase) {
                         try {
-                            var leadPayload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false };
-                            var { data: leadData, error: leadErr } = await supabase.from('leads').insert([leadPayload]).select('id').single();
-                            if (leadErr) throw leadErr;
-                            var leadId = leadData && leadData.id;
+                            if (!leadId) {
+                                var leadPayload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+                                var { data: leadData, error: leadErr } = await supabase.from('leads').insert([leadPayload]).select('id').single();
+                                if (leadErr) throw leadErr;
+                                leadId = leadData && leadData.id;
+                                if (leadId) self.data.meta.leadId = leadId;
+                            }
 
                             var attMeta = [];
                             if (leadId && self.data.pendingAttachments && self.data.pendingAttachments.length > 0) {
@@ -692,18 +727,36 @@
                                 }
                             }
 
-                            var assPayload = { lead_id: leadId, input_json: inputJson, output_json: outputJson, score: riskPts, status: 'done', attachments: attMeta };
-                            var { error: assErr } = await supabase.from('assessments').insert([assPayload]).select();
-                            if (assErr) throw assErr;
-                            dbSaved = true;
-                        } catch (err) {
-                            console.error('Supabase save error:', err);
-                        }
-                        doPdf(dbSaved);
-                    })();
-                } else {
-                    doPdf(false);
-                }
+                            pdf = await buildPdfBlob();
+                            if (pdf && leadId) {
+                                var ts = Date.now();
+                                reportPath = leadId + '/' + ts + '-diagnostika.pdf';
+                                var pdfBlob = pdf.output('blob');
+                                var pdfUp = await supabase.storage.from('reports').upload(reportPath, pdfBlob, { contentType: 'application/pdf' });
+                                if (pdfUp.error) reportPath = null;
+                            }
+
+                            var assessmentId = null;
+                            if (leadId) {
+                                var assPayload = { lead_id: leadId, input_json: inputJson, output_json: outputJson, score: riskPts, status: 'done', attachments: attMeta, pdf_url: reportPath };
+                                var assRes = await supabase.from('assessments').insert([assPayload]).select('id').single();
+                                if (!assRes.error && assRes.data) { dbSaved = true; assessmentId = assRes.data.id; }
+                            }
+                            if (dbSaved && opts.onSuccess && assessmentId && reportPath) {
+                                opts.onSuccess({ leadId: leadId, assessmentId: assessmentId, reportPath: reportPath, attMeta: attMeta, outputJson: outputJson });
+                            }
+                        } catch (err) { console.error('Supabase save error:', err); }
+                    }
+
+                    if (!pdf) pdf = await buildPdfBlob(); // fallback when supabase is null
+                    if (pdf) {
+                        pdf.save('diagnostika-' + (self.data.company.name || 'report').replace(/\s/g, '-') + '.pdf');
+                        if (!dbSaved) alert('Nepodařilo se uložit – PDF si stáhnete i tak.');
+                    } else {
+                        root.style.left = '0'; root.style.position = 'absolute'; root.style.top = '0'; root.style.zIndex = '99999';
+                        setTimeout(function() { window.print(); root.style.left = '-9999px'; }, 500);
+                    }
+                })();
             }
         };
 
