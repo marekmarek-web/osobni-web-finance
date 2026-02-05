@@ -3,10 +3,10 @@
  * POST /api/send-report
  * ENV: RESEND_API_KEY, MAIL_FROM, MAIL_TO_MAREK, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CALENDLY_URL
  */
-import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
+const { createClient } = require('@supabase/supabase-js');
+const { Resend } = require('resend');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
@@ -26,7 +26,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Chybí SUPABASE_URL nebo SUPABASE_SERVICE_ROLE_KEY v nastavení Vercelu.' });
     }
 
-    const { lead = {}, assessmentId, reportPath, attachmentsMeta = [], outputJson = {} } = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+    const body = typeof req.body === 'string' ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
+    const { lead = {}, assessmentId, reportPath, attachmentsMeta = [], outputJson = {} } = body;
 
     if (!reportPath || !lead.email) {
       return res.status(400).json({ error: 'Chybí reportPath nebo lead.email' });
@@ -88,7 +89,7 @@ export default async function handler(req, res) {
     console.error('send-report error:', err);
     return res.status(500).json({
       error: err.message || 'Chyba při odesílání e-mailu',
-      hint: 'Zkontroluj Vercel → Logs a Environment Variables (RESEND_API_KEY, SUPABASE_*, MAIL_*).',
+      hint: 'Resend: ověř doménu marek-marek.cz v Resend.com, nebo dočasně použij MAIL_FROM=onboarding@resend.dev',
     });
   }
-}
+};
