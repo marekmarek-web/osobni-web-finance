@@ -370,9 +370,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = "https://bqevrmtonpbmbyvvynev.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZXZybXRvbnBibWJ5dnZ5bmV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzA1NTYsImV4cCI6MjA4NTgwNjU1Nn0.c2QPg9cE2dhpLq6dIMiWG3z0Gla93M_oRquCoHpzW2Q";
-        window.DIAG_SUPABASE = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        var SUPABASE_URL = "https://bqevrmtonpbmbyvvynev.supabase.co";
+        var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxZXZybXRvbnBibWJ5dnZ5bmV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAyMzA1NTYsImV4cCI6MjA4NTgwNjU1Nn0.c2QPg9cE2dhpLq6dIMiWG3z0Gla93M_oRquCoHpzW2Q";
+
+        function initSupabase() {
+            if (window.DIAG_SUPABASE) return window.DIAG_SUPABASE;
+            var createClient = (typeof window.supabase !== 'undefined' && window.supabase.createClient) ? window.supabase.createClient : null;
+            if (!createClient) {
+                console.warn('Supabase: knihovna se nenačetla (window.supabase chybí).');
+                return null;
+            }
+            try {
+                window.DIAG_SUPABASE = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                return window.DIAG_SUPABASE;
+            } catch (e) {
+                console.warn('Supabase: createClient selhal', e);
+                return null;
+            }
+        }
+        initSupabase();
 
         async function testInsertLead() {
             var supabase = window.DIAG_SUPABASE;
@@ -626,7 +642,7 @@
                 var self = this;
                 return new Promise(function(resolve) {
                     if (self.data.meta.leadId) { resolve(self.data.meta.leadId); return; }
-                    var supabase = window.DIAG_SUPABASE;
+                    var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
                     if (!supabase) { resolve(null); return; }
                     var payload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
@@ -639,7 +655,7 @@
                 var self = this;
                 this.ensureLeadId().then(function(leadId) {
                     if (!leadId) { showToast('Nejprve vyplňte krok 1 a klikněte na Pokračovat na diagnostiku.', 'error'); return; }
-                    var supabase = window.DIAG_SUPABASE;
+                    var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
                     if (!supabase) { showToast('Nahrání není k dispozici.', 'error'); return; }
                     var ts = Date.now();
                     var safeName = (file.name || 'file').replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -753,13 +769,22 @@
             reset: function() { if (confirm('Vymazat všechna data?')) location.reload(); },
             createLeadThenNext: function() {
                 var self = this;
-                var supabase = window.DIAG_SUPABASE;
+                var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
                 if (supabase && !self.data.meta.leadId) {
                     var payload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
-                        if (res.data && res.data.id) self.data.meta.leadId = res.data.id;
+                        if (res.error) {
+                            console.error('Lead insert error:', res.error);
+                            showToast('Nepodařilo se uložit lead: ' + (res.error.message || res.error.code || 'zkuste znovu.'), 'error');
+                        } else if (res.data && res.data.id) {
+                            self.data.meta.leadId = res.data.id;
+                        }
                         self.step++; self.updateView();
-                    }).catch(function() { self.step++; self.updateView(); });
+                    }).catch(function(err) {
+                        console.error('Lead insert catch:', err);
+                        showToast('Nepodařilo se uložit – ' + (err && err.message ? err.message : 'zkuste znovu.'), 'error');
+                        self.step++; self.updateView();
+                    });
                 } else {
                     self.step++; self.updateView();
                 }
@@ -807,15 +832,19 @@
 
                 (async function() {
                     var dbSaved = false, leadId = self.data.meta.leadId, pdf = null, reportPath = null;
-                    var supabase = window.DIAG_SUPABASE;
+                    var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
 
                     if (supabase) {
                         try {
                             if (!leadId) {
                                 var leadPayload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
-                                var { data: leadData, error: leadErr } = await supabase.from('leads').insert([leadPayload]).select('id').single();
-                                if (leadErr) throw leadErr;
-                                leadId = leadData && leadData.id;
+                                var leadRes = await supabase.from('leads').insert([leadPayload]).select('id').single();
+                                if (leadRes.error) {
+                                    console.error('Lead insert error:', leadRes.error);
+                                    showToast('Nepodařilo se uložit lead: ' + (leadRes.error.message || leadRes.error.code || 'zkuste znovu.'), 'error');
+                                    throw leadRes.error;
+                                }
+                                leadId = leadRes.data && leadRes.data.id;
                                 if (leadId) self.data.meta.leadId = leadId;
                             }
 
@@ -850,7 +879,10 @@
                             if (dbSaved && opts.onSuccess && assessmentId && reportPath) {
                                 opts.onSuccess({ leadId: leadId, assessmentId: assessmentId, reportPath: reportPath, attMeta: attMeta, outputJson: outputJson });
                             }
-                        } catch (err) { console.error('Supabase save error:', err); }
+                        } catch (err) {
+                            console.error('Supabase save error:', err);
+                            if (err && err.message) showToast('Uložení: ' + err.message, 'error');
+                        }
                     }
 
                     if (!pdf) pdf = await buildPdfBlob(); // fallback when supabase is null
