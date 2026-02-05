@@ -696,8 +696,18 @@
                     if (!supabase) { resolve(null); return; }
                     var payload = self.buildLeadPayload();
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
-                        if (res.data && res.data.id) { self.data.meta.leadId = res.data.id; resolve(res.data.id); }
-                        else resolve(null);
+                        if (res.data && res.data.id) { self.data.meta.leadId = res.data.id; resolve(res.data.id); return; }
+                        if (res.error && (res.error.code === '23505' || (res.error.message && res.error.message.indexOf('duplicate key') !== -1))) {
+                            var emailNorm = (self.data.lead.email || '').trim().toLowerCase();
+                            if (emailNorm) {
+                                supabase.from('leads').select('id').eq('email_normalized', emailNorm).order('created_at', { ascending: false }).limit(1).then(function(ex) {
+                                    if (ex.data && ex.data[0] && ex.data[0].id) { self.data.meta.leadId = ex.data[0].id; resolve(ex.data[0].id); }
+                                    else resolve(null);
+                                });
+                                return;
+                            }
+                        }
+                        resolve(null);
                     }).catch(function() { resolve(null); });
                 });
             },
@@ -813,13 +823,18 @@
                             var lb = document.getElementById('btn-lead-capture');
                             if (lb) setButtonLoading(lb, true);
                             var leadPayload = { name: self.data.lead.name, email: self.data.lead.email, phone: self.data.lead.phone, company_name: self.data.company.name };
+                            var body = { lead: leadPayload, assessmentId: r.assessmentId, attachmentsMeta: r.attMeta || [], outputJson: r.outputJson || {} };
+                            if (r.reportPath) body.reportPath = r.reportPath;
+                            if (r.reportPdfBase64) body.reportPdfBase64 = r.reportPdfBase64;
                             fetch(apiBase + '/api/send-report', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ lead: leadPayload, assessmentId: r.assessmentId, reportPath: r.reportPath, attachmentsMeta: r.attMeta || [], outputJson: r.outputJson || {} })
+                                body: JSON.stringify(body)
                             }).then(function(res) {
-                                return res.json().then(function(data) {
-                                    if (lb) setButtonLoading(lb, false);
+                                if (lb) setButtonLoading(lb, false);
+                                return res.text().then(function(text) {
+                                    var data;
+                                    try { data = text ? JSON.parse(text) : {}; } catch (e) { data = { error: 'Neplatná odpověď serveru' }; }
                                     if (data.ok) { showToast('E-mail odeslán na ' + (self.data.lead.email || '') + '. Zkontrolujte doručenou poštu.', 'success'); }
                                     else { var msg = (data.error || 'Nepodařilo se odeslat.') + (data.hint ? ' ' + data.hint : ''); showToast(msg, 'error'); }
                                 });
@@ -870,6 +885,16 @@
                 if (supabase && !self.data.meta.leadId) {
                     var payload = self.buildLeadPayload();
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
+                        if (res.error && (res.error.code === '23505' || (res.error.message && res.error.message.indexOf('duplicate key') !== -1))) {
+                            var emailNorm = (self.data.lead.email || '').trim().toLowerCase();
+                            if (emailNorm) {
+                                supabase.from('leads').select('id').eq('email_normalized', emailNorm).order('created_at', { ascending: false }).limit(1).then(function(ex) {
+                                    if (ex.data && ex.data[0] && ex.data[0].id) { self.data.meta.leadId = ex.data[0].id; }
+                                    self.step++; self.updateView();
+                                });
+                                return;
+                            }
+                        }
                         if (res.error) {
                             console.error('Lead insert error:', res.error);
                             showToast('Nepodařilo se uložit lead: ' + (res.error.message || res.error.code || 'zkuste znovu.'), 'error');
@@ -940,14 +965,15 @@
                                 if (leadRes.error) {
                                     if (leadRes.error.code === '23505' || (leadRes.error.message && leadRes.error.message.indexOf('duplicate key') !== -1)) {
                                         var email = (self.data.lead.email || '').trim();
-                                        if (email) {
-                                            var existing = await supabase.from('leads').select('id').ilike('email', email).order('created_at', { ascending: false }).limit(1);
+                                        var emailNorm = email ? email.toLowerCase() : '';
+                                        if (emailNorm) {
+                                            var existing = await supabase.from('leads').select('id').eq('email_normalized', emailNorm).order('created_at', { ascending: false }).limit(1);
                                             if (existing.data && existing.data.length && existing.data[0] && existing.data[0].id) {
                                                 leadId = existing.data[0].id;
                                                 self.data.meta.leadId = leadId;
                                             }
-                                            if (!leadId) showToast('E-mail se neposlal: tento e-mail je už v systému, ale nepodařilo se ho propojit. Zkus jiný e-mail v kroku 1 nebo obnov stránku.', 'error');
-                                        } else if (!leadId) showToast('PDF se vygeneruje. (Vyplň e-mail v kroku 1 pro odeslání.)', 'info');
+                                            if (!leadId && !opts.onSuccess) showToast('PDF se vygeneruje. (Tento e-mail je v systému; pro odeslání použijeme přílohu.)', 'info');
+                                        } else if (!leadId && !opts.onSuccess) showToast('PDF se vygeneruje. (Vyplň e-mail v kroku 1 pro odeslání.)', 'info');
                                     }
                                     if (!leadId && leadRes.error.code !== '23505') {
                                         console.error('Lead insert error:', leadRes.error);
@@ -999,12 +1025,24 @@
                     }
 
                     if (!pdf) pdf = await buildPdfBlob(); // fallback when supabase is null
+                    if (pdf && opts.onSuccess && !onSuccessCalled && !reportPath) {
+                        var blob = pdf.output('blob');
+                        var base64 = await new Promise(function(resolve) {
+                            var r = new FileReader();
+                            r.onload = function() { var m = r.result.match(/^data:[^;]+;base64,(.+)$/); resolve(m ? m[1] : ''); };
+                            r.readAsDataURL(blob);
+                        });
+                        if (base64) {
+                            onSuccessCalled = true;
+                            opts.onSuccess({ reportPath: null, reportPdfBase64: base64, outputJson: outputJson, attMeta: [], assessmentId: null });
+                        }
+                    }
                     doneLoading();
                     if (opts.onNoReport && opts.onSuccess && !onSuccessCalled) opts.onNoReport();
                     if (pdf) {
                         pdf.save('diagnostika-' + (self.data.company.name || 'report').replace(/\s/g, '-') + '.pdf');
                         if (dbSaved) showToast('Uloženo', 'success');
-                        else showToast('Nepodařilo se uložit – zkuste znovu.', 'error');
+                        else if (!onSuccessCalled) showToast('Nepodařilo se uložit – zkuste znovu.', 'error');
                     } else {
                         root.style.left = '0'; root.style.position = 'absolute'; root.style.top = '0'; root.style.zIndex = '99999';
                         setTimeout(function() { window.print(); root.style.left = '-9999px'; }, 500);
