@@ -1,10 +1,44 @@
 /**
- * Vercel Serverless API: Odeslání reportu e-mailem (tobě + klientovi)
+ * Vercel Serverless API – BEZ npm balíčků (pouze vestavěné fetch).
  * POST /api/send-report
  * ENV: RESEND_API_KEY, MAIL_FROM, MAIL_TO_MAREK, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CALENDLY_URL
  */
-const { createClient } = require('@supabase/supabase-js');
-const { Resend } = require('resend');
+
+async function getSignedUrl(supabaseUrl, serviceKey, reportPath) {
+  try {
+    const url = supabaseUrl.replace(/\/$/, '') + '/storage/v1/object/sign/reports';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + serviceKey,
+      },
+      body: JSON.stringify({ path: reportPath, expiresIn: 3600 }),
+    });
+    const data = await res.json();
+    if (data.signedURL) return data.signedURL;
+    if (data.signedUrl) return data.signedUrl;
+    if (data.path) return supabaseUrl.replace(/\/$/, '') + '/storage/v1/object/reports/' + data.path + '?token=' + (data.token || '');
+    return '';
+  } catch (e) {
+    console.error('Signed URL error:', e);
+    return '';
+  }
+}
+
+async function sendResendEmail(apiKey, from, to, subject, html) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey,
+    },
+    body: JSON.stringify({ from, to: Array.isArray(to) ? to : [to], subject, html }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || data.error || 'Resend API error');
+  return data;
+}
 
 module.exports = async function handler(req, res) {
   try {
@@ -33,25 +67,15 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Chybí reportPath nebo lead.email' });
     }
 
-    const resend = new Resend(resendKey);
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
     let reportUrl = '';
-    try {
-      const { data: signed } = await supabase.storage.from('reports').createSignedUrl(reportPath, 3600);
-      reportUrl = (signed && signed.signedUrl) ? signed.signedUrl : '';
-    } catch (e) {
-      console.error('Signed URL error:', e);
+    if (reportPath) {
+      reportUrl = await getSignedUrl(supabaseUrl, supabaseServiceKey, reportPath);
     }
 
     const score = outputJson.score ?? 0;
     const topFindings = (outputJson.topFindings || []).join('; ') || '—';
 
-    const emailToMarek = {
-      from: mailFrom,
-      to: mailToMarek,
-      subject: `Diagnostika: ${lead.company_name || lead.email} – ${lead.name || 'bez jména'}`,
-      html: `
+    const htmlMarek = `
       <h2>Nový lead z diagnostiky</h2>
       <p><strong>Jméno:</strong> ${lead.name || '—'}</p>
       <p><strong>Email:</strong> ${lead.email}</p>
@@ -59,37 +83,31 @@ module.exports = async function handler(req, res) {
       <p><strong>Firma:</strong> ${lead.company_name || '—'}</p>
       <p><strong>Skóre:</strong> ${score}/100</p>
       <p><strong>Top nálezy:</strong> ${topFindings}</p>
-      ${reportUrl ? `<p><a href="${reportUrl}">Stáhnout PDF</a></p>` : ''}
-      ${(attachmentsMeta && attachmentsMeta.length) ? `<p>Přílohy: ${attachmentsMeta.map((a) => a.name).join(', ')}</p>` : ''}
+      ${reportUrl ? '<p><a href="' + reportUrl + '">Stáhnout PDF</a></p>' : ''}
+      ${(attachmentsMeta && attachmentsMeta.length) ? '<p>Přílohy: ' + attachmentsMeta.map(function(a) { return a.name; }).join(', ') + '</p>' : ''}
       <p>Assessment ID: ${assessmentId || '—'}</p>
-    `,
-    };
+    `;
 
-    const emailToClient = {
-      from: mailFrom,
-      to: lead.email,
-      subject: 'Diagnostika „Má to smysl?“ – shrnutí',
-      html: `
+    const htmlClient = `
       <p>Dobrý den${lead.name ? ' ' + lead.name : ''},</p>
       <p>díky za vyplnění diagnostiky. Připojuji shrnutí.</p>
       <p><strong>Skóre rizik:</strong> ${score}/100</p>
       <p><strong>Hlavní nálezy:</strong> ${topFindings}</p>
-      ${reportUrl ? `<p><a href="${reportUrl}">Stáhnout shrnutí (PDF)</a></p>` : ''}
+      ${reportUrl ? '<p><a href="' + reportUrl + '">Stáhnout shrnutí (PDF)</a></p>' : ''}
       <p>Chcete přesný návrh? Rezervujte si 15min call: <a href="${calendlyUrl}">${calendlyUrl}</a></p>
       <p>S pozdravem</p>
-    `,
-    };
+    `;
 
     const [r1, r2] = await Promise.all([
-      resend.emails.send(emailToMarek),
-      resend.emails.send(emailToClient),
+      sendResendEmail(resendKey, mailFrom, mailToMarek, 'Diagnostika: ' + (lead.company_name || lead.email) + ' – ' + (lead.name || 'bez jména'), htmlMarek),
+      sendResendEmail(resendKey, mailFrom, lead.email, 'Diagnostika „Má to smysl?“ – shrnutí', htmlClient),
     ]);
+
     return res.status(200).json({ ok: true, marek: r1, client: r2 });
   } catch (err) {
     console.error('send-report error:', err);
     return res.status(500).json({
       error: err.message || 'Chyba při odesílání e-mailu',
-      hint: 'Resend: ověř doménu marek-marek.cz v Resend.com, nebo dočasně použij MAIL_FROM=onboarding@resend.dev',
     });
   }
 };
