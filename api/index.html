@@ -84,6 +84,12 @@
         .btn-loading { pointer-events: none; opacity: 0.8; }
         .btn-loading .btn-loading-spinner { display: inline-block; width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.5rem; vertical-align: -0.15em; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .checkbox-card { background: white; border: 2px solid #e2e8f0; border-radius: 0.75rem; padding: 0.75rem 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; }
+        .checkbox-card.checked { border-color: var(--color-accent); background: #fffbeb; }
+        .checkbox-card input { display: none; }
+        .critical-warning { background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 0.875rem; color: #b91c1c; }
+        .pdf .blurred { filter: blur(4px); user-select: none; }
+        .pdf .pct-badge { display: inline-block; background: #0B3A7A; color: white; padding: 2px 6px; border-radius: 3px; font-size: 9pt; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -164,25 +170,26 @@
 
             <div id="step-2" class="step-content">
                 <div class="flex justify-between items-start mb-6">
-                    <div><h2 class="text-3xl font-bold text-slate-900">Benefity</h2><p class="text-slate-500 mt-1">DIP, DPS, IŽP – orientační výpočet úspor.</p></div>
+                    <div><h2 class="text-3xl font-bold text-slate-900">Benefity</h2><p class="text-slate-500 mt-1">DPS, DIP, IŽP – co máte a kolik přispíváte.</p></div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-6">
                         <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4">Mají benefity? <span class="font-normal text-slate-500">(toggle)</span></h3>
-                            <label class="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" id="benefit-has" class="w-5 h-5 rounded text-brand-orange">
-                                <span class="font-medium">Ano, firma přispívá na DIP/DPS/IŽP</span>
-                            </label>
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Přispíváte zaměstnancům?</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                <label class="checkbox-card" id="card-dps"><input type="checkbox" id="benefit-has-dps"><div class="flex items-center gap-2 w-full"><div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"><i class="fas fa-piggy-bank"></i></div><div><div class="font-bold text-slate-900">DPS</div><div class="text-xs text-slate-500">Penzijní připojištění</div></div></div></label>
+                                <label class="checkbox-card" id="card-dip"><input type="checkbox" id="benefit-has-dip"><div class="flex items-center gap-2 w-full"><div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-600"><i class="fas fa-chart-line"></i></div><div><div class="font-bold text-slate-900">DIP</div><div class="text-xs text-slate-500">Dlouhodobé investice</div></div></div></label>
+                                <label class="checkbox-card" id="card-izp"><input type="checkbox" id="benefit-has-izp"><div class="flex items-center gap-2 w-full"><div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600"><i class="fas fa-umbrella"></i></div><div><div class="font-bold text-slate-900">IŽP</div><div class="text-xs text-slate-500">Životní pojištění</div></div></div></label>
+                            </div>
                         </div>
                         <div id="benefit-details" class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h3 class="text-lg font-bold text-slate-800 mb-4">Zaměstnavatel dnes přispívá (Kč/měs/zaměstnanec)</h3>
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Příspěvek zaměstnavatele (Kč/měs na zaměstnance)</h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                 <div><label class="form-label">DPS</label><input type="number" id="benefit-dps-amount" class="form-input w-full px-4 py-3" placeholder="0" value="0"></div>
                                 <div><label class="form-label">DIP</label><input type="number" id="benefit-dip-amount" class="form-input w-full px-4 py-3" placeholder="0" value="0"></div>
                                 <div><label class="form-label">IŽP</label><input type="number" id="benefit-izp-amount" class="form-input w-full px-4 py-3" placeholder="0" value="0"></div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div><label class="form-label">Kolik zaměstnanců to využívá</label><input type="number" id="benefit-count" class="form-input w-full px-4 py-3" placeholder="10"></div>
                                 <div>
                                     <label class="form-label">Cíl firmy</label>
@@ -192,6 +199,19 @@
                                         <option value="danova">Daňová optimalizace</option>
                                         <option value="cat3">Musíme kvůli 3. kategorii</option>
                                     </select>
+                                </div>
+                            </div>
+                            <h4 class="font-bold text-slate-800 mb-2">Příspěvky jednatelům (majitelé)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="form-label">Kolik přispíváte jednatelům měsíčně celkem? (Kč)</label><input type="number" id="benefit-directors-amount" class="form-input w-full px-4 py-3" placeholder="0" value="0"></div>
+                            </div>
+                            <div id="benefit-director-pays-block" class="mt-4 hidden">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" id="benefit-director-pays-own" class="w-5 h-5 rounded text-brand-orange">
+                                    <span class="font-medium">Jednatel si životní / penzijní / DIP platí ze své mzdy (z čisté)</span>
+                                </label>
+                                <div id="benefit-director-pays-warning" class="critical-warning mt-3 hidden">
+                                    <strong>Kritická chyba:</strong> To může platit firma jako benefit – daňově výhodnější. Na konzultaci připravím konkrétní návrh.
                                 </div>
                             </div>
                         </div>
@@ -238,6 +258,13 @@
                                 <option value="yes">Ano</option>
                             </select>
                         </div>
+                        <div id="risk-liability-detail" class="mt-3 p-4 bg-white rounded-xl border border-slate-200 hidden">
+                            <h4 class="text-sm font-bold text-slate-700 mb-2">Detail – odpovědnost (volitelné)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div><label class="form-label text-xs">Pojistný limit (cca) Kč</label><input type="number" id="risk-liability-limit" class="form-input w-full px-3 py-2" placeholder="0"></div>
+                                <div><label class="form-label text-xs">Stáří smlouvy (roky)</label><input type="number" id="risk-liability-years" class="form-input w-full px-3 py-2" placeholder="0"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="bg-white border-2 border-brand-border rounded-2xl p-6">
@@ -252,12 +279,13 @@
                     <div><h2 class="text-3xl font-bold text-slate-900">Majetek firmy</h2><p class="text-slate-500 mt-1">Provozovna, stroje, flotila, kyber, přerušení provozu.</p></div>
                 </div>
                 <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">Co je pojištěné?</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="flex items-center justify-between p-4 bg-white rounded-xl border"><span>Provozovna/kancelář</span><select id="asset-premises" class="form-input w-24 px-3 py-2"><option value="no">Ne</option><option value="yes">Ano</option></select></div>
+                        <div class="p-4 bg-white rounded-xl border"><div class="flex items-center justify-between mb-2"><span>Provozovna / majetek</span><select id="asset-premises" class="form-input w-24 px-3 py-2"><option value="no">Ne</option><option value="yes">Ano</option></select></div><div id="asset-premises-detail" class="hidden mt-2 grid grid-cols-2 gap-2"><input type="number" id="asset-property-limit" class="form-input px-3 py-2 text-sm" placeholder="Limit Kč"><input type="number" id="asset-property-years" class="form-input px-3 py-2 text-sm" placeholder="Stáří roky"></div></div>
                         <div><label class="form-label">Stroje/technologie (rozmezí hodnoty Kč)</label><input type="text" id="asset-machinery" class="form-input w-full px-4 py-3" placeholder="0 – 500 000"></div>
                         <div><label class="form-label">Flotila (počet aut)</label><input type="number" id="asset-fleet" class="form-input w-full px-4 py-3" placeholder="0"></div>
                         <div class="flex items-center justify-between p-4 bg-white rounded-xl border"><span>Kyber rizika / data</span><select id="asset-cyber" class="form-input w-24 px-3 py-2"><option value="no">Ne</option><option value="yes">Ano</option></select></div>
-                        <div class="flex items-center justify-between p-4 bg-white rounded-xl border"><span>Přerušení provozu</span><select id="asset-interruption" class="form-input w-24 px-3 py-2"><option value="no">Ne</option><option value="yes">Ano</option></select></div>
+                        <div class="p-4 bg-white rounded-xl border"><div class="flex items-center justify-between mb-2"><span>Přerušení provozu</span><select id="asset-interruption" class="form-input w-24 px-3 py-2"><option value="no">Ne</option><option value="yes">Ano</option></select></div><div id="asset-interruption-detail" class="hidden mt-2 grid grid-cols-2 gap-2"><input type="number" id="asset-interruption-limit" class="form-input px-3 py-2 text-sm" placeholder="Limit Kč"><input type="number" id="asset-interruption-years" class="form-input px-3 py-2 text-sm" placeholder="Stáří roky"></div></div>
                     </div>
                 </div>
                 <div class="bg-white border-2 border-brand-border rounded-2xl p-6">
@@ -269,10 +297,11 @@
 
             <div id="step-5" class="step-content">
                 <div class="flex justify-between items-start mb-6">
-                    <div><h2 class="text-3xl font-bold text-slate-900">Jednatel</h2><p class="text-slate-500 mt-1">Osobní cíle, závazky, příjem.</p></div>
+                    <div><h2 class="text-3xl font-bold text-slate-900">Jednatel</h2><p class="text-slate-500 mt-1">Příjem, rezerva, zajištění příjmů (smrt, invalidita, PN).</p></div>
                     <div class="layer-badge layer-director"><i class="fas fa-user-tie"></i> Jednatel</div>
                 </div>
                 <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">Základní údaje</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div><label class="form-label">Čistý měsíční příjem (Kč)</label><input type="number" id="director-net-income" class="form-input w-full px-4 py-3" placeholder="80000"></div>
                         <div><label class="form-label">Rezerva jednatele – hotovost (Kč)</label><input type="number" id="director-reserve" class="form-input w-full px-4 py-3" placeholder="0"></div>
@@ -280,12 +309,19 @@
                         <div><label class="form-label">Úvěry/hypo – měsíční splátka (Kč) <span class="text-slate-400 font-normal">(volitelné)</span></label><input type="number" id="director-loan-payment" class="form-input w-full px-4 py-3" placeholder="0"></div>
                         <div><label class="form-label">Úvěry/hypo – zůstatek (Kč) <span class="text-slate-400 font-normal">(volitelné)</span></label><input type="number" id="director-loan-balance" class="form-input w-full px-4 py-3" placeholder="0"></div>
                     </div>
+                    <h3 class="text-lg font-bold text-slate-800 mt-6 mb-3">Pojištění jednatele (sjednané částky)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="form-label">Smrt – pojistná částka (Kč)</label><input type="number" id="director-ins-death" class="form-input w-full px-4 py-3" placeholder="0"></div>
+                        <div><label class="form-label">Invalidita – sjednaná částka (Kč)</label><input type="number" id="director-ins-invalidity" class="form-input w-full px-4 py-3" placeholder="0"></div>
+                        <div><label class="form-label">Denní odškodné PN (Kč/den)</label><input type="number" id="director-ins-sick" class="form-input w-full px-4 py-3" placeholder="0"></div>
+                    </div>
                 </div>
                 <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-200">
-                    <h4 class="font-bold text-amber-800 mb-3"><i class="fas fa-lightbulb mr-2"></i> Output</h4>
+                    <h4 class="font-bold text-amber-800 mb-3"><i class="fas fa-lightbulb mr-2"></i> Orientace</h4>
                     <div class="space-y-2 text-sm">
                         <div><span class="text-amber-700">Kolik měsíců přežijete bez příjmu:</span> <span id="output-months" class="font-bold text-amber-900">—</span></div>
-                        <div><span class="text-amber-700">Kritická hranice invalidity/smrt (orientace):</span> <span id="output-critical" class="font-bold text-amber-900">—</span></div>
+                        <div><span class="text-amber-700">Doporučené krytí (smrt cca 5× roční příjem):</span> <span id="output-critical" class="font-bold text-amber-900">—</span></div>
+                        <div id="output-director-pct" class="text-amber-700 mt-2 hidden">Krytí smrt / invalidita: <span id="output-death-pct" class="font-bold">—</span> % / <span id="output-inv-pct" class="font-bold">—</span> % doporučení (detail na call).</div>
                     </div>
                 </div>
             </div>
@@ -517,7 +553,11 @@
                 var topFindings = (calc && calc.companyRisks && calc.companyRisks.gaps) ? calc.companyRisks.gaps.slice(0, 3) : [];
                 var topFindingsHtml = topFindings.length ? '<ul style="font-size:9pt;margin:4mm 0;padding-left:6mm;">' + topFindings.map(function(g) { return '<li>' + g + '</li>'; }).join('') + '</ul>' : '<p style="font-size:9pt;color:#64748b;">Žádné kritické mezery.</p>';
                 var dir = d.director || {}, netInc = dir.netIncome || 0, reserve = (d.finance && d.finance.reserve) || 0;
-                var dirText = 'Jednatel: ' + directorName + '. Příjem: ' + fmt(netInc) + '/měs. Rezerva: ' + fmt(reserve) + '. Prověřit krytí smrt, invalidita, PN.';
+                var di = d.directorIns || {};
+                var recDeath = netInc * 12 * 5, recInv = netInc * 12 * 3;
+                var deathPct = recDeath > 0 ? Math.round(((dir.insDeath || di.death || 0) / recDeath) * 100) : 0, invPct = recInv > 0 ? Math.round(((dir.insInvalidity || di.invalidity || 0) / recInv) * 100) : 0;
+                var dirCoverageHtml = 'Krytí smrt: <span class="pct-badge blurred">cca ' + deathPct + ' %</span> doporučení. Invalidita: <span class="pct-badge blurred">cca ' + invPct + ' %</span> doporučení. Konkrétní částky na konzultaci.';
+                var dirText = 'Jednatel: ' + directorName + '. Příjem: ' + fmt(netInc) + '/měs. Rezerva: ' + fmt(reserve) + '. ' + dirCoverageHtml;
                 var calUrl = (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/');
                 var contactEmail = (d.lead && d.lead.email) || '';
                 var cfg = DIAG_CONFIG && DIAG_CONFIG.images, logoFiles = (cfg && cfg.logoFiles) || [], basePath = ((cfg && cfg.basePath) || './images/').replace(/\/?$/, '/');
@@ -528,23 +568,22 @@
                     '<div class="box"><span class="lbl">Jednatel</span><div class="val">' + (reserve > 0 ? fmt(reserve) : '—') + '</div><span class="sub">rezerva</span></div>' +
                     '</div>';
                 var boxHtml = '<div style="background:linear-gradient(135deg,#0a0f29,#1e3a6e);color:white;padding:6mm;border-radius:4mm;margin:4mm 0;">' +
-                    '<div style="font-weight:700;font-size:11pt;margin-bottom:2mm;">Největší díra:</div><p style="font-size:9pt;opacity:0.9;">' + (topFindings[0] || '—') + '</p>' +
-                    '<div style="font-weight:700;font-size:11pt;margin:3mm 0 2mm;">Nejrychlejší výhra:</div><p style="font-size:9pt;opacity:0.9;">' + (benefitResult.yearlySavings > 0 ? 'Benefity – úspora ' + fmt(benefitResult.yearlySavings) : 'Vyplňte benefity') + '</p>' +
-                    '</div>';
+                    '<div style="font-weight:700;font-size:11pt;margin-bottom:2mm;">Kritická mezera:</div><p style="font-size:9pt;opacity:0.9;">' + (topFindings[0] || '—') + '</p>' +
+                    '<div style="font-weight:700;font-size:11pt;margin:3mm 0 2mm;">Dopad na firmu:</div><p style="font-size:9pt;opacity:0.9;">' + (benefitResult.yearlySavings > 0 ? 'Potenciál úspor ' + fmt(benefitResult.yearlySavings) + '/rok' : 'Riziko bez krytí') + '</p>' +
+                    '<div style="font-weight:700;font-size:10pt;margin-top:4mm;padding-top:3mm;border-top:1px solid rgba(255,255,255,0.3);">Řešení: konzultace – společně doladíme konkrétní nastavení.</div></div>';
+                var ctaBlock = '<div class="recommendation" style="margin-top:6mm;font-size:10pt;">Rezervujte si 15 min call: <strong>' + calUrl + '</strong> — konkrétní čísla a návrhy připravím na míru.</div>';
                 var pages = [
                     '<section class="pdf-page">' + hdr('Výsledek diagnostiky', today, companyName) +
-                    '<div class="h2">Přehled</div>' + cardsHtml + boxHtml +
-                    '<div class="h2">3 největší nálezy</div>' + topFindingsHtml +
-                    '<p style="font-size:8pt;color:#64748b;margin-top:4mm;">Konkrétní nastavení a výběr produktů doladíme společně.</p>' + ftr(1) + '</section>',
+                    '<div class="h2">Shrnutí</div>' + cardsHtml + boxHtml +
+                    '<div class="h2">Kritické nálezy</div>' + topFindingsHtml + ctaBlock + ftr(1) + '</section>',
                     '<section class="pdf-page">' + hdr('Co to znamená v praxi', today, companyName) +
                     '<div class="h2">Benefity</div><p style="font-size:9pt;">' + savingsText + '</p>' +
                     '<div class="h2">Rizika</div><div class="risk-matrix">' + riskMatrix + '</div>' +
-                    '<div class="h2">Jednatel</div><p style="font-size:9pt;">' + dirText + '</p>' +
-                    '<p style="font-size:8pt;color:#64748b;margin-top:4mm;">Konkrétní nastavení a výběr produktů doladíme společně.</p>' + ftr(2) + '</section>',
+                    '<div class="h2">Jednatel</div><p style="font-size:9pt;">' + dirText + '</p>' + ctaBlock + ftr(2) + '</section>',
                     '<section class="pdf-page">' + hdr('Další krok', today, companyName) +
-                    '<div class="h2">Rezervace call</div><p style="font-size:9pt;">Rezervujte si 15min call pro detailní rozbor: <strong>' + calUrl + '</strong></p>' +
-                    (contactEmail ? '<div class="h2">Kontakt</div><p style="font-size:9pt;">' + contactEmail + '</p>' : '') +
-                    '<div class="recommendation" style="margin-top:8mm;">Konkrétní nastavení a výběr produktů doladíme společně.</div>' +
+                    '<div class="h2">Další krok</div><p style="font-size:10pt;">Víme, kde jsou mezery. Na 15min call připravím konkrétní návrh na míru.</p>' +
+                    '<p style="font-size:9pt;margin-top:4mm;">Rezervace: <strong>' + calUrl + '</strong></p>' +
+                    (contactEmail ? '<p style="font-size:9pt;margin-top:3mm;">Kontakt: ' + contactEmail + '</p>' : '') +
                     (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(3) + '</section>'
                 ];
                 return '<div class="pdf">' + pages.join('') + '</div>';
@@ -562,12 +601,12 @@
         }
 
         var CALENDLY_URL = 'https://calendly.com/';
-        var API_BASE = ''; // např. 'https://tvoje-app.vercel.app' pro /api/send-report
+        var API_BASE = 'https://osobni-web-finance.vercel.app'; // Vercel API pro /api/send-report
         var MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB
         var ALLOWED_UPLOAD_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
         var DiagnostikaApp = {
             step: 1, totalSteps: 6,
-            data: { meta: { leadId: null }, company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova' }, risks: { employee: 'unknown', director: 'no', professional: 'no' }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0 }, pendingAttachments: [], uploadedFiles: [] },
+            data: { meta: { leadId: null }, company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, hasDps: false, hasDip: false, hasIzp: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova', directorsAmount: 0, directorPaysFromOwn: false }, risks: { employee: 'unknown', director: 'no', professional: 'no', liabilityLimit: 0, liabilityYears: 0 }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no', propertyLimit: 0, propertyYears: 0, interruptionLimit: 0, interruptionYears: 0 }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0, insDeath: 0, insInvalidity: 0, insSick: 0 }, pendingAttachments: [], uploadedFiles: [] },
             init: function() {
                 var self = this;
                 this.bindNav(); this.bindInputs();
@@ -599,14 +638,23 @@
                 self.bind('company-industry', function(v) { self.data.company.industry = v; });
                 self.bind('company-employees', function(v) { self.data.company.employees = parseInt(v) || 0; });
                 self.bind('company-cat3', function(v) { self.data.company.cat3 = v || '0'; });
-                var bh = document.getElementById('benefit-has'); if (bh) bh.addEventListener('change', function() { self.data.benefits.has = this.checked; self.updateStep2(); });
+                ['benefit-has-dps','benefit-has-dip','benefit-has-izp'].forEach(function(id, i) { var k = ['hasDps','hasDip','hasIzp'][i]; var el = document.getElementById(id); if (el) { el.addEventListener('change', function() { self.data.benefits[k] = this.checked; self.updateStep2(); }); } });
+                ['card-dps','card-dip','card-izp'].forEach(function(cardId, i) { var cbId = ['benefit-has-dps','benefit-has-dip','benefit-has-izp'][i]; var card = document.getElementById(cardId); var cb = document.getElementById(cbId); if (card && cb) { card.addEventListener('click', function(e) { if (e.target.tagName !== 'INPUT') { cb.checked = !cb.checked; self.data.benefits[['hasDps','hasDip','hasIzp'][i]] = cb.checked; self.updateStep2(); } }); } });
                 ['benefit-dps-amount','benefit-dip-amount','benefit-izp-amount'].forEach(function(id, i) { var k = ['dps','dip','izp'][i]; self.bind(id, function(v) { self.data.benefits[k] = parseFloat(v) || 0; self.updateStep2(); }); });
                 self.bind('benefit-count', function(v) { self.data.benefits.count = parseInt(v) || 0; self.updateStep2(); });
                 self.bind('benefit-goal', function(v) { self.data.benefits.goal = v || 'danova'; });
+                self.bind('benefit-directors-amount', function(v) { self.data.benefits.directorsAmount = parseFloat(v) || 0; self.updateStep2(); });
+                var bdo = document.getElementById('benefit-director-pays-own'); if (bdo) bdo.addEventListener('change', function() { self.data.benefits.directorPaysFromOwn = this.checked; self.updateStep2(); });
                 self.bind('risk-employee', function(v) { self.data.risks.employee = v; self.updateStep3(); });
                 self.bind('risk-director', function(v) { self.data.risks.director = v; self.updateStep3(); });
                 self.bind('risk-professional', function(v) { self.data.risks.professional = v; self.updateStep3(); });
+                self.bind('risk-liability-limit', function(v) { self.data.risks.liabilityLimit = parseInt(v) || 0; });
+                self.bind('risk-liability-years', function(v) { self.data.risks.liabilityYears = parseInt(v) || 0; });
                 self.bind('asset-premises', function(v) { self.data.assets.premises = v; self.updateStep4(); });
+                self.bind('asset-property-limit', function(v) { self.data.assets.propertyLimit = parseInt(v) || 0; });
+                self.bind('asset-property-years', function(v) { self.data.assets.propertyYears = parseInt(v) || 0; });
+                self.bind('asset-interruption-limit', function(v) { self.data.assets.interruptionLimit = parseInt(v) || 0; });
+                self.bind('asset-interruption-years', function(v) { self.data.assets.interruptionYears = parseInt(v) || 0; });
                 self.bind('asset-machinery', function(v) { self.data.assets.machinery = v; self.updateStep4(); });
                 self.bind('asset-fleet', function(v) { self.data.assets.fleet = parseInt(v) || 0; self.updateStep4(); });
                 self.bind('asset-cyber', function(v) { self.data.assets.cyber = v; self.updateStep4(); });
@@ -616,6 +664,9 @@
                 self.bind('director-family-count', function(v) { self.data.director.familyCount = parseInt(v) || 0; });
                 self.bind('director-loan-payment', function(v) { self.data.director.loanPayment = parseFloat(v) || 0; self.updateStep5(); });
                 self.bind('director-loan-balance', function(v) { self.data.director.loanBalance = parseFloat(v) || 0; });
+                self.bind('director-ins-death', function(v) { self.data.director.insDeath = parseFloat(v) || 0; self.updateStep5(); });
+                self.bind('director-ins-invalidity', function(v) { self.data.director.insInvalidity = parseFloat(v) || 0; self.updateStep5(); });
+                self.bind('director-ins-sick', function(v) { self.data.director.insSick = parseFloat(v) || 0; self.updateStep5(); });
                 var inpAtt = document.getElementById('input-attachment');
                 if (inpAtt) inpAtt.addEventListener('change', function() {
                     var files = this.files;
@@ -682,8 +733,17 @@
                 });
             },
             updateStep2: function() {
-                var b = this.data.benefits, c = this.data.company, amount = (b.dps || 0) + (b.dip || 0) + (b.izp || 0), count = b.count || c.employees || 0;
-                var yearlyCost = amount * count * 12, savings = 0;
+                var b = this.data.benefits, c = this.data.company;
+                b.has = !!(b.hasDps || b.hasDip || b.hasIzp);
+                ['benefit-has-dps','benefit-has-dip','benefit-has-izp'].forEach(function(id, i) { var el = document.getElementById(id); var val = [b.hasDps, b.hasDip, b.hasIzp][i]; if (el) el.checked = !!val; });
+                ['card-dps','card-dip','card-izp'].forEach(function(cardId, i) { var card = document.getElementById(cardId); var chk = document.getElementById(['benefit-has-dps','benefit-has-dip','benefit-has-izp'][i]); if (card && chk) { card.classList.toggle('checked', chk.checked); } });
+                var anyBenefit = b.has || (b.directorsAmount || 0) > 0;
+                var detailsEl = document.getElementById('benefit-details'), blockEl = document.getElementById('benefit-director-pays-block'), warnEl = document.getElementById('benefit-director-pays-warning');
+                if (detailsEl) detailsEl.classList.toggle('hidden', !anyBenefit);
+                if (blockEl) blockEl.classList.toggle('hidden', !anyBenefit);
+                if (warnEl) warnEl.classList.toggle('hidden', !b.directorPaysFromOwn);
+                var amount = (b.dps || 0) + (b.dip || 0) + (b.izp || 0), count = b.count || c.employees || 0;
+                var yearlyCost = amount * count * 12 + (b.directorsAmount || 0) * 12, savings = 0;
                 if (amount > 0 && count > 0 && window.DIAG_BENEFITS) { var res = DIAG_BENEFITS.calcBenefitSavings(amount, count, (c.cat3 || '0') !== '0'); savings = res.yearlySavings; }
                 var sy = document.getElementById('summary-yearly-cost'), st = document.getElementById('summary-tax-impact');
                 if (sy) sy.textContent = this.fmt(yearlyCost); if (st) st.textContent = this.fmt(savings);
@@ -696,20 +756,30 @@
                 var risks = []; if (r.director === 'no') risks.push('Chybí D&O'); if (r.professional === 'no') risks.push('Chybí prof. odpovědnost'); if (r.employee === 'unknown') risks.push('Neznámá odp. zaměstnance');
                 var se = document.getElementById('risk-score'), pe = document.getElementById('risk-progress'), ge = document.getElementById('risk-gaps');
                 if (se) se.textContent = pts + '–100'; if (pe) pe.style.width = pts + '%'; if (ge) ge.innerHTML = '3 největší rizika: ' + (risks.slice(0,3).join('; ') || '—');
+                var detailEl = document.getElementById('risk-liability-detail'); if (detailEl) detailEl.classList.toggle('hidden', r.professional !== 'yes');
             },
             updateStep4: function() {
                 var a = this.data.assets, items = [];
-                items.push(a.premises === 'yes' ? '<span class="text-green-600">✓ Provozovna</span>' : '<span class="text-red-600">○ Provozovna</span>');
+                var premisesDetail = document.getElementById('asset-premises-detail'), interDetail = document.getElementById('asset-interruption-detail');
+                if (premisesDetail) premisesDetail.classList.toggle('hidden', a.premises !== 'yes');
+                if (interDetail) interDetail.classList.toggle('hidden', a.interruption !== 'yes');
+                items.push(a.premises === 'yes' ? '<span class="text-green-600">✓ Provozovna' + (a.propertyLimit ? ' ' + this.fmtShort(a.propertyLimit) : '') + '</span>' : '<span class="text-red-600">○ Provozovna</span>');
                 items.push(a.fleet > 0 ? '<span class="text-green-600">✓ Flotila ' + a.fleet + '</span>' : '<span class="text-slate-400">○ Flotila</span>');
                 items.push(a.cyber === 'yes' ? '<span class="text-green-600">✓ Kyber</span>' : '<span class="text-red-600">○ Kyber</span>');
-                items.push(a.interruption === 'yes' ? '<span class="text-green-600">✓ Přerušení</span>' : '<span class="text-red-600">○ Přerušení</span>');
+                items.push(a.interruption === 'yes' ? '<span class="text-green-600">✓ Přerušení' + (a.interruptionLimit ? ' ' + this.fmtShort(a.interruptionLimit) : '') + '</span>' : '<span class="text-red-600">○ Přerušení</span>');
                 var el = document.getElementById('asset-checklist'); if (el) el.innerHTML = items.join(' ');
             },
             updateStep5: function() {
                 var d = this.data.director, inc = d.netIncome || 0, reserve = d.reserve || 0, burn = inc * 0.7 + (d.loanPayment || 0);
                 var months = burn > 0 ? Math.floor(reserve / burn) : 0;
+                var recDeath = inc * 12 * (DIAG_CONFIG && DIAG_CONFIG.director && DIAG_CONFIG.director.deathMultiplier ? DIAG_CONFIG.director.deathMultiplier : 5);
+                var recInv = inc * 12 * (DIAG_CONFIG && DIAG_CONFIG.director && DIAG_CONFIG.director.invalidityMultiplier ? DIAG_CONFIG.director.invalidityMultiplier : 3);
+                var deathPct = recDeath > 0 ? Math.round((d.insDeath || 0) / recDeath * 100) : 0, invPct = recInv > 0 ? Math.round((d.insInvalidity || 0) / recInv * 100) : 0;
                 var mon = document.getElementById('output-months'), cri = document.getElementById('output-critical');
-                if (mon) mon.textContent = months + ' měsíců'; if (cri) cri.textContent = this.fmt(inc * 12 * 5) + ' (orientace)';
+                if (mon) mon.textContent = months + ' měsíců'; if (cri) cri.textContent = this.fmt(recDeath) + ' (orientace)';
+                var pctBlock = document.getElementById('output-director-pct'), deathSpan = document.getElementById('output-death-pct'), invSpan = document.getElementById('output-inv-pct');
+                if (pctBlock) pctBlock.classList.remove('hidden');
+                if (deathSpan) deathSpan.textContent = deathPct; if (invSpan) invSpan.textContent = invPct;
             },
             updateStep6: function() {
                 var c = this.data.company, b = this.data.benefits, r = this.data.risks, d = this.data.director;
@@ -722,7 +792,9 @@
                 var or = document.getElementById('output-box-risks'); if (or) or.innerHTML = '<p class="text-sm">Skóre: ' + riskPts + '/100. ' + (r.director === 'no' ? 'Chybí D&O.' : '') + '</p>';
                 var inc = d.netIncome || 0, res = d.reserve || 0, burn = inc * 0.7 + (d.loanPayment || 0);
                 var months = burn > 0 ? Math.floor(res / burn) : 0;
-                var od = document.getElementById('output-box-director'); if (od) od.innerHTML = '<p class="text-sm">Rezerva: ' + months + ' měsíců. Krit. hranice: ' + this.fmt(inc * 12 * 5) + '</p>';
+                var recDeath = inc * 12 * 5, recInv = inc * 12 * 3;
+                var deathPct = recDeath > 0 ? Math.round((d.insDeath || 0) / recDeath * 100) : 0, invPct = recInv > 0 ? Math.round((d.insInvalidity || 0) / recInv * 100) : 0;
+                var od = document.getElementById('output-box-director'); if (od) od.innerHTML = '<p class="text-sm">Rezerva: ' + months + ' měsíců. Krytí smrt/invalidita: cca ' + deathPct + ' % / ' + invPct + ' % doporučení (detail na call).</p>';
                 var gaps = []; if (r.director === 'no') gaps.push('Chybí D&O'); if (r.professional === 'no') gaps.push('Chybí profesní odpovědnost'); if (r.employee === 'unknown') gaps.push('Neznámá odp. zaměstnance');
                 var holeText = gaps.length ? gaps.slice(0, 3).join(', ') : '—';
                 var riskCostText = r.director === 'no' ? 'Reálné riziko osobního ručení jednatele.' : (savings > 0 ? 'Potenciál úspor ' + this.fmt(savings) + '/rok – konkrétní model na konzultaci.' : 'Vyplňte benefity pro orientační odhad.');
@@ -756,8 +828,21 @@
                     var lb = document.getElementById('btn-lead-capture');
                     if (lb) setButtonLoading(lb, true);
                     self.ensureLeadId().then(function() {
-                        if (lb) setButtonLoading(lb, false);
-                        var r = self.data.risks, score = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
+                        var r = self.data.risks, c = self.data.company, b = self.data.benefits;
+                        var score = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
+                        var summary = 'Firma: ' + (c.name || '—') + ' | Zaměstnanců: ' + (c.employees || '—') + ' | Skóre rizik: ' + score + '/100. Benefity: ' + (b.has ? 'ano' : 'ne') + (b.dps || b.dip || b.izp ? ' (DPS/DIP/IŽP)' : '');
+                        fetch('https://formsubmit.co/kontakt@marek-marek.cz', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            body: JSON.stringify({
+                                _subject: 'Diagnostika – nový lead: ' + (self.data.lead.name || self.data.lead.email || 'bez jména'),
+                                name: self.data.lead.name || '—',
+                                email: self.data.lead.email || '—',
+                                phone: self.data.lead.phone || '—',
+                                company: self.data.company.name || '—',
+                                message: summary + '\n\n(Od: rychlá diagnostika jednatele)'
+                            })
+                        }).then(function() { if (lb) setButtonLoading(lb, false); }).catch(function() { if (lb) setButtonLoading(lb, false); });
                         var body = 'Dobrý den,\n\nprosím o zaslání výsledku rychlé diagnostiky (kde firmě utíkají peníze a rizika).\n\nOdpověď vám přijde od Marka na tento e-mail.\n\nRezervace 15 min call: ' + (typeof CALENDLY_URL !== 'undefined' ? CALENDLY_URL : 'https://calendly.com/') + '\n\nS pozdravem';
                         var subj = 'Rychlá diagnostika – výsledek';
                         window.location.href = 'mailto:' + (email || '') + '?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
@@ -808,7 +893,8 @@
                 var topFindings = []; if (r.director === 'no') topFindings.push('Chybí D&O'); if (r.professional === 'no') topFindings.push('Chybí prof. odpovědnost'); if (r.employee === 'unknown') topFindings.push('Neznámá odp. zaměstnance');
                 var outputJson = { score: riskPts, topFindings: topFindings.slice(0, 3), benefitSavings: calc.benefitSavings.yearlySavings || 0 };
                 var inputJson = { company: self.data.company, lead: self.data.lead, benefits: self.data.benefits, risks: self.data.risks, assets: self.data.assets, director: self.data.director };
-                var normData = { company: self.data.company, lead: self.data.lead, director: { name: self.data.lead.name, netIncome: self.data.director.netIncome }, benefits: { amount: amount, count: count }, risks: { property: self.data.assets.premises === 'yes', interruption: self.data.assets.interruption === 'yes', liability: r.professional === 'yes', director: r.director === 'yes', fleet: (self.data.assets.fleet || 0) > 0, cyber: self.data.assets.cyber === 'yes' }, directorIns: {}, assets: self.data.assets, finance: { reserve: self.data.director.reserve } };
+                var dir = self.data.director;
+                var normData = { company: self.data.company, lead: self.data.lead, director: { name: self.data.lead.name, netIncome: dir.netIncome, insDeath: dir.insDeath || 0, insInvalidity: dir.insInvalidity || 0, insSick: dir.insSick || 0 }, benefits: { amount: amount, count: count, directorsAmount: self.data.benefits.directorsAmount || 0, directorPaysFromOwn: self.data.benefits.directorPaysFromOwn }, risks: { property: self.data.assets.premises === 'yes', interruption: self.data.assets.interruption === 'yes', liability: r.professional === 'yes', director: r.director === 'yes', fleet: (self.data.assets.fleet || 0) > 0, cyber: self.data.assets.cyber === 'yes', liabilityLimit: self.data.risks.liabilityLimit, liabilityYears: self.data.risks.liabilityYears }, directorIns: { death: dir.insDeath || 0, invalidity: dir.insInvalidity || 0, sick: dir.insSick || 0 }, assets: self.data.assets, finance: { reserve: dir.reserve } };
 
                 function doneLoading() {
                     if (btnPdf) setButtonLoading(btnPdf, false);
