@@ -644,7 +644,7 @@
                     if (self.data.meta.leadId) { resolve(self.data.meta.leadId); return; }
                     var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
                     if (!supabase) { resolve(null); return; }
-                    var payload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+                    var payload = self.buildLeadPayload();
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
                         if (res.data && res.data.id) { self.data.meta.leadId = res.data.id; resolve(res.data.id); }
                         else resolve(null);
@@ -767,11 +767,15 @@
             exportData: function() { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' })); a.download = 'diagnostika-' + (this.data.company.name || 'klient') + '.json'; a.click(); },
             importData: function(e) { var f = e.target.files[0]; if (!f) return; var self = this; var r = new FileReader(); r.onload = function(ev) { try { self.data = JSON.parse(ev.target.result); location.reload(); } catch (err) { alert('Chyba.'); } }; r.readAsText(f); },
             reset: function() { if (confirm('Vymazat všechna data?')) location.reload(); },
+            buildLeadPayload: function() {
+                var self = this;
+                return { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+            },
             createLeadThenNext: function() {
                 var self = this;
                 var supabase = window.DIAG_SUPABASE || (typeof initSupabase === 'function' && initSupabase());
                 if (supabase && !self.data.meta.leadId) {
-                    var payload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+                    var payload = self.buildLeadPayload();
                     supabase.from('leads').insert([payload]).select('id').single().then(function(res) {
                         if (res.error) {
                             console.error('Lead insert error:', res.error);
@@ -837,15 +841,26 @@
                     if (supabase) {
                         try {
                             if (!leadId) {
-                                var leadPayload = { name: self.data.lead.name || null, email: self.data.lead.email || null, phone: self.data.lead.phone || null, company_name: self.data.company.name || null, employees_count: self.data.company.employees || null, industry: self.data.company.industry || null, source: 'link', consent_marketing: false, status: 'draft' };
+                                var leadPayload = self.buildLeadPayload();
                                 var leadRes = await supabase.from('leads').insert([leadPayload]).select('id').single();
                                 if (leadRes.error) {
-                                    console.error('Lead insert error:', leadRes.error);
-                                    showToast('Nepodařilo se uložit lead: ' + (leadRes.error.message || leadRes.error.code || 'zkuste znovu.'), 'error');
-                                    throw leadRes.error;
+                                    if (leadRes.error.code === '23505' || (leadRes.error.message && leadRes.error.message.indexOf('duplicate key') !== -1)) {
+                                        var email = self.data.lead.email || '';
+                                        if (email) {
+                                            var existing = await supabase.from('leads').select('id').eq('email', email).order('created_at', { ascending: false }).limit(1);
+                                            if (existing.data && existing.data[0] && existing.data[0].id) { leadId = existing.data[0].id; self.data.meta.leadId = leadId; }
+                                        }
+                                        if (!leadId) showToast('Lead už byl dříve uložen. PDF se vygeneruje bez propojení.', 'info');
+                                    }
+                                    if (!leadId && leadRes.error.code !== '23505') {
+                                        console.error('Lead insert error:', leadRes.error);
+                                        showToast('Nepodařilo se uložit lead: ' + (leadRes.error.message || leadRes.error.code || 'zkuste znovu.'), 'error');
+                                        throw leadRes.error;
+                                    }
+                                } else {
+                                    leadId = leadRes.data && leadRes.data.id;
+                                    if (leadId) self.data.meta.leadId = leadId;
                                 }
-                                leadId = leadRes.data && leadRes.data.id;
-                                if (leadId) self.data.meta.leadId = leadId;
                             }
 
                             var attMeta = [];
