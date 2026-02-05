@@ -26,14 +26,16 @@ async function getSignedUrl(supabaseUrl, serviceKey, reportPath) {
   }
 }
 
-async function sendResendEmail(apiKey, from, to, subject, html) {
+async function sendResendEmail(apiKey, from, to, subject, html, attachments) {
+  const payload = { from, to: Array.isArray(to) ? to : [to], subject, html };
+  if (attachments && attachments.length) payload.attachments = attachments;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + apiKey,
     },
-    body: JSON.stringify({ from, to: Array.isArray(to) ? to : [to], subject, html }),
+    body: JSON.stringify(payload),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || data.error || 'Resend API error');
@@ -56,20 +58,24 @@ module.exports = async function handler(req, res) {
     if (!resendKey) {
       return res.status(500).json({ error: 'Chybí RESEND_API_KEY v nastavení Vercelu.' });
     }
-    if (!supabaseUrl || !supabaseServiceKey) {
-      return res.status(500).json({ error: 'Chybí SUPABASE_URL nebo SUPABASE_SERVICE_ROLE_KEY v nastavení Vercelu.' });
-    }
 
     const body = typeof req.body === 'string' ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
-    const { lead = {}, assessmentId, reportPath, attachmentsMeta = [], outputJson = {} } = body;
+    const { lead = {}, assessmentId, reportPath, reportPdfBase64, attachmentsMeta = [], outputJson = {} } = body;
 
-    if (!reportPath || !lead.email) {
-      return res.status(400).json({ error: 'Chybí reportPath nebo lead.email' });
+    if (!lead.email) {
+      return res.status(400).json({ error: 'Chybí lead.email' });
+    }
+    if (!reportPath && !reportPdfBase64) {
+      return res.status(400).json({ error: 'Chybí reportPath nebo reportPdfBase64' });
     }
 
     let reportUrl = '';
-    if (reportPath) {
+    if (reportPath && supabaseUrl && supabaseServiceKey) {
       reportUrl = await getSignedUrl(supabaseUrl, supabaseServiceKey, reportPath);
+    }
+    var pdfAttachment = [];
+    if (reportPdfBase64 && typeof reportPdfBase64 === 'string') {
+      pdfAttachment = [{ filename: 'diagnostika-shrnuti.pdf', content: reportPdfBase64 }];
     }
 
     const score = outputJson.score ?? 0;
@@ -99,8 +105,8 @@ module.exports = async function handler(req, res) {
     `;
 
     const [r1, r2] = await Promise.all([
-      sendResendEmail(resendKey, mailFrom, mailToMarek, 'Diagnostika: ' + (lead.company_name || lead.email) + ' – ' + (lead.name || 'bez jména'), htmlMarek),
-      sendResendEmail(resendKey, mailFrom, lead.email, 'Diagnostika „Má to smysl?“ – shrnutí', htmlClient),
+      sendResendEmail(resendKey, mailFrom, mailToMarek, 'Diagnostika: ' + (lead.company_name || lead.email) + ' – ' + (lead.name || 'bez jména'), htmlMarek, pdfAttachment),
+      sendResendEmail(resendKey, mailFrom, lead.email, 'Diagnostika „Má to smysl?“ – shrnutí', htmlClient, pdfAttachment),
     ]);
 
     return res.status(200).json({ ok: true, marek: r1, client: r2 });
