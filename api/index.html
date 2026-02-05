@@ -639,7 +639,6 @@
                 self.bind('company-employees', function(v) { self.data.company.employees = parseInt(v) || 0; });
                 self.bind('company-cat3', function(v) { self.data.company.cat3 = v || '0'; });
                 ['benefit-has-dps','benefit-has-dip','benefit-has-izp'].forEach(function(id, i) { var k = ['hasDps','hasDip','hasIzp'][i]; var el = document.getElementById(id); if (el) { el.addEventListener('change', function() { self.data.benefits[k] = this.checked; self.updateStep2(); }); } });
-                ['card-dps','card-dip','card-izp'].forEach(function(cardId, i) { var cbId = ['benefit-has-dps','benefit-has-dip','benefit-has-izp'][i]; var card = document.getElementById(cardId); var cb = document.getElementById(cbId); if (card && cb) { card.addEventListener('click', function(e) { if (e.target.tagName !== 'INPUT') { cb.checked = !cb.checked; self.data.benefits[['hasDps','hasDip','hasIzp'][i]] = cb.checked; self.updateStep2(); } }); } });
                 ['benefit-dps-amount','benefit-dip-amount','benefit-izp-amount'].forEach(function(id, i) { var k = ['dps','dip','izp'][i]; self.bind(id, function(v) { self.data.benefits[k] = parseFloat(v) || 0; self.updateStep2(); }); });
                 self.bind('benefit-count', function(v) { self.data.benefits.count = parseInt(v) || 0; self.updateStep2(); });
                 self.bind('benefit-goal', function(v) { self.data.benefits.goal = v || 'danova'; });
@@ -936,7 +935,7 @@
                                             var existing = await supabase.from('leads').select('id').eq('email', email).order('created_at', { ascending: false }).limit(1);
                                             if (existing.data && existing.data[0] && existing.data[0].id) { leadId = existing.data[0].id; self.data.meta.leadId = leadId; }
                                         }
-                                        if (!leadId) showToast('Lead už byl dříve uložen. PDF se vygeneruje bez propojení.', 'info');
+                                        if (!leadId) showToast('PDF se vygeneruje. (Tento e-mail už je v systému.)', 'info');
                                     }
                                     if (!leadId && leadRes.error.code !== '23505') {
                                         console.error('Lead insert error:', leadRes.error);
