@@ -3,6 +3,15 @@
  * POST /api/send-report
  * ENV: RESEND_API_KEY, MAIL_FROM, MAIL_TO_MAREK, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CALENDLY_URL
  */
+
+  "name": "osobni-web-finance",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "resend": "^3.2.0"
+  }
+}
 const { createClient } = require('@supabase/supabase-js');
 const { Resend } = require('resend');
 
