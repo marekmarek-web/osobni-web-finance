@@ -3,7 +3,19 @@
  * POST /api/send-report
  * ENV: RESEND_API_KEY, MAIL_FROM, MAIL_TO_MAREK, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CALENDLY_URL
  */
+ // 🔥 CORS
+  res.setHeader('Access-Control-Allow-Origin', 'https://www.marek-marek.cz');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 async function getSignedUrl(supabaseUrl, serviceKey, reportPath) {
   try {
     const url = supabaseUrl.replace(/\/$/, '') + '/storage/v1/object/sign/reports';
