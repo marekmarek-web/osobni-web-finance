@@ -51,8 +51,22 @@ async function sendResendEmail(apiKey, from, to, subject, html, attachments, cc)
 }
 
 module.exports = async function handler(req, res) {
+  // CORS hlavičky - povolit všechny originy (v produkci můžeš omezit na konkrétní domény)
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hodin
+  
+  // Handle preflight OPTIONS request - MUSÍ být před try blokem
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
   try {
     if (req.method !== 'POST') {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(405).json({ error: 'Method not allowed' });
     }
 
@@ -64,16 +78,19 @@ module.exports = async function handler(req, res) {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!resendKey) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(500).json({ error: 'Chybí RESEND_API_KEY v nastavení Vercelu.' });
     }
 
     const body = typeof req.body === 'string' ? (req.body ? JSON.parse(req.body) : {}) : (req.body || {});
     const { lead = {}, assessmentId, reportPath, reportPdfBase64, attachmentsMeta = [], outputJson = {} } = body;
 
-    if (!leadEmailClean) {
-      return res.status(400).json({ error: 'Chybí leadEmailClean' });
+    if (!lead.email) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      return res.status(400).json({ error: 'Chybí lead.email' });
     }
     if (!reportPath && !reportPdfBase64) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(400).json({ error: 'Chybí reportPath nebo reportPdfBase64' });
     }
 
@@ -119,12 +136,15 @@ module.exports = async function handler(req, res) {
     const leadEmailClean = (lead.email || '').trim();
     
     if (!emailRegex.test(mailFromClean)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(500).json({ error: 'Neplatná MAIL_FROM adresa: ' + mailFromClean });
     }
     if (!emailRegex.test(mailToMarekClean)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(500).json({ error: 'Neplatná MAIL_TO_MAREK adresa: ' + mailToMarekClean });
     }
     if (!emailRegex.test(leadEmailClean)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
       return res.status(400).json({ error: 'Neplatná emailová adresa v lead objektu: ' + leadEmailClean });
     }
 
@@ -133,9 +153,11 @@ module.exports = async function handler(req, res) {
       sendResendEmail(resendKey, mailFromClean, leadEmailClean, 'Diagnostika „Má to smysl?“ – shrnutí', htmlClient, pdfAttachment),
     ]);
 
+    res.setHeader('Access-Control-Allow-Origin', origin);
     return res.status(200).json({ ok: true, marek: r1, client: r2 });
   } catch (err) {
     console.error('send-report error:', err);
+    res.setHeader('Access-Control-Allow-Origin', origin);
     return res.status(500).json({
       error: err.message || 'Chyba při odesílání e-mailu',
     });
