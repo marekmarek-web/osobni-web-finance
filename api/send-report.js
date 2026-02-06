@@ -131,9 +131,10 @@ module.exports = async function handler(req, res) {
 
     // Validace a očištění emailových adres
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const mailFromClean = (mailFrom || '').trim();
-    const mailToMarekClean = (mailToMarek || '').trim();
-    const leadEmailClean = (lead.email || '').trim();
+    // Odstranění [blocked] a dalších neplatných částí z emailů
+    const mailFromClean = (mailFrom || '').replace(/\s*\[blocked\]\s*/gi, '').trim();
+    const mailToMarekClean = (mailToMarek || '').replace(/\s*\[blocked\]\s*/gi, '').trim();
+    const leadEmailClean = (lead.email || '').replace(/\s*\[blocked\]\s*/gi, '').trim();
     
     if (!emailRegex.test(mailFromClean)) {
       res.setHeader('Access-Control-Allow-Origin', origin);
