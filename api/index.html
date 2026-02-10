@@ -125,7 +125,7 @@
         .avoid-break { break-inside: avoid; page-break-inside: avoid; }
         .pdf-title-page { display: flex; flex-direction: column; justify-content: center; min-height: 260mm; text-align: center; }
         .pdf .h1 { font-size: 22pt; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; margin-bottom: 5mm; }
-        .pdf .h2 { font-size: 14pt; font-weight: 800; margin-top: 5mm; margin-bottom: 3mm; color: #0B3A7A; border-left: 4px solid #ea8d00; padding-left: 4mm; line-height: 1; page-break-after: avoid; }
+        .pdf .h2 { display: flex; align-items: center; font-size: 14pt; font-weight: 800; margin-top: 5mm; margin-bottom: 3mm; color: #0B3A7A; border-left: 4px solid #ea8d00; padding-left: 4mm; line-height: 1.2; min-height: 1.2em; page-break-after: avoid; }
         .pdf .h2:first-child { margin-top: 0; }
         .pdf .kpi { display: flex; gap: 4mm; margin-bottom: 6mm; flex-wrap: wrap; }
         .pdf .kpi .box { flex: 1; min-width: 45mm; background: #f8fafc; border: 1px solid #e6e9f2; border-radius: 4mm; padding: 5mm; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
@@ -1310,16 +1310,17 @@
                     '<div class="pdf-section"><div class="h2">Shrnutí</div>' + cardsHtml +
                     '<div class="interpretation ' + interpClass + '"><strong>Interpretace:</strong> ' + interpText + '</div>' + boxHtml +
                     '<div class="h2">Všechny kritické nálezy</div>' + allFindingsHtml + ctaBlock + ftr(2) + '</section>',
-                    '<section class="pdf-page">' + hdr('Benefity, majetek a rizika', today, companyName) +
+                    '<section class="pdf-page">' + hdr('Benefity a majetek', today, companyName) +
                     '<div class="pdf-section"><div class="h2">Benefity</div>' + (benefitsTableRows || '<p style="font-size:10pt;color:#64748b;">Vyplňte benefity v přehledu.</p>') + (benefitsDetail ? '<div class="interpretation success" style="margin-top:3mm;">' + benefitsDetail + '</div>' : '') + '</div>' +
-                    '<div class="pdf-section"><div class="h2">Majetek a provoz</div><table class="table"><thead><tr><th>Položka</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + assetsTableRows + '</tbody></table>' +
-                    '<div class="pdf-section avoid-break"><div class="h2">Rizika – přehled krytí</div><table class="table"><thead><tr><th>Riziko</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + riskTableRows + '</tbody></table></div>' +
-                    '<div class="pdf-section"><div class="h2">Zajištění jednatele</div><p style="font-size:10pt;color:#64748b;margin-bottom:4mm;">Jednatel: <strong>' + directorName + '</strong> | Příjem: <strong>' + fmt(netInc) + '</strong>/měs</p><table class="table" style="margin-bottom:4mm;"><thead><tr><th style="width:50%;">Rizika</th><th style="width:50%;text-align:right;">Pojistná částka</th></tr></thead><tbody>' + dirTableRows + '</tbody></table>' + dirBlocks + '</div>' + ctaBlock + ftr(3) + '</section>',
+                    '<div class="pdf-section"><div class="h2">Majetek a provoz</div><table class="table"><thead><tr><th>Položka</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + assetsTableRows + '</tbody></table></div>' +
+                    '<div class="pdf-section avoid-break"><div class="h2">Rizika – přehled krytí</div><table class="table"><thead><tr><th>Riziko</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + riskTableRows + '</tbody></table></div>' + ftr(3) + '</section>' +
+                    '<section class="pdf-page">' + hdr('Zajištění jednatele', today, companyName) +
+                    '<div class="pdf-section"><p style="font-size:10pt;color:#64748b;margin-bottom:4mm;">Jednatel: <strong>' + directorName + '</strong> | Příjem: <strong>' + fmt(netInc) + '</strong>/měs</p><table class="table" style="margin-bottom:4mm;"><thead><tr><th style="width:50%;">Rizika</th><th style="width:50%;text-align:right;">Pojistná částka</th></tr></thead><tbody>' + dirTableRows + '</tbody></table>' + dirBlocks + '</div>' + ctaBlock + ftr(4) + '</section>' +
                     '<section class="pdf-page">' + hdr('Další kroky', today, companyName) +
                     '<div class="pdf-section"><div class="h2">Doporučené kroky</div>' + nextStepsHtml +
                     '<div class="interpretation success"><p style="margin:0;"><strong>Na 15min call</strong> připravím konkrétní návrh na míru. Rezervace: <strong>' + calUrl + '</strong></p></div>' +
                     (contactEmail ? '<p style="font-size:9pt;color:#64748b;margin-top:4mm;">Kontakt: ' + contactEmail + '</p>' : '') +
-                    (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(4) + '</section>'
+                    (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(5) + '</section>'
                 ];
                 return '<div class="pdf">' + pages.join('') + '</div>';
             }
