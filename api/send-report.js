@@ -104,29 +104,76 @@ module.exports = async function handler(req, res) {
     }
 
     const score = outputJson.score ?? 0;
-    const topFindings = (outputJson.topFindings || []).join('; ') || '—';
+    const allFindings = outputJson.allFindings || outputJson.topFindings || [];
+    const biggestHole = outputJson.biggestHole || (allFindings.length ? allFindings.join(' ') : '—');
+    const quickWin = outputJson.quickWin || '—';
+    const nextSteps = outputJson.nextSteps || [];
+    const gapsCount = outputJson.gapsCount ?? 0;
+    const riskItems = outputJson.riskItems || [];
+    const companyName = outputJson.companyName || lead.company_name || '—';
+    const benefitSavings = outputJson.benefitSavings || 0;
+    const fmtKc = (n) => n ? Math.round(n).toLocaleString('cs-CZ') + ' Kč' : '—';
 
     const htmlMarek = `
-      <h2>Nový lead z diagnostiky</h2>
+      <h2>Nový kontakt z rychlého přehledu</h2>
       <p><strong>Jméno:</strong> ${lead.name || '—'}</p>
       <p><strong>Email:</strong> ${lead.email}</p>
       <p><strong>Telefon:</strong> ${lead.phone || '—'}</p>
-      <p><strong>Firma:</strong> ${lead.company_name || '—'}</p>
+      <p><strong>Firma:</strong> ${companyName}</p>
       <p><strong>Skóre:</strong> ${score}/100</p>
-      <p><strong>Top nálezy:</strong> ${topFindings}</p>
+      <p><strong>Míst ke zlepšení:</strong> ${gapsCount}</p>
+      <p><strong>Top nálezy:</strong> ${Array.isArray(allFindings) ? allFindings.join('; ') : allFindings}</p>
       ${reportUrl ? '<p><a href="' + reportUrl + '">Stáhnout PDF</a></p>' : ''}
-      ${(attachmentsMeta && attachmentsMeta.length) ? '<p>Přílohy: ' + attachmentsMeta.map(function(a) { return a.name; }).join(', ') + '</p>' : ''}
+      ${(attachmentsMeta && attachmentsMeta.length) ? '<p>Přílohy: ' + attachmentsMeta.map(a => a.name).join(', ') + '</p>' : ''}
       <p>Assessment ID: ${assessmentId || '—'}</p>
     `;
 
+    const riskRows = riskItems.map(item => `
+      <tr><td style="padding:6px 12px;border-bottom:1px solid #e5e7eb;">${item.ok ? '✓' : '✗'}</td><td style="padding:6px 12px;border-bottom:1px solid #e5e7eb;">${item.label}</td></tr>
+    `).join('');
+    const findingsList = Array.isArray(allFindings) && allFindings.length > 0
+      ? allFindings.map(f => `<li style="margin:6px 0;">${f}</li>`).join('')
+      : `<li>${biggestHole}</li>`;
+    const nextStepsList = Array.isArray(nextSteps) && nextSteps.length > 0
+      ? nextSteps.map(s => `<li style="margin:6px 0;">${s}</li>`).join('')
+      : '';
+
     const htmlClient = `
-      <p>Dobrý den${lead.name ? ' ' + lead.name : ''},</p>
-      <p>díky za vyplnění diagnostiky. Připojuji shrnutí.</p>
-      <p><strong>Skóre rizik:</strong> ${score}/100</p>
-      <p><strong>Hlavní nálezy:</strong> ${topFindings}</p>
-      ${reportUrl ? '<p><a href="' + reportUrl + '">Stáhnout shrnutí (PDF)</a></p>' : ''}
-      <p>Chcete přesný návrh? Rezervujte si 15min call: <a href="${calendlyUrl}">${calendlyUrl}</a></p>
-      <p>S pozdravem</p>
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#1f2937;">
+        <p style="font-size:16px;line-height:1.6;">Dobrý den${lead.name ? ' ' + lead.name.split(' ')[0] : ''},</p>
+        <p style="font-size:16px;line-height:1.6;">připojuji shrnutí vašeho rychlého přehledu – co jste vyplnili a kde vidím příležitosti.</p>
+        
+        <div style="background:#f8fafc;border-radius:8px;padding:16px;margin:20px 0;border-left:4px solid #0B3A7A;">
+          <p style="margin:0 0 8px;font-weight:700;color:#0f172a;">${companyName}</p>
+          <p style="margin:0;font-size:14px;color:#64748b;">Skóre rizik: <strong>${score}/100</strong> &nbsp;|&nbsp; Našel jsem <strong>${gapsCount} míst</strong> ke zlepšení</p>
+          ${benefitSavings > 0 ? '<p style="margin:8px 0 0;font-size:14px;color:#10b981;">Potenciál úspor: <strong>' + fmtKc(benefitSavings) + '/rok</strong></p>' : ''}
+        </div>
+
+        <h3 style="font-size:16px;color:#0f172a;margin:24px 0 12px;">Kritické nálezy</h3>
+        <ul style="font-size:15px;line-height:1.7;padding-left:20px;margin:0;">
+          ${findingsList}
+        </ul>
+
+        ${riskItems.length > 0 ? `
+        <h3 style="font-size:16px;color:#0f172a;margin:24px 0 12px;">Přehled krytí rizik</h3>
+        <table style="font-size:14px;border-collapse:collapse;width:100%;">
+          ${riskRows}
+        </table>
+        ` : ''}
+
+        ${nextStepsList ? `
+        <h3 style="font-size:16px;color:#0f172a;margin:24px 0 12px;">Doporučené kroky</h3>
+        <ul style="font-size:15px;line-height:1.7;padding-left:20px;margin:0;">
+          ${nextStepsList}
+        </ul>
+        ` : ''}
+
+        <p style="font-size:16px;line-height:1.6;margin-top:24px;">${reportUrl ? 'Příloha: <a href="' + reportUrl + '" style="color:#0B3A7A;">stáhnout shrnutí (PDF)</a>. ' : ''}Pro přesný návrh na míru si rezervujte 15min call:</p>
+        <p style="margin:16px 0;"><a href="${calendlyUrl}" style="display:inline-block;background:#ffcc00;color:#0a0f29;font-weight:700;padding:12px 24px;text-decoration:none;border-radius:8px;">${calendlyUrl}</a></p>
+        
+        <p style="font-size:16px;line-height:1.6;margin-top:32px;">S pozdravem</p>
+        <p style="font-size:16px;font-weight:700;color:#0f172a;">Marek Marek</p>
+      </div>
     `;
 
     // Validace a očištění emailových adres
@@ -151,7 +198,7 @@ module.exports = async function handler(req, res) {
 
     const [r1, r2] = await Promise.all([
       sendResendEmail(resendKey, mailFromClean, mailToMarekClean, 'Diagnostika: ' + (lead.company_name || leadEmailClean) + ' – ' + (lead.name || 'bez jména'), htmlMarek, pdfAttachment),
-      sendResendEmail(resendKey, mailFromClean, leadEmailClean, 'Diagnostika „Má to smysl?“ – shrnutí', htmlClient, pdfAttachment),
+      sendResendEmail(resendKey, mailFromClean, leadEmailClean, 'Shrnutí rychlého přehledu' + (companyName !== '—' ? ' – ' + companyName : ''), htmlClient, pdfAttachment),
     ]);
 
     res.setHeader('Access-Control-Allow-Origin', origin);
