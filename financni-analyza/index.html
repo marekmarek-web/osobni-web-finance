@@ -26,9 +26,10 @@
                         brand: {
                             dark: '#0a0f29',    // Hero pozadí
                             orange: '#ffcc00', // CTA, akcenty
-                            gold: '#ffdd33',    // Jemné detaily
-                            main: '#0B3A7A',    // Hlavní modrá
-                            light: '#EAF3FF',   // Pozadí sekcí
+                            gold: '#ffdd33',   // Jemné detaily
+                            lightgold: '#fde047', // hamburger hover (jako diagnostika)
+                            main: '#0B3A7A',   // Hlavní modrá
+                            light: '#EAF3FF',  // Pozadí sekcí
                             border: '#D6E6FF', // Rámečky
                         }
                     },
@@ -86,11 +87,14 @@
             border-bottom: 1px solid rgba(11, 58, 122, 0.1);
             color: #0a0f29;
         }
-        /* Nav při scrollu – tmavý text a světlá tlačítka */
-        .glass-header-scrolled .header-brand,
-        .glass-header-scrolled .header-brand span { color: #0a0f29 !important; }
-        .glass-header-scrolled .header-actions .btn-header { background: #f1f5f9 !important; color: #0f172a !important; }
-        .glass-header-scrolled .header-actions #header-status { color: #475569 !important; }
+        .nav-link { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; padding: 0.6rem 1rem; border-radius: 9999px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .glass-header-scrolled #logo-text,
+        .glass-header-scrolled #logo-subtext { color: #0a0f29 !important; }
+        .glass-header-scrolled .nav-link { color: #0a0f29 !important; }
+        .glass-header-scrolled .nav-link:hover { background: rgba(10, 15, 41, 0.08); }
+        .glass-header-scrolled #nav-divider,
+        .glass-header-scrolled #nav-divider-2 { background: rgba(10, 15, 41, 0.2); }
+        .glass-header-scrolled #mobile-menu-btn { color: #0a0f29 !important; }
 
         /* Stepper Styles - Fixed overlap */
         .stepper-item { 
@@ -511,34 +515,66 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Navigation (stejný styl jako diagnostika) -->
+    <!-- Navigation – z diagnostika-jednatel-standalone.html -->
     <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
                 <!-- Logo -->
-                <div class="flex items-center gap-3 shrink-0 header-brand">
-                    <div class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl shadow-sm">
-                        M
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden relative">
+                        <img id="logo-img" src="FA - Lead - s.r.o/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.outerHTML='<span class=\'text-lg font-bold text-brand-dark\'>M</span>'">
                     </div>
                     <div class="flex flex-col leading-tight">
-                        <span class="text-lg font-bold text-white">Marek Marek<span class="text-brand-orange">.</span></span>
-                        <span class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase">Finanční analýza</span>
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
                 </div>
-                <!-- Uložit / Načíst / Nový plán -->
-                <div class="flex items-center gap-4 header-actions">
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="window.app && window.app.saveToFile()" class="btn-header text-sm px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center gap-1.5" title="Uložit analýzu">
-                            <i class="fas fa-save text-xs"></i>
-                            <span class="hidden sm:inline">Uložit</span>
-                        </button>
-                        <label class="btn-header text-sm px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer" title="Načíst analýzu">
-                            <i class="fas fa-folder-open text-xs"></i>
-                            <span class="hidden sm:inline">Načíst</span>
-                            <input type="file" accept=".json" onchange="window.app && window.app.loadFromFile(event)" class="hidden">
-                        </label>
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
+                </div>
+                <!-- Hamburger -->
+                <div class="flex items-center">
+                    <button type="button" id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
                     </div>
-                    <div class="text-sm text-white/90 font-medium cursor-pointer hover:text-white transition-opacity" id="header-status" onclick="window.app && window.app.resetPlan()">Nový plán</div>
+                </div>
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-brand-main mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
                 </div>
             </div>
         </div>
@@ -550,20 +586,9 @@
         <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-main/10 skew-x-12 transform origin-top-right z-0 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-72 h-72 bg-brand-orange/10 rounded-full blur-[80px] z-0 pointer-events-none"></div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <span class="inline-flex items-center py-2 px-4 rounded-full bg-white/10 border border-white/20 text-brand-orange text-xs font-bold tracking-widest uppercase mb-6 backdrop-blur-sm">
-                <span class="w-2 h-2 rounded-full bg-brand-orange mr-2 animate-pulse"></span>
-                Osobní finanční plán
-            </span>
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-[1.2] tracking-tight mb-6">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-[1.2] tracking-tight">
                 Finanční analýza
             </h1>
-            <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
-                Váš přehled příjmů, výdajů, majetku a cílů na jednom míste. Vyplňte kroky níže a získejte doporučení i export do PDF.
-            </p>
-            <a href="#wizard-start" class="inline-flex items-center gap-3 bg-gradient-to-r from-brand-orange to-brand-gold hover:opacity-95 text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-orange/25 transition-all hover:scale-[1.02] mt-8 no-underline">
-                <i class="fas fa-arrow-down"></i>
-                <span>Začít vyplňovat</span>
-            </a>
         </div>
     </section>
 
@@ -581,7 +606,23 @@
 
         <!-- START: WIZARD_STRUCTURE -->
         <div class="w-full max-w-5xl wizard-card p-8 md:p-10 mb-20">
-            
+            <!-- Uložit / Načíst / Nový plán – pouze ve wizardu -->
+            <div class="flex flex-wrap items-center justify-end gap-3 pb-6 mb-6 border-b border-slate-200">
+                <button type="button" onclick="window.app && window.app.saveToFile()" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-2 font-semibold text-slate-700" title="Uložit analýzu">
+                    <i class="fas fa-save"></i>
+                    <span>Uložit</span>
+                </button>
+                <label class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-2 font-semibold text-slate-700 cursor-pointer" title="Načíst analýzu">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Načíst</span>
+                    <input type="file" accept=".json" onchange="window.app && window.app.loadFromFile(event)" class="hidden">
+                </label>
+                <button type="button" onclick="window.app && window.app.resetPlan()" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-2 font-semibold text-slate-700" title="Začít nový plán">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Nový plán</span>
+                </button>
+            </div>
+
             <!-- Krok 1: Klient -->
             <div id="step-1" class="step-content active" data-title="Osobní údaje">
                 <!-- ... existing step 1 content ... -->
@@ -618,6 +659,14 @@
                             <div class="md:col-span-4">
                                 <label class="form-label">Telefon <span class="text-slate-400 font-normal">(volitelné)</span></label>
                                 <input type="tel" id="client-phone" class="form-input w-full px-4 py-3" placeholder="">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="form-label">Povolání <span class="text-slate-400 font-normal">(volitelné)</span></label>
+                                <input type="text" id="client-occupation" class="form-input w-full px-4 py-3" placeholder="">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="form-label">Sporty <span class="text-slate-400 font-normal">(volitelné)</span></label>
+                                <input type="text" id="client-sports" class="form-input w-full px-4 py-3" placeholder="">
                             </div>
                         </div>
                     </div>
@@ -868,11 +917,11 @@
                             <h3 class="text-lg font-bold text-slate-900 pl-3 border-l-4 border-green-500">Aktiva (Majetek)</h3>
                         </div>
                         <div class="p-6 space-y-4">
-                             <!-- Cash (read-only from reserve) -->
+                             <!-- Hotovost / Rezerva (editovatelné) -->
                             <div class="flex justify-between items-center py-2 border-b border-slate-50">
                                 <span class="font-medium text-slate-700">Hotovost / Rezerva</span>
                                 <div class="relative w-40">
-                                     <input type="number" data-type="asset" id="asset-cash" class="form-input w-full text-right py-2 px-3 border-transparent bg-transparent font-bold" readonly placeholder="0">
+                                     <input type="number" data-type="asset" id="asset-cash" class="form-input w-full text-right py-2 px-3 font-bold bg-white border border-slate-200" placeholder="0">
                                 </div>
                             </div>
                              <!-- Nemovitosti -->
@@ -922,6 +971,10 @@
                                     <span class="font-bold text-slate-800">Hypotéka</span>
                                     <input type="number" data-type="liability" id="liability-mortgage" class="form-input w-40 text-right font-bold" placeholder="Zůstatek (Kč)">
                                 </div>
+                                <div class="mb-2">
+                                    <label class="block text-xs font-medium text-slate-500 mb-0.5">Poskytovatel</label>
+                                    <select id="liab-mortgage-provider" class="form-input text-sm px-2 py-1.5 w-full max-w-xs"></select>
+                                </div>
                                 <div class="grid grid-cols-3 gap-2">
                                     <input type="number" id="liab-mortgage-rate" class="form-input text-xs px-2 py-1" placeholder="Úrok %">
                                     <input type="number" id="liab-mortgage-fix" class="form-input text-xs px-2 py-1" placeholder="Fixace (roky)">
@@ -953,6 +1006,10 @@
                                     <span class="font-bold text-slate-800">Ostatní závazky</span>
                                     <input type="number" data-type="liability" id="liability-other" class="form-input w-40 text-right font-bold" placeholder="Zůstatek (Kč)">
                                 </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-0.5">Poskytovatel</label>
+                                    <select id="liab-other-provider" class="form-input text-sm px-2 py-1.5 w-full max-w-xs"></select>
+                                </div>
                                 <input type="text" id="liab-other-desc" class="form-input text-xs px-2 py-1 w-full" placeholder="Co a jaké (např. půjčka v rodině)">
                             </div>
                         </div>
@@ -964,9 +1021,92 @@
                 </div>
             </div>
 
-            <!-- Krok 4: Cíle -->
-            <div id="step-4" class="step-content" data-title="Finanční cíle">
-                <!-- ... existing step 4 content ... -->
+            <!-- Krok 4: Úvěry / hypotéky k vyřízení -->
+            <div id="step-4" class="step-content" data-title="Úvěry a hypotéky">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-bold text-slate-900">Úvěry / hypotéky k vyřízení</h2>
+                    <p class="text-slate-500 mt-2">Potřebuje klient vyřídit novou hypotéku nebo úvěr? Zadejte parametry a zobrazí se přibližná měsíční splátka.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-7">
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="p-6 md:p-8 space-y-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-3 uppercase tracking-wide">Typ produktu</label>
+                                    <div class="flex flex-wrap gap-3">
+                                        <button type="button" id="credit-wish-product-mortgage" class="credit-wish-product px-5 py-3 rounded-xl text-sm font-bold border transition-all" data-product="mortgage"><i class="fas fa-home mr-2"></i>Hypotéka</button>
+                                        <button type="button" id="credit-wish-product-loan" class="credit-wish-product px-5 py-3 rounded-xl text-sm font-bold border transition-all bg-slate-50 text-slate-600 border-slate-200" data-product="loan"><i class="fas fa-hand-holding-usd mr-2"></i>Úvěr</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Na co</label>
+                                    <select id="credit-wish-purpose" class="form-input w-full px-4 py-3">
+                                        <option value="">— Vyberte účel —</option>
+                                        <option value="bydleni-koupě">Bydlení – koupě nemovitosti</option>
+                                        <option value="bydleni-rekonstrukce">Bydlení – rekonstrukce</option>
+                                        <option value="auto">Auto / vozidlo</option>
+                                        <option value="konsolidace">Konsolidace úvěrů</option>
+                                        <option value="ostatni">Ostatní</option>
+                                    </select>
+                                </div>
+                                <div id="credit-wish-subtype-block">
+                                    <label class="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Typ</label>
+                                    <div id="credit-wish-subtype-btns" class="flex flex-wrap gap-2"></div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2" id="credit-wish-amount-label">Kolik si chcete půjčit (Kč)</label>
+                                    <input type="number" id="credit-wish-amount" class="form-input w-full px-4 py-3 text-lg font-bold" placeholder="0" value="0" min="0" step="10000">
+                                </div>
+                                <div id="credit-wish-own-block">
+                                    <label class="block text-sm font-bold text-slate-600 mb-2" id="credit-wish-own-label">Vlastní zdroje – LTV</label>
+                                    <div id="credit-wish-ltv-btns" class="flex flex-wrap items-center gap-2"></div>
+                                    <p class="text-xs text-slate-500 mt-2" id="credit-wish-own-summary">Vlastní zdroje: 0 Kč</p>
+                                </div>
+                                <div id="credit-wish-extra-block" class="hidden">
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Peníze navíc při konsolidaci (Kč)</label>
+                                    <input type="number" id="credit-wish-extra" class="form-input w-full px-4 py-3" placeholder="0" value="0" min="0" step="10000">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">Doba splácení (roky)</label>
+                                        <input type="number" id="credit-wish-term" class="form-input w-full px-4 py-3" placeholder="25" value="25" min="1" max="35" step="1">
+                                    </div>
+                                    <div id="credit-wish-fix-block">
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">Fixace úroku</label>
+                                        <select id="credit-wish-fix" class="form-input w-full px-4 py-3">
+                                            <option value="3">3 roky</option>
+                                            <option value="5" selected>5 let</option>
+                                            <option value="7">7 let</option>
+                                            <option value="10">10 let</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Úroková sazba (výběr banky)</label>
+                                    <select id="credit-wish-bank" class="form-input w-full px-4 py-3">
+                                        <option value="unicredit">UniCredit Bank (od 4,19 %)</option>
+                                        <option value="rb">Raiffeisenbank (od 4,29 %)</option>
+                                        <option value="csob">ČSOB / Komerční banka (od 4,39 %)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5">
+                        <div class="sticky top-4 bg-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-xl border border-slate-700">
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Přibližná měsíční splátka od</p>
+                            <p class="text-4xl md:text-5xl font-black mb-8"><span id="credit-wish-monthly-display">—</span> <span class="text-xl font-medium text-slate-500">Kč</span></p>
+                            <div class="space-y-4 text-sm border-t border-slate-700 pt-4">
+                                <div class="flex justify-between items-center"><span class="text-slate-400">Odhad úroku</span><span class="font-bold text-amber-400 text-lg" id="credit-wish-rate-display">— %</span></div>
+                                <div class="flex justify-between items-center"><span class="text-slate-400">Celkem zaplatíte</span><span class="font-bold" id="credit-wish-total-display">— Kč</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Krok 5: Cíle -->
+            <div id="step-5" class="step-content" data-title="Finanční cíle">
                 <div class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">Finanční cíle</h2>
                     <p class="text-slate-500 mt-1">Vyberte cíle a systém dopočítá potřebný kapitál i měsíční odklad.</p>
@@ -1092,7 +1232,7 @@
             </div>
 
             <!-- Krok 5: Strategie -->
-            <div id="step-5" class="step-content" data-title="Investiční strategie">
+            <div id="step-6" class="step-content" data-title="Investiční strategie">
                 <!-- ... existing step 5 content ... -->
                 <div class="mb-8">
                     <h2 class="text-3xl font-bold text-slate-900">Investiční strategie</h2>
@@ -1366,7 +1506,7 @@
             </div>
 
             <!-- Krok 6: Shrnutí -->
-            <div id="step-6" class="step-content" data-title="Shrnutí">
+            <div id="step-7" class="step-content" data-title="Shrnutí">
                 <!-- ... existing step 6 ... -->
                 <div class="text-center mb-10">
                     <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm animate-blob">
@@ -1579,16 +1719,65 @@
             }
         };
 
+        // Banky, nebankovní poskytovatelé a leasingové společnosti (dropdown u úvěrů, hypotéky, ostatních závazků)
+        const LIABILITY_PROVIDERS = [
+            { group: 'Banky', names: [
+                'Česká spořitelna', 'ČSOB', 'Komerční banka', 'UniCredit Bank', 'Raiffeisenbank', 'MONETA Money Bank',
+                'Fio banka', 'mBank', 'Air Bank', 'Oberbank', 'PPF banka', 'Expobank', 'Trinity Bank', 'CREDITAS',
+                'Waldviertler Sparkasse', 'Wüstenrot - stavební spořitelna', 'ČMSS', 'Modrá pyramida'
+            ]},
+            { group: 'Nebankovní poskytovatelé', names: [
+                'Home Credit', 'Cofidis', 'Provident Financial', 'Zonky', 'Profi Credit', 'Creditstar', 'Ferratum',
+                'Santander Consumer Finance', 'Acema Credit', 'BB Finance', 'Zaplo Finance', 'Český Triangl',
+                'Dollar Financial', 'Friendly Finance', 'CreditPortal', 'Via SMS', 'Net Credit', 'Kreditech',
+                'creditON.cz', '4finance', 'SMART Lending', 'Wero Finance', 'Credit 2.0', 'Mikrofinance'
+            ]},
+            { group: 'Leasingové společnosti', names: [
+                'ČSOB Leasing', 'KB Leasing', 'Komerční banka - Auto Leasing', 'PPF Leasing', 'UniCredit Leasing',
+                'Raiffeisen Leasing', 'LeasePlan', 'Arval', 'Alphabet', 'DLL', 'SG Equipment Finance', 'CETELEM',
+                'Česká spořitelna Leasing', 'Santander Consumer Leasing', 'BNP Paribas Leasing', 'SG Fleet',
+                'ALD Automotive', 'Porsche Financial Services', 'BMW Financial Services', 'Škoda Auto VWF'
+            ]},
+            { group: '—', names: ['Jiný / neuvedeno'] }
+        ];
+        function getLiabilityProviderOptionsHTML(selected) {
+            return getLiabilityProviderOptionsHTMLByType(null, selected);
+        }
+        // type: null = všechny; 'Hypotéka' = Banky + Jiný; 'Spotřebitelský úvěr' = Banky + Nebankovní + Jiný; 'Kreditní karta'|'Kontokorent' = Banky + Jiný; 'Leasing' = Leasingové společnosti + Jiný; 'Jiný' = všechny
+        function getLiabilityProviderOptionsHTMLByType(type, selected) {
+            let html = '<option value="">— Vyberte poskytovatele —</option>';
+            const groups = LIABILITY_PROVIDERS.filter(g => {
+                if (g.group === '—') return true; // Jiný / neuvedeno vždy
+                if (!type || type === 'Jiný') return true;
+                if (type === 'Hypotéka') return g.group === 'Banky';
+                if (type === 'Leasing') return g.group === 'Leasingové společnosti';
+                if (type === 'Spotřebitelský úvěr') return g.group === 'Banky' || g.group === 'Nebankovní poskytovatelé';
+                if (type === 'Kreditní karta' || type === 'Kontokorent') return g.group === 'Banky';
+                return true;
+            });
+            groups.forEach(g => {
+                const label = (g.group || '').replace(/"/g, '&quot;');
+                html += '<optgroup label="' + label + '">';
+                (g.names || []).forEach(n => {
+                    const escaped = (n || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+                    const sel = (selected && n === selected) ? ' selected' : '';
+                    html += '<option value="' + escaped + '"' + sel + '>' + (n || '') + '</option>';
+                });
+                html += '</optgroup>';
+            });
+            return html;
+        }
+
         // START: APP_LOGIC
         class AppState {
             constructor() {
                 this.STORAGE_KEY = 'financial_plan_state';
                 this.currentStep = 1;
-                this.totalSteps = 6;
+                this.totalSteps = 7;
                 
                 // Init data with new structure
                 this.data = {
-                    client: { name: '', birthDate: '', age: '', email: '', phone: '', hasPartner: false },
+                    client: { name: '', birthDate: '', age: '', email: '', phone: '', occupation: '', sports: '', hasPartner: false },
                     partner: { name: '', birthDate: '' },
                     children: [], 
                     cashflow: { 
@@ -1619,18 +1808,20 @@
                     liabilities: { 
                         mortgage: 0, 
                         mortgageDetails: {rate:0, fix:0, pay:0},
+                        mortgageProvider: '',
                         // Celková výše všech úvěrů (součet z loansList)
                         loans: 0, 
-                        // Agregované údaje (ponecháno kvůli zpětné kompatibilitě)
                         loansDetails: {rate:0, pay:0},
-                        // Detailní seznam jednotlivých úvěrů
-                        loansList: [], // {id, type, desc, balance, rate, fix, pay}
+                        loansList: [], // {id, type, provider, desc, balance, rate, fix, pay}
                         other: 0,
-                        otherDesc: ''
+                        otherDesc: '',
+                        otherProvider: ''
                     },
                     
                     goals: [], 
-                    // 8) Strategy Data Model - Updated for Step 5
+                    // Úvěry / hypotéky k vyřízení (nový krok 4)
+                    newCreditWish: { product: 'mortgage', subType: 'standard', purpose: '', selectedBankId: 'unicredit', amount: 0, ownResources: 0, ltvPercent: 90, akoPercent: 0, extraAmount: 0, termYears: 25, fixYears: 5, estimatedRate: 0, estimatedMonthly: 0 },
+                    // Strategy Data Model - Updated for Step 5
                     strategy: { profile: 'balanced', conservativeMode: false },
                     investments: [] 
                 };
@@ -1713,10 +1904,13 @@
 
                             if(Array.isArray(parsed.data.goals)) {
                                 this.data.goals = parsed.data.goals.map(g => {
-                                    // FORCE RECALC FOR RENTA TO FIX 6% LOGIC
+                                    const RENTA_INFLATION = 0.03; // 3 % p.a. (FV = P × (1+i)^n, i=0,03, n=počet let)
+                                    const RENTA_WITHDRAWAL_RATE = 0.06;
                                     let fvTarget = g.amount;
                                     if (g.type === 'renta') {
-                                        fvTarget = (g.amount * 12) / 0.06;
+                                        const years = g.years || g.horizon || 1;
+                                        const futureRent = g.amount * Math.pow(1 + RENTA_INFLATION, years);
+                                        fvTarget = (futureRent * 12) / RENTA_WITHDRAWAL_RATE;
                                     } else {
                                         if (g.computed && g.computed.fvTarget) fvTarget = g.computed.fvTarget;
                                     }
@@ -1745,6 +1939,9 @@
                             if(parsed.data.strategy) {
                                 this.data.strategy.profile = parsed.data.strategy.profile || 'balanced';
                                 this.data.strategy.conservativeMode = parsed.data.strategy.conservativeMode || false;
+                            }
+                            if(parsed.data.newCreditWish) {
+                                this.data.newCreditWish = { ...this.data.newCreditWish, ...parsed.data.newCreditWish };
                             }
                             // Investments Merge
                             if(Array.isArray(parsed.data.investments)) {
@@ -1879,14 +2076,15 @@
             }
 
             // Správa seznamu úvěrů (spotřebitelské úvěry, kreditky, kontokorenty…)
-            addLoanItem(type = 'Spotřebitelský úvěr', desc = '', balance = 0, rate = 0, fix = 0, pay = 0) {
+            addLoanItem(type = 'Spotřebitelský úvěr', provider = '', desc = '', balance = 0, rate = 0, fix = 0, pay = 0) {
                 if(!Array.isArray(this.data.liabilities.loansList)) {
                     this.data.liabilities.loansList = [];
                 }
                 this.data.liabilities.loansList.push({
                     id: Date.now() + Math.random(),
                     type,
-                    desc,
+                    provider: provider || '',
+                    desc: desc || '',
                     balance: parseFloat(balance) || 0,
                     rate: parseFloat(rate) || 0,
                     fix: parseFloat(fix) || 0,
@@ -2009,7 +2207,11 @@
 
                 if (rawGoal.type === 'renta') {
                     targetMonthlyIncome = rawGoal.amount;
-                    fvTarget = (targetMonthlyIncome * 12) / 0.06;
+                    const RENTA_INFLATION = 0.03; // i = 3 % p.a., n = počet let, FV = P × (1+i)^n
+                    const RENTA_WITHDRAWAL_RATE = 0.06;
+                    const years = rawGoal.horizon || 1;
+                    const futureRent = targetMonthlyIncome * Math.pow(1 + RENTA_INFLATION, years);
+                    fvTarget = (futureRent * 12) / RENTA_WITHDRAWAL_RATE;
                 } else {
                     targetAmount = rawGoal.amount;
                     fvTarget = targetAmount;
@@ -2206,8 +2408,8 @@
                             <div style="display: inline-block; text-align: left; background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 300px;">
                                 <p style="margin-bottom: 10px; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: bold;">Klient</p>
                                 <h2 style="font-size: 24px; color: #0f172a; margin: 0 0 20px 0;">${clientName}</h2>
-                                
-                                <p style="margin-bottom: 10px; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: bold;">Datum vyhotovení</p>
+                                ${this.pdfClientExtra(data.client)}
+                                <p style="margin-bottom: 10px; margin-top: 12px; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: bold;">Datum vyhotovení</p>
                                 <h3 style="font-size: 16px; color: #0f172a; margin: 0;">${today}</h3>
                             </div>
                         </div>
@@ -2294,6 +2496,7 @@
                                     </table>
                                 </div>
                             </div>
+                            ${this.renderPasivaDetail(liabilities)}
                         </div>
 
                         <div class="pdf-section" style="margin-top: 10mm;">
@@ -2376,6 +2579,7 @@
                                     ${this.renderGoalsRows(data.goals)}
                                 </tbody>
                             </table>
+                            ${this.renderRentaFormula(data.goals)}
                         </div>
 
                         <div class="pdf-section">
@@ -2435,6 +2639,69 @@
                     
                     ${this.renderInsurancePage(data)}
                 `;
+            }
+
+            pdfClientExtra(client) {
+                if (!client) return '';
+                const occ = client.occupation ? 'Povolání: ' + client.occupation : '';
+                const sport = client.sports ? 'Sporty: ' + client.sports : '';
+                if (!occ && !sport) return '';
+                return '<p style="margin-bottom: 4px; color: #64748b; font-size: 11px;">' + (occ ? occ + (sport ? '<br/>' : '') : '') + (sport ? sport : '') + '</p>';
+            }
+
+            renderPasivaDetail(liabilities) {
+                if (!liabilities) return '';
+                const md = liabilities.mortgageDetails || {};
+                const list = liabilities.loansList || [];
+                const hasMortgage = (liabilities.mortgage || 0) > 0;
+                const hasMortgageDetail = hasMortgage && (md.rate || md.fix || md.pay);
+                const otherDesc = liabilities.otherDesc || '';
+                const hasOther = (liabilities.other || 0) > 0;
+                if (!hasMortgageDetail && list.length === 0 && !hasOther && !otherDesc) return '';
+                let html = '<div style="margin-top: 6mm; font-size: 9pt; color: #475569;">';
+                if (hasMortgage && hasMortgageDetail) {
+                    html += '<div style="margin-bottom: 3mm;"><strong>Hypotéka – detail:</strong> ';
+                    html += 'Úrok ' + (Number(md.rate) || 0) + ' %, Fixace ' + (Number(md.fix) || 0) + ' let, Splátka ' + (Number(md.pay) || 0).toLocaleString('cs-CZ') + ' Kč/měs.</div>';
+                }
+                if (list.length > 0) {
+                    html += '<div style="margin-bottom: 2mm;"><strong>Úvěry – detail:</strong></div>';
+                    html += '<table class="table" style="width: 100%; font-size: 9pt;"><thead><tr><th>Typ / Popis</th><th style="text-align:right">Zůstatek</th><th style="text-align:center">Úrok %</th><th style="text-align:center">Splatnost</th><th style="text-align:right">Splátka</th></tr></thead><tbody>';
+                    list.forEach(l => {
+                        const type = l.type || 'Úvěr';
+                        const desc = l.desc ? ' – ' + (l.desc || '').replace(/</g, '&lt;') : '';
+                        const name = type + desc;
+                        html += '<tr><td>' + name + '</td><td style="text-align:right">' + (Number(l.balance) || 0).toLocaleString('cs-CZ') + ' Kč</td><td style="text-align:center">' + (Number(l.rate) || 0) + '</td><td style="text-align:center">' + (Number(l.fix) || 0) + ' let</td><td style="text-align:right">' + (Number(l.pay) || 0).toLocaleString('cs-CZ') + ' Kč</td></tr>';
+                    });
+                    html += '</tbody></table>';
+                }
+                if (hasOther && otherDesc) {
+                    html += '<div style="margin-top: 3mm;"><strong>Ostatní závazky:</strong> ' + otherDesc.replace(/</g, '&lt;') + '</div>';
+                }
+                html += '</div>';
+                return html;
+            }
+
+            renderRentaFormula(goals) {
+                const rentaGoals = (goals || []).filter(g => g.type === 'renta' && (g.amount || g.computed?.fvTarget));
+                if (rentaGoals.length === 0) return '';
+                const i = 0.03;
+                let html = '<div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 10pt; color: #334155;">';
+                html += '<div style="font-weight: 700; margin-bottom: 6px; color: #0f172a;">Výpočet cíle „Finanční nezávislost (Renta)“</div>';
+                html += '<p style="margin: 0 0 6px 0;">Budoucí hodnota měsíční renty s ohledem na inflaci (3 % p.a.):</p>';
+                html += '<p style="margin: 0 0 4px 0; font-family: monospace; font-size: 11pt;"><strong>FV = P × (1 + i)<sup>n</sup></strong></p>';
+                html += '<p style="margin: 0 0 8px 0; font-size: 9pt;">kde <strong>P</strong> = dnešní požadovaná měsíční renta (Kč), <strong>i</strong> = 0,03 (3 % inflace), <strong>n</strong> = počet let do cíle.</p>';
+                html += '<p style="margin: 0 0 6px 0;">Potřebný kapitál k zajištění budoucí renty (předpoklad 6% výnosu):</p>';
+                html += '<p style="margin: 0 0 8px 0; font-family: monospace; font-size: 10pt;"><strong>Potřebný kapitál = (budoucí renta × 12) / 0,06</strong></p>';
+                rentaGoals.forEach((g, idx) => {
+                    const P = Number(g.amount) || 0;
+                    const n = Number(g.years) || Number(g.horizon) || 0;
+                    const FV = P * Math.pow(1 + i, n);
+                    const capital = (FV * 12) / 0.06;
+                    html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0;">';
+                    html += '<strong>Příklad ' + (rentaGoals.length > 1 ? (idx + 1) + ': ' : '') + '</strong>P = ' + Math.round(P).toLocaleString('cs-CZ') + ' Kč/měs, n = ' + n + ' let → FV = ' + Math.round(FV).toLocaleString('cs-CZ') + ' Kč/měs → potřebný kapitál <strong>' + Math.round(capital).toLocaleString('cs-CZ') + ' Kč</strong>.</div>';
+                });
+                html += '</div>';
+                return html;
             }
 
             renderGoalCoverage(data) {
@@ -3509,7 +3776,7 @@
             // Define renderStepper first to avoid hoisting issues
             renderStepper() {
                 this.stepsContainer.innerHTML = '';
-                const stepTitles = ["Klient", "Cashflow", "Majetek", "Cíle", "Strategie", "Shrnutí"];
+                const stepTitles = ["Klient", "Cashflow", "Majetek", "Úvěry", "Cíle", "Strategie", "Shrnutí"];
                 for (let i = 1; i <= this.app.totalSteps; i++) {
                     const stepDiv = document.createElement('div');
                     stepDiv.className = `stepper-item flex-1 flex flex-col items-center`;
@@ -3537,6 +3804,13 @@
             }
 
             initListeners() {
+                // Mobilní menu (header z diagnostika)
+                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+                const mobileMenu = document.getElementById('mobile-menu');
+                if(mobileMenuBtn && mobileMenu) {
+                    mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+                }
+
                 if(this.btnNext) this.btnNext.addEventListener('click', () => this.handleNext());
                 if(this.btnPrev) this.btnPrev.addEventListener('click', () => this.handlePrev());
 
@@ -3550,6 +3824,8 @@
                 this.bindInput('client-name', 'client', 'name');
                 this.bindInput('client-email', 'client', 'email');
                 this.bindInput('client-phone', 'client', 'phone');
+                this.bindInput('client-occupation', 'client', 'occupation');
+                this.bindInput('client-sports', 'client', 'sports');
                 
                 // Client DOB & Age
                 const dobInput = document.getElementById('client-dob');
@@ -3641,7 +3917,7 @@
                 const btnAddLoan = document.getElementById('btn-add-loan');
                 if(btnAddLoan) {
                     btnAddLoan.addEventListener('click', () => {
-                        this.app.addLoanItem('Spotřebitelský úvěr', '', 0, 0, 0, 0);
+                        this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
                         this.renderLoansList();
                         this.recalcSums();
                     });
@@ -3662,6 +3938,18 @@
                 
                 const liabOtherDesc = document.getElementById('liab-other-desc');
                 if(liabOtherDesc) liabOtherDesc.addEventListener('input', (e) => this.app.updateField('liabilities', 'otherDesc', e.target.value));
+                const liabMortProvider = document.getElementById('liab-mortgage-provider');
+                if(liabMortProvider) {
+                    liabMortProvider.innerHTML = getLiabilityProviderOptionsHTMLByType('Hypotéka', this.app.data.liabilities.mortgageProvider || '');
+                    liabMortProvider.value = this.app.data.liabilities.mortgageProvider || '';
+                    liabMortProvider.addEventListener('change', (e) => { this.app.updateField('liabilities', 'mortgageProvider', e.target.value); });
+                }
+                const liabOtherProvider = document.getElementById('liab-other-provider');
+                if(liabOtherProvider) {
+                    liabOtherProvider.innerHTML = getLiabilityProviderOptionsHTML(this.app.data.liabilities.otherProvider || '');
+                    liabOtherProvider.value = this.app.data.liabilities.otherProvider || '';
+                    liabOtherProvider.addEventListener('change', (e) => { this.app.updateField('liabilities', 'otherProvider', e.target.value); });
+                }
 
 
                 // Rezerva Listeners
@@ -3729,7 +4017,169 @@
                     });
                 });
 
-                // Krok 4: Goals Listeners
+                // Krok 4: Úvěry / hypotéky k vyřízení
+                const CREDIT_WISH_SUBTYPES = {
+                    mortgage: [{ id: 'standard', label: 'Klasická' }, { id: 'investment', label: 'Investiční' }, { id: 'american', label: 'Americká' }],
+                    loan: [{ id: 'consumer', label: 'Spotřebitelský' }, { id: 'auto', label: 'Auto / Leasing' }, { id: 'consolidation', label: 'Konsolidace' }]
+                };
+                // 3 banky – orientační úrokové sazby (hypotéka / úvěr) – uživatel vybírá
+                const CREDIT_WISH_BANKS = [
+                    { id: 'unicredit', name: 'UniCredit Bank', rateHypo: 4.19, rateLoan: 6.2 },
+                    { id: 'rb', name: 'Raiffeisenbank', rateHypo: 4.29, rateLoan: 6.5 },
+                    { id: 'csob', name: 'ČSOB / Komerční banka', rateHypo: 4.39, rateLoan: 6.9 }
+                ];
+                const updateCreditWishUI = () => {
+                    const w = this.app.data.newCreditWish || {};
+                    const product = w.product || 'mortgage';
+                    const subType = w.subType || (product === 'mortgage' ? 'standard' : 'consumer');
+                    const subTypes = CREDIT_WISH_SUBTYPES[product] || [];
+                    const container = document.getElementById('credit-wish-subtype-btns');
+                    if(container) {
+                        container.innerHTML = subTypes.map(s => `
+                            <button type="button" class="credit-wish-subtype px-3 py-2 rounded-lg text-sm font-bold border transition-all ${s.id === subType ? 'bg-amber-400 text-slate-900 border-amber-400' : 'bg-slate-50 text-slate-600 border-slate-200'}" data-subtype="${s.id}">${s.label}</button>
+                        `).join('');
+                        container.querySelectorAll('.credit-wish-subtype').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                this.app.data.newCreditWish.subType = btn.dataset.subtype;
+                                if(btn.dataset.subtype === 'investment' || btn.dataset.subtype === 'american') {
+                                    if(product === 'mortgage' && (w.ltvPercent || 90) > 70) this.app.data.newCreditWish.ltvPercent = 70;
+                                }
+                                this.app.saveState();
+                                updateCreditWishUI();
+                                this.calculateCreditWish();
+                            });
+                        });
+                    }
+                    const ownBlock = document.getElementById('credit-wish-own-block');
+                    const extraBlock = document.getElementById('credit-wish-extra-block');
+                    const fixBlock = document.getElementById('credit-wish-fix-block');
+                    const amountLabel = document.getElementById('credit-wish-amount-label');
+                    const ownLabel = document.getElementById('credit-wish-own-label');
+                    const ltvContainer = document.getElementById('credit-wish-ltv-btns');
+                    if(ownBlock) ownBlock.classList.toggle('hidden', product === 'loan' && (subType === 'consumer' || subType === 'consolidation'));
+                    if(extraBlock) extraBlock.classList.toggle('hidden', subType !== 'consolidation');
+                    if(fixBlock) fixBlock.style.display = product === 'mortgage' ? '' : 'none';
+                    if(amountLabel) amountLabel.innerText = subType === 'consolidation' ? 'Stávající závazky (Kč)' : (product === 'loan' && subType === 'auto' ? 'Cena vozu (Kč)' : 'Kolik si chcete půjčit (Kč)');
+                    if(ownLabel) ownLabel.innerText = (product === 'loan' && subType === 'auto') ? 'Akontace' : 'Vlastní zdroje – LTV';
+                    if(ltvContainer) {
+                        const amount = parseFloat(document.getElementById('credit-wish-amount')?.value) || 0;
+                        if(product === 'mortgage') {
+                            const maxLtv = (subType === 'investment' || subType === 'american') ? 70 : 90;
+                            const values = [90, 80, 70, 60, 50].filter(v => v <= maxLtv);
+                            ltvContainer.innerHTML = values.map(v => {
+                                const active = (w.ltvPercent || 90) === v;
+                                return `<button type="button" class="credit-wish-ltv px-3 py-2 rounded-lg text-sm font-bold border transition-all ${active ? 'bg-amber-400 text-slate-900 border-amber-400' : 'bg-slate-50 text-slate-600 border-slate-200'}" data-value="${v}">${v} %</button>`;
+                            }).join('');
+                            ltvContainer.querySelectorAll('.credit-wish-ltv').forEach(btn => {
+                                btn.addEventListener('click', () => {
+                                    this.app.data.newCreditWish.ltvPercent = parseInt(btn.dataset.value, 10);
+                                    this.app.saveState();
+                                    updateCreditWishUI();
+                                    this.calculateCreditWish();
+                                });
+                            });
+                        } else if(product === 'loan' && subType === 'auto') {
+                            const values = [0, 10, 20, 30, 40, 50];
+                            ltvContainer.innerHTML = values.map(v => {
+                                const active = (w.akoPercent || 0) === v;
+                                return `<button type="button" class="credit-wish-ako px-3 py-2 rounded-lg text-sm font-bold border transition-all ${active ? 'bg-amber-400 text-slate-900 border-amber-400' : 'bg-slate-50 text-slate-600 border-slate-200'}" data-value="${v}">${v} %</button>`;
+                            }).join('');
+                            ltvContainer.querySelectorAll('.credit-wish-ako').forEach(btn => {
+                                btn.addEventListener('click', () => {
+                                    this.app.data.newCreditWish.akoPercent = parseInt(btn.dataset.value, 10);
+                                    this.app.saveState();
+                                    updateCreditWishUI();
+                                    this.calculateCreditWish();
+                                });
+                            });
+                        }
+                    }
+                    const bankSelect = document.getElementById('credit-wish-bank');
+                    if(bankSelect) {
+                        const product = w.product || 'mortgage';
+                        bankSelect.innerHTML = CREDIT_WISH_BANKS.map(b => {
+                            const rate = product === 'mortgage' ? b.rateHypo : b.rateLoan;
+                            const rateStr = rate.toFixed(2).replace('.', ',');
+                            return `<option value="${b.id}" ${(w.selectedBankId || 'unicredit') === b.id ? 'selected' : ''}>${b.name} (od ${rateStr} %)</option>`;
+                        }).join('');
+                    }
+                    this.calculateCreditWish();
+                };
+                const calculateCreditWish = () => {
+                    const w = this.app.data.newCreditWish || {};
+                    const amount = parseFloat(document.getElementById('credit-wish-amount')?.value) || 0;
+                    const extra = parseFloat(document.getElementById('credit-wish-extra')?.value) || 0;
+                    const term = parseInt(document.getElementById('credit-wish-term')?.value) || 25;
+                    const fix = parseInt(document.getElementById('credit-wish-fix')?.value) || 5;
+                    const bankId = document.getElementById('credit-wish-bank')?.value || 'unicredit';
+                    w.selectedBankId = bankId;
+                    const bank = CREDIT_WISH_BANKS.find(b => b.id === bankId) || CREDIT_WISH_BANKS[0];
+                    let own = 0;
+                    if(w.product === 'mortgage' && amount > 0) {
+                        const ltv = (w.ltvPercent || 90) / 100;
+                        own = Math.round((amount * (1 / ltv - 1)) / 1000) * 1000;
+                    } else if(w.product === 'loan' && w.subType === 'auto' && amount > 0) {
+                        own = Math.round((amount * (w.akoPercent || 0) / 100) / 1000) * 1000;
+                    }
+                    w.amount = amount; w.ownResources = own; w.extraAmount = extra; w.termYears = term; w.fixYears = fix;
+                    let borrowingAmount = amount;
+                    let ratePct = 5;
+                    if(w.product === 'mortgage') {
+                        ratePct = bank.rateHypo;
+                    } else {
+                        if(w.subType === 'auto') borrowingAmount = Math.max(0, amount - own);
+                        else if(w.subType === 'consolidation') borrowingAmount = amount + extra;
+                        ratePct = bank.rateLoan;
+                    }
+                    const rate = ratePct / 100;
+                    const r = rate / 12;
+                    const n = term * 12;
+                    const monthly = (borrowingAmount > 0 && n > 0) ? (r > 0 ? (borrowingAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : borrowingAmount / n) : 0;
+                    const total = monthly * n;
+                    w.estimatedRate = ratePct;
+                    w.estimatedMonthly = monthly;
+                    const fmt = (x) => Math.round(x).toLocaleString('cs-CZ');
+                    const monthlyEl = document.getElementById('credit-wish-monthly-display');
+                    const rateEl = document.getElementById('credit-wish-rate-display');
+                    const totalEl = document.getElementById('credit-wish-total-display');
+                    const ownSummary = document.getElementById('credit-wish-own-summary');
+                    if(monthlyEl) monthlyEl.textContent = borrowingAmount > 0 ? fmt(monthly) : '—';
+                    if(rateEl) rateEl.textContent = borrowingAmount > 0 ? ratePct.toFixed(2).replace('.', ',') + ' %' : '—';
+                    if(totalEl) totalEl.textContent = borrowingAmount > 0 ? fmt(total) + ' Kč' : '—';
+                    if(ownSummary) ownSummary.textContent = (w.product === 'mortgage' || (w.product === 'loan' && w.subType === 'auto')) ? 'Vlastní zdroje: ' + fmt(own) + ' Kč' : '';
+                    this.app.saveState();
+                };
+                this.calculateCreditWish = calculateCreditWish;
+                this.updateCreditWishUI = updateCreditWishUI;
+                document.querySelectorAll('.credit-wish-product').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const product = btn.dataset.product;
+                        this.app.data.newCreditWish.product = product;
+                        this.app.data.newCreditWish.subType = product === 'mortgage' ? 'standard' : 'consumer';
+                        this.app.saveState();
+                        document.querySelectorAll('.credit-wish-product').forEach(b => {
+                            b.classList.toggle('bg-amber-400', b.dataset.product === product);
+                            b.classList.toggle('text-slate-900', b.dataset.product === product);
+                            b.classList.toggle('border-amber-400', b.dataset.product === product);
+                            b.classList.toggle('bg-slate-50', b.dataset.product !== product);
+                            b.classList.toggle('text-slate-600', b.dataset.product !== product);
+                            b.classList.toggle('border-slate-200', b.dataset.product !== product);
+                        });
+                        updateCreditWishUI();
+                        calculateCreditWish();
+                    });
+                });
+                ['credit-wish-amount','credit-wish-extra','credit-wish-term','credit-wish-fix'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.addEventListener('input', () => { updateCreditWishUI(); });
+                    if(el) el.addEventListener('change', () => { updateCreditWishUI(); });
+                });
+                const creditWishBank = document.getElementById('credit-wish-bank');
+                if(creditWishBank) creditWishBank.addEventListener('change', () => { this.app.data.newCreditWish.selectedBankId = creditWishBank.value; this.app.saveState(); calculateCreditWish(); });
+                const creditWishPurpose = document.getElementById('credit-wish-purpose');
+                if(creditWishPurpose) creditWishPurpose.addEventListener('change', (e) => { this.app.data.newCreditWish.purpose = e.target.value; this.app.saveState(); });
+
+                // Krok 5: Goals Listeners
                 const btnAddGoal = document.getElementById('btn-add-goal');
                 if(btnAddGoal) {
                     btnAddGoal.addEventListener('click', () => {
@@ -4010,11 +4460,12 @@
 
                 list.forEach(item => {
                     const fixVal = item.fix != null ? item.fix : 0;
+                    const providerVal = (item.provider || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
                     const div = document.createElement('div');
                     div.className = "p-4 bg-slate-50 rounded-xl border border-slate-100";
                     div.innerHTML = `
                         <div class="flex justify-between items-center mb-2">
-                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-1 min-w-0 flex-wrap">
                                 <select class="form-input text-sm px-2 py-1.5 font-bold text-slate-800 flex-shrink-0" style="max-width: 12rem;">
                                     <option value="Spotřebitelský úvěr" ${item.type==='Spotřebitelský úvěr'?'selected':''}>Spotřebitelský úvěr</option>
                                     <option value="Kreditní karta" ${item.type==='Kreditní karta'?'selected':''}>Kreditní karta</option>
@@ -4022,7 +4473,8 @@
                                     <option value="Leasing" ${item.type==='Leasing'?'selected':''}>Leasing</option>
                                     <option value="Jiný" ${item.type==='Jiný'?'selected':''}>Jiný</option>
                                 </select>
-                                <input type="text" class="form-input text-xs px-2 py-1 flex-1 min-w-0" placeholder="Popis (např. banka)" value="${(item.desc || '').replace(/"/g, '&quot;')}">
+                                <select class="form-input text-sm px-2 py-1.5 flex-shrink-0 loan-provider-select" style="max-width: 14rem;"></select>
+                                <input type="text" class="form-input text-xs px-2 py-1 flex-1 min-w-0" placeholder="Popis (volitelně)" value="${(item.desc || '').replace(/"/g, '&quot;')}">
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 <input type="number" class="form-input w-40 text-right font-bold text-slate-700" placeholder="Zůstatek (Kč)" value="${item.balance != null && item.balance !== '' ? item.balance : ''}">
@@ -4032,21 +4484,43 @@
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
-                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Úrok %" value="${item.rate != null && item.rate !== '' ? item.rate : ''}">
-                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Fixace (roky)" value="${fixVal != null && fixVal !== '' ? fixVal : ''}">
-                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Splátka (Kč)" value="${item.pay != null && item.pay !== '' ? item.pay : ''}">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-0.5">Úrok %</label>
+                                <input type="number" class="form-input text-xs px-2 py-1 w-full" placeholder="0" value="${item.rate != null && item.rate !== '' ? item.rate : ''}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-0.5">Splatnost (roky)</label>
+                                <input type="number" class="form-input text-xs px-2 py-1 w-full" placeholder="0" value="${fixVal != null && fixVal !== '' ? fixVal : ''}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-0.5">Splátka (Kč)</label>
+                                <input type="number" class="form-input text-xs px-2 py-1 w-full" placeholder="0" value="${item.pay != null && item.pay !== '' ? item.pay : ''}">
+                            </div>
                         </div>
                     `;
 
-                    const inputs = div.querySelectorAll('select, input[type="number"], input[type="text"]');
-                    const sel = div.querySelector('select');
+                    const sel = div.querySelector('select:not(.loan-provider-select)');
+                    const providerSel = div.querySelector('.loan-provider-select');
+                    const fillProviderByType = () => {
+                        providerSel.innerHTML = getLiabilityProviderOptionsHTMLByType(item.type, item.provider || '');
+                        const opt = Array.from(providerSel.options).find(o => o.value === (item.provider || ''));
+                        providerSel.value = opt ? item.provider : '';
+                    };
+                    fillProviderByType();
+
                     const descInp = div.querySelector('input[type="text"]');
                     const balanceInp = div.querySelectorAll('input[type="number"]')[0];
                     const rateInp = div.querySelectorAll('input[type="number"]')[1];
                     const fixInp = div.querySelectorAll('input[type="number"]')[2];
                     const payInp = div.querySelectorAll('input[type="number"]')[3];
 
-                    sel.addEventListener('change', (e) => { item.type = e.target.value; this.app.saveState(); });
+                    sel.addEventListener('change', (e) => {
+                        item.type = e.target.value;
+                        fillProviderByType();
+                        item.provider = providerSel.value || '';
+                        this.app.saveState();
+                    });
+                    providerSel.addEventListener('change', (e) => { item.provider = e.target.value; this.app.saveState(); });
                     descInp.addEventListener('input', (e) => { item.desc = e.target.value; this.app.saveState(); });
                     balanceInp.addEventListener('input', (e) => { 
                         item.balance = parseFloat(e.target.value) || 0; 
@@ -4118,7 +4592,7 @@
                 div.className = "flex gap-4 items-center animate-fadeIn";
                 div.innerHTML = `
                     <input type="text" placeholder="Jméno dítěte" class="form-input flex-1 px-4 py-2" value="${child.name}">
-                    <input type="text" placeholder="DD.MM.RRRR" class="form-input w-40 px-4 py-2" value="${child.birthDate}">
+                    <input type="text" placeholder="Datum narození" class="form-input w-40 px-4 py-2" value="${child.birthDate}">
                     <button class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>
                 `;
                 
@@ -4626,6 +5100,8 @@
                     restore('client-dob', c.birthDate);
                     restore('client-email', c.email);
                     restore('client-phone', c.phone);
+                    restore('client-occupation', c.occupation);
+                    restore('client-sports', c.sports);
                     
                     // Věk - textContent pro div
                     const ageEl = document.getElementById('client-age');
@@ -4661,6 +5137,30 @@
                     this.recalcSums();
                 }
 
+                if(current === 4) {
+                    const w = this.app.data.newCreditWish || {};
+                    const restore = (id, val) => { const el = document.getElementById(id); if(el) el.value = val !== undefined && val !== '' ? val : (el.getAttribute('placeholder') || ''); };
+                    restore('credit-wish-amount', w.amount);
+                    restore('credit-wish-extra', w.extraAmount);
+                    restore('credit-wish-term', w.termYears || 25);
+                    const fixEl = document.getElementById('credit-wish-fix');
+                    if(fixEl) fixEl.value = w.fixYears || 5;
+                    const purposeEl = document.getElementById('credit-wish-purpose');
+                    if(purposeEl) purposeEl.value = w.purpose || '';
+                    const bankEl = document.getElementById('credit-wish-bank');
+                    if(bankEl) bankEl.value = w.selectedBankId || 'unicredit';
+                    document.querySelectorAll('.credit-wish-product').forEach(b => {
+                        const active = b.dataset.product === (w.product || 'mortgage');
+                        b.classList.toggle('bg-amber-400', active);
+                        b.classList.toggle('text-slate-900', active);
+                        b.classList.toggle('border-amber-400', active);
+                        b.classList.toggle('bg-slate-50', !active);
+                        b.classList.toggle('text-slate-600', !active);
+                        b.classList.toggle('border-slate-200', !active);
+                    });
+                    if(this.updateCreditWishUI) this.updateCreditWishUI();
+                }
+
                 if(current === 3) {
                     // ... (Restore Step 3 logic)
                     const a = this.app.data.assets || {};
@@ -4675,6 +5175,10 @@
                     restore('liab-loans-rate', l.loansDetails?.rate);
                     restore('liab-loans-pay', l.loansDetails?.pay);
                     restore('liab-other-desc', l.otherDesc);
+                    const mortProvEl = document.getElementById('liab-mortgage-provider');
+                    if(mortProvEl) { mortProvEl.innerHTML = getLiabilityProviderOptionsHTMLByType('Hypotéka', l.mortgageProvider || ''); mortProvEl.value = l.mortgageProvider || ''; }
+                    const otherProvEl = document.getElementById('liab-other-provider');
+                    if(otherProvEl) { otherProvEl.innerHTML = getLiabilityProviderOptionsHTML(l.otherProvider || ''); otherProvEl.value = l.otherProvider || ''; }
                     
                     this.renderAssetInvestmentList();
                     this.renderAssetPensionList();
