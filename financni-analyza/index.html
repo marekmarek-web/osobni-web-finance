@@ -522,7 +522,8 @@
                 <!-- Logo -->
                 <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
                     <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden relative">
-                        <img id="logo-img" src="FA - Lead - s.r.o/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.outerHTML='<span class=\'text-lg font-bold text-brand-dark\'>M</span>'">
+                        <img id="logo-img" src="images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('flex');">
+                        <span id="logo-fallback" class="hidden absolute inset-0 flex items-center justify-center text-lg font-bold text-brand-dark">M</span>
                     </div>
                     <div class="flex flex-col leading-tight">
                         <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
@@ -1577,8 +1578,9 @@
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
-                            <span class="text-lg font-bold">M</span>
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded overflow-hidden relative shrink-0">
+                            <img src="images/logo_M_white.png" alt="M" class="w-5 h-5 object-contain invert" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                            <span class="hidden text-lg font-bold absolute inset-0 flex items-center justify-center">M</span>
                         </div>
                         <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
