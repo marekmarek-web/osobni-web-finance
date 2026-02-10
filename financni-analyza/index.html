@@ -1530,7 +1530,7 @@
                         // Agregované údaje (ponecháno kvůli zpětné kompatibilitě)
                         loansDetails: {rate:0, pay:0},
                         // Detailní seznam jednotlivých úvěrů
-                        loansList: [], // {id, type, desc, balance, rate, pay}
+                        loansList: [], // {id, type, desc, balance, rate, fix, pay}
                         other: 0,
                         otherDesc: ''
                     },
@@ -1785,7 +1785,7 @@
             }
 
             // Správa seznamu úvěrů (spotřebitelské úvěry, kreditky, kontokorenty…)
-            addLoanItem(type = 'Spotřebitelský úvěr', desc = '', balance = 0, rate = 0, pay = 0) {
+            addLoanItem(type = 'Spotřebitelský úvěr', desc = '', balance = 0, rate = 0, fix = 0, pay = 0) {
                 if(!Array.isArray(this.data.liabilities.loansList)) {
                     this.data.liabilities.loansList = [];
                 }
@@ -1795,6 +1795,7 @@
                     desc,
                     balance: parseFloat(balance) || 0,
                     rate: parseFloat(rate) || 0,
+                    fix: parseFloat(fix) || 0,
                     pay: parseFloat(pay) || 0
                 });
                 this.recalcLoansTotal();
@@ -3546,7 +3547,7 @@
                 const btnAddLoan = document.getElementById('btn-add-loan');
                 if(btnAddLoan) {
                     btnAddLoan.addEventListener('click', () => {
-                        this.app.addLoanItem('Spotřebitelský úvěr', '', 0, 0, 0);
+                        this.app.addLoanItem('Spotřebitelský úvěr', '', 0, 0, 0, 0);
                         this.renderLoansList();
                         this.recalcSums();
                     });
@@ -3914,51 +3915,54 @@
                 }
 
                 list.forEach(item => {
+                    const fixVal = item.fix != null ? item.fix : 0;
                     const div = document.createElement('div');
-                    div.className = "grid grid-cols-1 md:grid-cols-5 gap-2 items-center";
+                    div.className = "p-4 bg-slate-50 rounded-xl border border-slate-100";
                     div.innerHTML = `
-                        <select class="form-input text-xs px-2 py-1 md:col-span-1">
-                            <option value="Spotřebitelský úvěr" ${item.type==='Spotřebitelský úvěr'?'selected':''}>Spotřebitelský úvěr</option>
-                            <option value="Kreditní karta" ${item.type==='Kreditní karta'?'selected':''}>Kreditní karta</option>
-                            <option value="Kontokorent" ${item.type==='Kontokorent'?'selected':''}>Kontokorent</option>
-                            <option value="Leasing" ${item.type==='Leasing'?'selected':''}>Leasing</option>
-                            <option value="Jiný" ${item.type==='Jiný'?'selected':''}>Jiný</option>
-                        </select>
-                        <input type="text" class="form-input text-xs px-2 py-1 md:col-span-2" placeholder="Popis (např. banka, účel)" value="${item.desc || ''}">
-                        <div class="relative">
-                            <input type="number" class="form-input text-xs px-2 py-1 text-right" placeholder="Zůstatek (Kč)" value="${item.balance || 0}">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <select class="form-input text-sm px-2 py-1.5 font-bold text-slate-800 flex-shrink-0" style="max-width: 12rem;">
+                                    <option value="Spotřebitelský úvěr" ${item.type==='Spotřebitelský úvěr'?'selected':''}>Spotřebitelský úvěr</option>
+                                    <option value="Kreditní karta" ${item.type==='Kreditní karta'?'selected':''}>Kreditní karta</option>
+                                    <option value="Kontokorent" ${item.type==='Kontokorent'?'selected':''}>Kontokorent</option>
+                                    <option value="Leasing" ${item.type==='Leasing'?'selected':''}>Leasing</option>
+                                    <option value="Jiný" ${item.type==='Jiný'?'selected':''}>Jiný</option>
+                                </select>
+                                <input type="text" class="form-input text-xs px-2 py-1 flex-1 min-w-0" placeholder="Popis (např. banka)" value="${(item.desc || '').replace(/"/g, '&quot;')}">
+                            </div>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <input type="number" class="form-input w-40 text-right font-bold text-slate-700" placeholder="Zůstatek (Kč)" value="${item.balance != null && item.balance !== '' ? item.balance : ''}">
+                                <button type="button" class="text-red-400 hover:text-red-600 p-2" title="Smazat">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <input type="number" class="form-input text-xs px-2 py-1 text-right" placeholder="Úrok %" value="${item.rate || 0}">
-                        <div class="flex items-center gap-1">
-                            <input type="number" class="form-input text-xs px-2 py-1 text-right flex-1" placeholder="Splátka (Kč)" value="${item.pay || 0}">
-                            <button class="text-red-400 hover:text-red-600 px-2" title="Smazat">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Úrok %" value="${item.rate != null && item.rate !== '' ? item.rate : ''}">
+                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Fixace (roky)" value="${fixVal != null && fixVal !== '' ? fixVal : ''}">
+                            <input type="number" class="form-input text-xs px-2 py-1" placeholder="Splátka (Kč)" value="${item.pay != null && item.pay !== '' ? item.pay : ''}">
                         </div>
                     `;
 
-                    const inputs = div.querySelectorAll('select, input');
-                    // Typ úvěru
-                    inputs[0].addEventListener('change', (e) => { item.type = e.target.value; this.app.saveState(); });
-                    // Popis
-                    inputs[1].addEventListener('input', (e) => { item.desc = e.target.value; this.app.saveState(); });
-                    // Zůstatek
-                    inputs[2].addEventListener('input', (e) => { 
+                    const inputs = div.querySelectorAll('select, input[type="number"], input[type="text"]');
+                    const sel = div.querySelector('select');
+                    const descInp = div.querySelector('input[type="text"]');
+                    const balanceInp = div.querySelectorAll('input[type="number"]')[0];
+                    const rateInp = div.querySelectorAll('input[type="number"]')[1];
+                    const fixInp = div.querySelectorAll('input[type="number"]')[2];
+                    const payInp = div.querySelectorAll('input[type="number"]')[3];
+
+                    sel.addEventListener('change', (e) => { item.type = e.target.value; this.app.saveState(); });
+                    descInp.addEventListener('input', (e) => { item.desc = e.target.value; this.app.saveState(); });
+                    balanceInp.addEventListener('input', (e) => { 
                         item.balance = parseFloat(e.target.value) || 0; 
                         this.app.recalcLoansTotal(); 
                         this.recalcSums(); 
                         this.app.saveState(); 
                     });
-                    // Úrok
-                    inputs[3].addEventListener('input', (e) => { 
-                        item.rate = parseFloat(e.target.value) || 0; 
-                        this.app.saveState(); 
-                    });
-                    // Splátka
-                    inputs[4].addEventListener('input', (e) => { 
-                        item.pay = parseFloat(e.target.value) || 0; 
-                        this.app.saveState(); 
-                    });
+                    rateInp.addEventListener('input', (e) => { item.rate = parseFloat(e.target.value) || 0; this.app.saveState(); });
+                    fixInp.addEventListener('input', (e) => { item.fix = parseFloat(e.target.value) || 0; this.app.saveState(); });
+                    payInp.addEventListener('input', (e) => { item.pay = parseFloat(e.target.value) || 0; this.app.saveState(); });
 
                     div.querySelector('button').addEventListener('click', () => { 
                         this.app.removeLoanItem(item.id); 
