@@ -115,25 +115,40 @@
         .semafor-red { background: #ef4444; color: #ef4444; }
         .semafor-yellow { background: #f59e0b; color: #f59e0b; }
         .semafor-green { background: #10b981; color: #10b981; }
-        #report-root { position: fixed; left: -9999px; top: 0; width: 210mm; background: white; }
-        @media print { body * { visibility: hidden; } #report-root, #report-root * { visibility: visible; } #report-root { position: absolute; left: 0; top: 0; } }
+        #report-root { position: fixed; left: -9999px; top: 0; width: 210mm; background: white; user-select: none; caret-color: transparent; }
+        @media print { body * { visibility: hidden; } #report-root, #report-root * { visibility: visible; } #report-root { position: absolute; left: 0; top: 0; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
         @page { size: A4; margin: 10mm; }
-        .pdf { font-family: Inter, sans-serif; color: #0b1220; }
-        .pdf-page { width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; page-break-after: always; position: relative; background: white; }
+        .pdf { font-family: Inter, system-ui, sans-serif; color: #0b1220; background: #fff; }
+        .pdf-page { width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; page-break-after: always; position: relative; background: white; overflow: visible; }
         .pdf-page:last-child { page-break-after: auto; }
-        .pdf .h1 { font-size: 28pt; font-weight: 800; color: #0f172a; margin-bottom: 5mm; }
-        .pdf .h2 { font-size: 14pt; font-weight: 800; margin: 6mm 0 5mm; color: #0B3A7A; border-left: 4px solid #ffcc00; padding-left: 4mm; }
-        .pdf .kpi { display: flex; gap: 4mm; margin-bottom: 5mm; flex-wrap: wrap; }
-        .pdf .kpi .box { flex: 1; min-width: 40mm; background: #f8fafc; border: 1px solid #e6e9f2; border-radius: 3mm; padding: 4mm; text-align: center; }
-        .pdf .kpi .box .lbl { font-size: 7pt; color: #64748b; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2mm; }
-        .pdf .kpi .box .val { font-size: 14pt; font-weight: 800; }
-        .pdf .recommendation { background: #f0fdf4; border-left: 4px solid #10b981; padding: 3mm 4mm; font-size: 9pt; margin: 3mm 0; }
-        .pdf .footer { position: absolute; bottom: 10mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; font-size: 7pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 3mm; }
-        .pdf .pdf-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 3mm; border-bottom: 1px solid #e2e8f0; margin-bottom: 5mm; font-size: 8pt; }
-        .pdf .risk-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 4mm 0; }
-        .pdf .risk-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 2mm; padding: 3mm; text-align: center; }
-        .pdf .risk-item.covered { background: #f0fdf4; border-color: #bbf7d0; }
-        .pdf .risk-item.not-covered { background: #fef2f2; border-color: #fecaca; }
+        .pdf-section { margin-bottom: 6mm; page-break-inside: avoid; break-inside: avoid; }
+        .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+        .pdf-title-page { display: flex; flex-direction: column; justify-content: center; min-height: 260mm; text-align: center; }
+        .pdf .h1 { font-size: 22pt; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; margin-bottom: 5mm; }
+        .pdf .h2 { font-size: 14pt; font-weight: 800; margin-top: 5mm; margin-bottom: 3mm; color: #0B3A7A; border-left: 4px solid #ea8d00; padding-left: 4mm; line-height: 1; page-break-after: avoid; }
+        .pdf .h2:first-child { margin-top: 0; }
+        .pdf .kpi { display: flex; gap: 4mm; margin-bottom: 6mm; flex-wrap: wrap; }
+        .pdf .kpi .box { flex: 1; min-width: 45mm; background: #f8fafc; border: 1px solid #e6e9f2; border-radius: 4mm; padding: 5mm; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+        .pdf .kpi .box .lbl { font-size: 8pt; color: #52607a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; display: block; margin-bottom: 2mm; }
+        .pdf .kpi .box .val { font-size: 14pt; font-weight: 800; color: #0f172a; }
+        .pdf .interpretation { background: #f8fafc; padding: 4mm; border-radius: 3mm; margin-bottom: 5mm; border-left: 3px solid #64748b; font-size: 9pt; color: #475569; line-height: 1.5; }
+        .pdf .interpretation strong { color: #334155; }
+        .pdf .interpretation.success { border-left-color: #10b981; background: #f0fdf4; }
+        .pdf .interpretation.warning { border-left-color: #f59e0b; background: #fffbeb; }
+        .pdf .recommendation { background: #f0fdf4; border-left: 4px solid #10b981; padding: 4mm 5mm; font-size: 10pt; margin: 4mm 0; border-radius: 2mm; font-weight: 500; color: #166534; }
+        .pdf .footer { position: absolute; bottom: 10mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; font-size: 7pt; color: #7a869e; border-top: 1px solid #e2e8f0; padding-top: 2mm; }
+        .pdf .pdf-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 2mm; margin-bottom: 6mm; font-size: 9pt; border-bottom: 2px solid #ea8d00; }
+        .pdf .risk-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 4mm 0; }
+        .pdf .risk-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 3mm; padding: 4mm; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); min-height: 22mm; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .pdf .risk-item.covered { background: #f0fdf4; border-color: #86efac; box-shadow: 0 1px 3px rgba(16,185,129,0.15); }
+        .pdf .risk-item.not-covered { background: #fef2f2; border-color: #fecaca; box-shadow: 0 1px 3px rgba(239,68,68,0.1); }
+        .pdf .highlight-box { background: linear-gradient(135deg, #0a0f29 0%, #1e3a6e 100%); color: white; padding: 6mm; border-radius: 4mm; margin: 4mm 0; box-shadow: 0 4px 12px rgba(10,15,41,0.15); }
+        .pdf .highlight-box .title { font-weight: 700; font-size: 11pt; margin-bottom: 2mm; color: #ffcc00; }
+        .pdf .client-info-box { display: inline-block; text-align: left; background: #f8fafc; padding: 8mm 10mm; border-radius: 4mm; border: 1px solid #e2e8f0; min-width: 280px; margin-top: 8mm; }
+        .pdf .client-info-box .label { color: #64748b; font-size: 10pt; text-transform: uppercase; font-weight: 600; margin-bottom: 1mm; letter-spacing: 0.5px; }
+        .pdf .table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; page-break-inside: avoid; font-size: 9pt; }
+        .pdf .table th { text-align: left; color: #52607a; border-bottom: 2px solid #e6e9f2; padding: 2.5mm 3mm; font-weight: 700; font-size: 8pt; text-transform: uppercase; }
+        .pdf .table td { border-bottom: 1px solid #f1f3f8; padding: 2.5mm 3mm; color: #0f172a; vertical-align: middle; }
         .toast-container { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
         .toast { padding: 0.75rem 1.25rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); pointer-events: auto; animation: toastIn 0.3s ease-out; }
         .toast.success { background: #10b981; color: white; }
@@ -1187,8 +1202,8 @@
         (function() {
             function fmt(n) { return n ? Math.round(n).toLocaleString('cs-CZ') + ' Kč' : '—'; }
             function fmtShort(n) { if (!n) return '—'; if (n >= 1e6) return (n/1e6).toFixed(1) + ' mil.'; if (n >= 1e3) return Math.round(n/1e3) + ' tis.'; return n.toLocaleString('cs-CZ'); }
-            function hdr(t, today, cn) { return '<div class="pdf-header"><span style="font-weight:bold;color:#0f172a;">' + t + '</span><span style="color:#64748b;">Vypracováno: <strong>' + today + '</strong> | ' + (cn || 'Společnost') + '</span></div>'; }
-            function ftr(p) { return '<div class="footer"><span>Kde firma přichází o peníze – Marek Marek</span><span>Strana ' + p + '</span></div>'; }
+            function hdr(t, today, cn) { return '<div class="pdf-header"><span style="font-weight:bold;color:#0f172a;">' + t + '</span><span style="color:#64748b;">Vypracoval: <strong>Marek Marek</strong> dne: <strong>' + today + '</strong> pro: <strong>' + (cn || 'Společnost') + '</strong></span></div>'; }
+            function ftr(p) { return '<div class="footer"><span>Marek Marek - Privátní finanční plánování | www.marek-marek.cz | +420 778 511 166</span><span>Strana ' + p + '</span></div>'; }
             function buildReportHTML(data, calc) {
                 var d = data || {}, today = new Date().toLocaleDateString('cs-CZ'), companyName = (d.company && d.company.name) || 'Společnost';
                 var directorName = (d.director && d.director.name) || 'Jednatel', c = d.company || {}, b = d.benefits || {}, r = d.risks || {};
@@ -1196,13 +1211,13 @@
                 var employees = c.employees || 0, cat3Val = c.cat3 || '0', hasCat3 = cat3Val !== '0';
                 var benefitResult = (calc && calc.benefitSavings) || {}, riskResult = (calc && calc.companyRisks) || {};
                 var riskItems = [{key:'property',name:'Majetek',icon:'fa-building'},{key:'interruption',name:'Přerušení',icon:'fa-pause-circle'},{key:'liability',name:'Odpovědnost',icon:'fa-gavel'},{key:'director',name:'D&O',icon:'fa-user-tie'},{key:'fleet',name:'Flotila',icon:'fa-truck'},{key:'cyber',name:'Kyber',icon:'fa-shield-virus'}];
-                var riskMatrix = riskItems.map(function(item) {
+                var riskTableRows = riskItems.map(function(item) {
                     var covered = r[item.key] === true || r[item.key] === 'yes';
                     var humanLabel = item.name;
-                    if (item.key === 'property' && !covered) humanLabel = 'Majetek – když se něco stane, platíte z cashflow';
-                    if (item.key === 'interruption' && !covered) humanLabel = 'Přerušení – náklady běží dál';
-                    if (item.key === 'director' && !covered) humanLabel = 'D&O – rozhodnutí může jít za vámi';
-                    return '<div class="risk-item ' + (covered ? 'covered' : 'not-covered') + '"><div style="font-size:14pt;margin-bottom:2mm;"><i class="fas ' + item.icon + '" style="color:' + (covered ? '#10b981' : '#ef4444') + ';"></i></div><div style="font-size:8pt;font-weight:600;">' + humanLabel + '</div><div style="font-size:7pt;color:' + (covered ? '#10b981' : '#ef4444') + ';">' + (covered ? 'Kryto' : 'Nekryto') + '</div></div>';
+                    if (item.key === 'property' && !covered) humanLabel = 'Majetek / provozovna';
+                    if (item.key === 'interruption' && !covered) humanLabel = 'Přerušení provozu';
+                    if (item.key === 'director' && !covered) humanLabel = 'D&O (odpovědnost jednatele)';
+                    return '<tr><td>' + humanLabel + '</td><td style="text-align:right;font-weight:600;color:' + (covered ? '#10b981' : '#ef4444') + ';">' + (covered ? 'Kryto' : 'Nekryto') + '</td></tr>';
                 }).join('');
                 var humanFindings = [];
                 if (calc && calc.companyRisks && calc.companyRisks.gaps) {
@@ -1225,17 +1240,30 @@
                 var savingsText = benefitResult.yearlySavings > 0 ? 'Orientační potenciál úspor: ' + fmt(benefitResult.yearlySavings) + ' ročně.' : 'Vyplňte benefity.';
                 if (hasCat3) savingsText += ' Firma má 3. kategorii – prověřit Úrazové pojištění.';
                 var dps = (b.dps || 0), dip = (b.dip || 0), izp = (b.izp || 0), totAmount = dps + dip + izp;
+                var benefitsTableRows = '';
+                if (b.has === true || totAmount > 0) {
+                    benefitsTableRows = '<table class="table" style="margin-bottom:4mm;"><thead><tr><th>Benefit</th><th style="text-align:right;">Částka</th></tr></thead><tbody>' +
+                        '<tr><td>DPS (penzijní připojištění)</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + fmt(dps) + '</td></tr>' +
+                        '<tr><td>DIP (životní pojištění)</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + fmt(dip) + '</td></tr>' +
+                        '<tr><td>IŽP (úrazové pojištění)</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + fmt(izp) + '</td></tr>' +
+                        '</tbody></table><p style="font-size:8pt;color:#64748b;">Zaměstnanců: ' + (b.count || employees || '—') + (hasCat3 ? ', má 3. kategorii' : '') + '.</p>';
+                }
                 var benefitsDetail = '';
-                if (totAmount > 0) benefitsDetail = '<p style="font-size:9pt;margin:2mm 0;">DPS: ' + fmt(dps) + ', DIP: ' + fmt(dip) + ', IŽP: ' + fmt(izp) + '. Zaměstnanců: ' + (b.count || employees || '—') + '.</p>';
-                var assetsDetail = '';
-                assetsDetail += '<p style="font-size:9pt;">Provozovna/majetek: ' + (a.premises === 'yes' ? 'ano' : 'ne') + (a.propertyYearsRange ? ', smlouva ' + a.propertyYearsRange + ' let' : '') + '.</p>';
-                assetsDetail += '<p style="font-size:9pt;">Přerušení provozu: ' + (a.interruption === 'yes' ? 'ano' : 'ne') + (a.interruptionYearsRange ? ', smlouva ' + a.interruptionYearsRange + ' let' : '') + '.</p>';
-                assetsDetail += '<p style="font-size:9pt;">Flotila: ' + ((a.fleet || 0) > 0 ? a.fleetRange || 'ano' : 'ne') + (a.fleetPayRange ? ', platíte cca ' + a.fleetPayRange + ' tis./rok' : '') + (a.fleetYearsRange ? ', smlouva ' + a.fleetYearsRange : '') + '.</p>';
-                assetsDetail += '<p style="font-size:9pt;">Kyber: ' + (a.cyber === 'yes' ? 'ano' : 'ne') + '.</p>';
-                var dirDetail = 'Jednatel: ' + directorName + '. Příjem: ' + fmt(netInc) + '/měs. Rezerva: ' + fmt(reserve) + ' (' + months + ' měsíců). ';
-                dirDetail += 'Smrt: ' + fmt(deathVal) + (deathOk ? ' (OK)' : (' - doporučeno min. ' + fmt(recDeath) + '). '));
-                dirDetail += 'Invalidita: ' + fmt(invVal) + (invOk ? ' (OK)' : (' - doporučeno min. ' + fmt(recInv) + '). '));
-                dirDetail += 'PN: ' + (sickVal || 0) + ' Kč/den' + (sickOk ? ' (OK)' : (' - doporučeno min. ' + recSick + ' Kč/den')) + '.';
+                if (totAmount > 0) benefitsDetail = savingsText;
+                var fleetLabel = { '0': '', '20': 'do 20 tis./rok', '50': '20–50 tis./rok', '100': '50–100 tis./rok', '200': '100+ tis./rok' }[String(a.fleetPayRange || '')] || (a.fleetPayRange ? a.fleetPayRange + ' tis./rok' : '');
+                var assetsTableRows = '<tr><td>Provozovna / majetek' + (a.propertyYearsRange ? ' (smlouva ' + a.propertyYearsRange + ')' : '') + '</td><td style="text-align:right;">' + (a.premises === 'yes' ? 'Kryto' : 'Nekryto') + '</td></tr>' +
+                    '<tr><td>Přerušení provozu' + (a.interruptionYearsRange ? ' (smlouva ' + a.interruptionYearsRange + ')' : '') + '</td><td style="text-align:right;">' + (a.interruption === 'yes' ? 'Kryto' : 'Nekryto') + '</td></tr>' +
+                    '<tr><td>Flotila' + (fleetLabel ? ' – ' + fleetLabel : '') + '</td><td style="text-align:right;">' + ((a.fleet || 0) > 0 ? 'Ano' : 'Ne') + '</td></tr>' +
+                    '<tr><td>Kyber</td><td style="text-align:right;">' + (a.cyber === 'yes' ? 'Kryto' : 'Nekryto') + '</td></tr>';
+                var dirTableRows = '<tr><td><i class="fas fa-heart" style="color:#0B3A7A;margin-right:2mm;"></i>Smrt</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + fmt(deathVal) + '</td></tr>' +
+                    '<tr><td><i class="fas fa-wheelchair" style="color:#0B3A7A;margin-right:2mm;"></i>Invalidita</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + fmt(invVal) + '</td></tr>' +
+                    '<tr><td><i class="fas fa-bed" style="color:#0B3A7A;margin-right:2mm;"></i>Pracovní neschopnost</td><td style="text-align:right;font-weight:600;color:#0B3A7A;">' + (sickVal ? sickVal + ' Kč/den' : '—') + '</td></tr>';
+                var dirBlocks = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;font-size:8pt;margin-top:4mm;">' +
+                    '<div style="background:#f8fafc;padding:4mm;border-radius:2mm;border-left:3px solid #0B3A7A;"><div style="font-weight:700;color:#0B3A7A;margin-bottom:2mm;font-size:9pt;">SMRT</div><div style="color:#475569;line-height:1.5;">' + (deathOk ? 'Krytí v pořádku.' : 'Doporučeno min. ' + fmt(recDeath) + ' – závazky a rodina.') + '</div></div>' +
+                    '<div style="background:#f8fafc;padding:4mm;border-radius:2mm;border-left:3px solid #0B3A7A;"><div style="font-weight:700;color:#0B3A7A;margin-bottom:2mm;font-size:9pt;">INVALIDITA</div><div style="color:#475569;line-height:1.5;">' + (invOk ? 'Krytí v pořádku.' : 'Doporučeno min. ' + fmt(recInv) + ' – rozdíl ke státnímu důchodu.') + '</div></div>' +
+                    '<div style="background:#f8fafc;padding:4mm;border-radius:2mm;border-left:3px solid #0B3A7A;"><div style="font-weight:700;color:#0B3A7A;margin-bottom:2mm;font-size:9pt;">PRACOVNÍ NESCHOPNOST</div><div style="color:#475569;line-height:1.5;">' + (sickOk ? 'Krytí v pořádku.' : 'Doporučeno min. ' + recSick + ' Kč/den.') + '</div></div>' +
+                    '<div style="background:#f8fafc;padding:4mm;border-radius:2mm;border-left:3px solid #0B3A7A;"><div style="font-weight:700;color:#0B3A7A;margin-bottom:2mm;font-size:9pt;">REZERVA</div><div style="color:#475569;line-height:1.5;">' + fmt(reserve) + ' (' + months + ' měsíců). ' + (months < 6 && netInc > 0 ? 'Doporučeno min. 6 měsíců.' : '') + '</div></div>' +
+                    '</div>';
                 var biggestHole = humanFindings.length > 0 ? humanFindings.join(' ') + ' To musíme dotáhnout na schůzce.' : 'Vypadá to dobře – prověřím limity a výluky na schůzce.';
                 var quickWin = benefitResult.yearlySavings > 0 ? 'Potenciál úspor ' + fmt(benefitResult.yearlySavings) + ' ročně – konkrétní model připravím na konzultaci.' : (r.director === false || r.director === 'no' ? 'Rychlé řešení: pojistit D&O – ochrání vás osobně.' : 'Rychlé řešení připravím na konzultaci.');
                 var nextStepsArr = [];
@@ -1250,32 +1278,48 @@
                 var cfg = DIAG_CONFIG && DIAG_CONFIG.images, logoFiles = (cfg && cfg.logoFiles) || [], basePath = ((cfg && cfg.basePath) || './images/').replace(/\/?$/, '/');
                 var logoHtml = logoFiles.map(function(f) { return '<img src="' + basePath + f + '" alt="" style="height:12mm;object-fit:contain;">'; }).join('');
                 var industryLabels = { office: 'Kancelář/IT', services: 'Služby', 'light-manufacturing': 'Lehká výroba', 'heavy-manufacturing': 'Těžká výroba', construction: 'Stavebnictví', transport: 'Doprava' };
-                var companyBlock = '<div class="h2">Firma</div><p style="font-size:9pt;">' + (companyName !== 'Společnost' ? companyName : '—') + (c.ico ? ', IČO ' + c.ico : '') + '. Obor: ' + (industryLabels[c.industry] || c.industry || '—') + '. Zaměstnanců: ' + (employees || '—') + (hasCat3 ? ', má 3. kategorii' : '') + '.</p>';
-                var cardsHtml = '<div class="kpi" style="margin-bottom:6mm;">' +
-                    '<div class="box"><span class="lbl">Úspory</span><div class="val" style="color:#10b981;">' + (benefitResult.yearlySavings > 0 ? fmt(benefitResult.yearlySavings) : '—') + '</div><span class="sub">/rok</span></div>' +
+                var companyInfo = (companyName !== 'Společnost' ? companyName : '—') + (c.ico ? ', IČO ' + c.ico : '') + '. Obor: ' + (industryLabels[c.industry] || c.industry || '—') + '. Zaměstnanců: ' + (employees || '—') + (hasCat3 ? ', má 3. kategorii' : '') + '.';
+                var titlePage = '<section class="pdf-page pdf-title-page">' +
+                    '<div style="text-align:center;">' +
+                    '<div style="width:72px;height:72px;background:#0a0f29;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 16px;box-shadow:0 4px 12px rgba(10,15,41,0.2);">M</div>' +
+                    '<h1 class="h1" style="font-size:32pt;margin-bottom:8px;">RYCHLÝ PŘEHLED</h1>' +
+                    '<p style="font-size:14pt;color:#64748b;margin-bottom:40px;">Kde firma přichází o peníze – benefity, rizika, jednatel</p>' +
+                    '<div class="client-info-box">' +
+                    '<p class="label">KLIENT / FIRMA</p>' +
+                    '<p style="font-size:18pt;font-weight:700;color:#0f172a;margin:0 0 16px 0;">' + (companyName !== 'Společnost' ? companyName : '—') + '</p>' +
+                    '<p class="label">DATUM VYHOTOVENÍ</p>' +
+                    '<p style="font-size:12pt;color:#0f172a;margin:0;">' + today + '</p>' +
+                    (directorName && directorName !== 'Jednatel' ? '<p class="label" style="margin-top:10px;">Jednatel</p><p style="font-size:11pt;color:#0f172a;margin:0;">' + directorName + '</p>' : '') +
+                    '</div></div>' + ftr(1) + '</section>';
+                var cardsHtml = '<div class="kpi">' +
+                    '<div class="box"><span class="lbl">Úspory / rok</span><div class="val" style="color:#10b981;">' + (benefitResult.yearlySavings > 0 ? fmt(benefitResult.yearlySavings) : '—') + '</div></div>' +
                     '<div class="box"><span class="lbl">Krytí rizik</span><div class="val" style="color:#0B3A7A;">' + (riskResult.score || '0/6') + '</div></div>' +
-                    '<div class="box"><span class="lbl">Rezerva</span><div class="val">' + (reserve > 0 ? fmt(reserve) : '—') + '</div><span class="sub">' + months + ' měs.</span></div>' +
+                    '<div class="box"><span class="lbl">Rezerva</span><div class="val">' + (reserve > 0 ? fmt(reserve) : '—') + '</div><span style="font-size:8pt;color:#64748b;">' + months + ' měsíců</span></div>' +
                     '</div>';
-                var boxHtml = '<div style="background:linear-gradient(135deg,#0a0f29,#1e3a6e);color:white;padding:6mm;border-radius:4mm;margin:4mm 0;">' +
-                    '<div style="font-weight:700;font-size:11pt;margin-bottom:2mm;">Největší díra:</div><p style="font-size:9pt;opacity:0.9;">' + biggestHole + '</p>' +
-                    '<div style="font-weight:700;font-size:11pt;margin:3mm 0 2mm;">Nejrychlejší výhra:</div><p style="font-size:9pt;opacity:0.9;">' + quickWin + '</p>' +
-                    '<div style="font-weight:700;font-size:10pt;margin-top:4mm;padding-top:3mm;border-top:1px solid rgba(255,255,255,0.3);">Projdeme to spolu – 15 min (bez závazků)</div></div>';
-                var ctaBlock = '<div class="recommendation" style="margin-top:6mm;font-size:10pt;">Projdeme to spolu – 15 min (bez závazků): <strong>' + calUrl + '</strong></div>';
+                var boxHtml = '<div class="highlight-box">' +
+                    '<div class="title">Největší díra</div><p style="font-size:9pt;opacity:0.95;line-height:1.5;margin:0 0 4mm 0;">' + biggestHole + '</p>' +
+                    '<div class="title" style="margin-top:4mm;">Nejrychlejší výhra</div><p style="font-size:9pt;opacity:0.95;line-height:1.5;margin:0 0 4mm 0;">' + quickWin + '</p>' +
+                    '<div style="font-weight:700;font-size:10pt;margin-top:4mm;padding-top:3mm;border-top:1px solid rgba(255,255,255,0.25);">Projdeme to spolu – 15 min (bez závazků)</div></div>';
+                var interpClass = humanFindings.length > 0 ? 'warning' : 'success';
+                var interpText = humanFindings.length > 0 ? 'Našli jsme kritické mezery. Doporučujeme projít je společně na konzultaci.' : 'Vypadá to celkem v pořádku. Limity a výluky prověřím na schůzce.';
+                var ctaBlock = '<div class="recommendation">Projdeme to spolu – 15 min (bez závazků): <strong>' + calUrl + '</strong></div>';
                 var pages = [
+                    titlePage,
                     '<section class="pdf-page">' + hdr('Výsledek přehledu', today, companyName) +
-                    companyBlock + '<div class="h2">Shrnutí</div>' + cardsHtml + boxHtml +
-                    '<div class="h2">Všechny kritické nálezy</div>' + allFindingsHtml + ctaBlock + ftr(1) + '</section>',
+                    '<div class="pdf-section"><div class="h2">Firma</div><p style="font-size:10pt;color:#475569;line-height:1.5;">' + companyInfo + '</p></div>' +
+                    '<div class="pdf-section"><div class="h2">Shrnutí</div>' + cardsHtml +
+                    '<div class="interpretation ' + interpClass + '"><strong>Interpretace:</strong> ' + interpText + '</div>' + boxHtml +
+                    '<div class="h2">Všechny kritické nálezy</div>' + allFindingsHtml + ctaBlock + ftr(2) + '</section>',
                     '<section class="pdf-page">' + hdr('Benefity, majetek a rizika', today, companyName) +
-                    '<div class="h2">Benefity</div><p style="font-size:9pt;">' + savingsText + '</p>' + benefitsDetail +
-                    '<div class="h2">Majetek a provoz</div>' + assetsDetail +
-                    '<div class="h2">Rizika – přehled krytí</div><div class="risk-matrix">' + riskMatrix + '</div>' +
-                    '<div class="h2">Jednatel – pojištění a rezerva</div><p style="font-size:9pt;">' + dirDetail + '</p>' + ctaBlock + ftr(2) + '</section>',
+                    '<div class="pdf-section"><div class="h2">Benefity</div>' + (benefitsTableRows || '<p style="font-size:10pt;color:#64748b;">Vyplňte benefity v přehledu.</p>') + (benefitsDetail ? '<div class="interpretation success" style="margin-top:3mm;">' + benefitsDetail + '</div>' : '') + '</div>' +
+                    '<div class="pdf-section"><div class="h2">Majetek a provoz</div><table class="table"><thead><tr><th>Položka</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + assetsTableRows + '</tbody></table>' +
+                    '<div class="pdf-section avoid-break"><div class="h2">Rizika – přehled krytí</div><table class="table"><thead><tr><th>Riziko</th><th style="text-align:right;">Stav</th></tr></thead><tbody>' + riskTableRows + '</tbody></table></div>' +
+                    '<div class="pdf-section"><div class="h2">Zajištění jednatele</div><p style="font-size:10pt;color:#64748b;margin-bottom:4mm;">Jednatel: <strong>' + directorName + '</strong> | Příjem: <strong>' + fmt(netInc) + '</strong>/měs</p><table class="table" style="margin-bottom:4mm;"><thead><tr><th style="width:50%;">Rizika</th><th style="width:50%;text-align:right;">Pojistná částka</th></tr></thead><tbody>' + dirTableRows + '</tbody></table>' + dirBlocks + '</div>' + ctaBlock + ftr(3) + '</section>',
                     '<section class="pdf-page">' + hdr('Další kroky', today, companyName) +
-                    '<div class="h2">Doporučené kroky</div>' + nextStepsHtml +
-                    '<p style="font-size:10pt;margin-top:6mm;">Na 15min call připravím konkrétní návrh na míru.</p>' +
-                    '<p style="font-size:9pt;margin-top:4mm;">Rezervace: <strong>' + calUrl + '</strong></p>' +
-                    (contactEmail ? '<p style="font-size:9pt;margin-top:3mm;">Kontakt: ' + contactEmail + '</p>' : '') +
-                    (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(3) + '</section>'
+                    '<div class="pdf-section"><div class="h2">Doporučené kroky</div>' + nextStepsHtml +
+                    '<div class="interpretation success"><p style="margin:0;"><strong>Na 15min call</strong> připravím konkrétní návrh na míru. Rezervace: <strong>' + calUrl + '</strong></p></div>' +
+                    (contactEmail ? '<p style="font-size:9pt;color:#64748b;margin-top:4mm;">Kontakt: ' + contactEmail + '</p>' : '') +
+                    (logoHtml ? '<div class="h2" style="margin-top:8mm;">Spolupracující partneři</div><div style="display:flex;flex-wrap:wrap;gap:8mm;">' + logoHtml + '</div>' : '') + ftr(4) + '</section>'
                 ];
                 return '<div class="pdf">' + pages.join('') + '</div>';
             }
@@ -2091,6 +2135,7 @@
             },
             sendPdfEmail: function() {
                 var self = this;
+                this.syncFromDom();
                 var email = (this.data.lead.email || '').trim() || (document.getElementById('lead-email') && (document.getElementById('lead-email').value || '').trim()) || '';
                 if (!email) { showToast('Pro zaslání reportu zadejte email v kroku 1. Bez emailu nelze report odeslat.', 'error'); return; }
                 if (email) try { localStorage.setItem('diagnostika_lead_email', email); } catch (e) {}
@@ -2119,7 +2164,11 @@
                                 });
                             }).catch(function(err) {
                                 if (lb) setButtonLoading(lb, false);
-                                showToast('Odeslání selhalo: ' + (err && err.message ? err.message : 'zkontroluj připojení nebo zkus později.'), 'error');
+                                var msg = (err && err.message) ? err.message : 'zkontroluj připojení.';
+                                if (msg === 'Failed to fetch') {
+                                    msg = 'Nepodařilo se připojit k serveru. Stránka musí běžet z webu (https://), ne z disku. Zkontrolujte API URL a připojení.';
+                                }
+                                showToast('Odeslání selhalo: ' + msg, 'error');
                             });
                         },
                         onNoReport: function() {
@@ -2151,7 +2200,63 @@
                     });
                 }
             },
-            exportData: function() { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' })); a.download = 'diagnostika-' + (this.data.company.name || 'klient') + '.json'; a.click(); },
+            syncFromDom: function() {
+                var self = this, el = function(id) { return document.getElementById(id); };
+                if (el('company-name')) self.data.company.name = el('company-name').value || '';
+                if (el('company-ico')) self.data.company.ico = el('company-ico').value || '';
+                if (el('lead-name')) self.data.lead.name = el('lead-name').value || '';
+                if (el('lead-email')) self.data.lead.email = el('lead-email').value || '';
+                if (el('lead-phone')) self.data.lead.phone = el('lead-phone').value || '';
+                if (el('company-industry')) self.data.company.industry = el('company-industry').value || 'office';
+                if (el('company-employees')) self.data.company.employees = parseInt(el('company-employees').value) || 0;
+                if (el('company-cat3')) self.data.company.cat3 = el('company-cat3').value || '0';
+                ['benefit-dps-amount','benefit-dip-amount','benefit-izp-amount'].forEach(function(id, i) {
+                    var k = ['dps','dip','izp'][i];
+                    var v = (el(id) && el(id).value) ? parseFloat(el(id).value) : 0;
+                    self.data.benefits[k] = v || 0;
+                });
+                var dpsGoal = el('benefit-dps-goal'); if (dpsGoal) self.data.benefits.goal = dpsGoal.value || 'danova';
+                var dipGoal = el('benefit-dip-goal'); if (dipGoal) self.data.benefits.dipGoal = dipGoal.value;
+                var dpsCount = el('benefit-dps-count'); if (dpsCount && dpsCount.value) self.data.benefits.dpsCountRange = dpsCount.value;
+                var dpsSelf = el('benefit-dps-self'); if (dpsSelf && dpsSelf.value) self.data.benefits.dpsSelf = dpsSelf.value;
+                var dipHas = el('benefit-dip-has-plan'); if (dipHas && dipHas.value) self.data.benefits.dipHasPlan = dipHas.value;
+                var dipStr = el('benefit-dip-strategy'); if (dipStr && dipStr.value) self.data.benefits.dipStrategy = dipStr.value;
+                var dirOwn = el('benefit-director-pays-own-hidden'); if (dirOwn && dirOwn.value) self.data.benefits.directorPaysFromOwn = (dirOwn.value === 'yes');
+                self.data.benefits.count = self.data.company.employees || 0;
+                self.data.benefits.hasDps = (self.data.benefits.dps || 0) > 0;
+                self.data.benefits.hasDip = (self.data.benefits.dip || 0) > 0;
+                self.data.benefits.hasIzp = (self.data.benefits.izp || 0) > 0;
+                self.data.benefits.has = self.data.benefits.hasDps || self.data.benefits.hasDip || self.data.benefits.hasIzp;
+                ['director-net-income','director-reserve','director-family-count','director-loan-payment','director-loan-balance','director-ins-death','director-ins-invalidity','director-ins-sick'].forEach(function(id) {
+                    var key = id.replace('director-','').replace(/-/g,''); var map = { netincome:'netIncome', familycount:'familyCount', loanpayment:'loanPayment', loanbalance:'loanBalance', insdeath:'insDeath', insinvalidity:'insInvalidity', inssick:'insSick' };
+                    var k = map[key] || key;
+                    var v = (el(id) && el(id).value) ? parseFloat(el(id).value) : 0;
+                    if (id.indexOf('family') >= 0) v = parseInt(el(id).value) || 0;
+                    self.data.director[k] = v;
+                });
+                ['risk-employee','risk-director','risk-professional','risk-legal'].forEach(function(id) {
+                    var key = id.replace('risk-','');
+                    var chk = el(id);
+                    self.data.risks[key] = (chk && chk.checked) ? 'yes' : 'no';
+                });
+                var ap = el('asset-premises'); if (ap) self.data.assets.premises = ap.checked ? 'yes' : 'no';
+                var ac = el('asset-cyber'); if (ac) self.data.assets.cyber = ac.checked ? 'yes' : 'no';
+                var ai = el('asset-interruption'); if (ai) self.data.assets.interruption = ai.checked ? 'yes' : 'no';
+                document.querySelectorAll('.pill-asset-years.active').forEach(function(p) { self.data.assets.propertyYearsRange = p.getAttribute('data-value') || ''; });
+                document.querySelectorAll('.pill-interruption-years.active').forEach(function(p) { self.data.assets.interruptionYearsRange = p.getAttribute('data-value') || ''; });
+                document.querySelectorAll('.pill-fleet-count.active').forEach(function(p) { var v = p.getAttribute('data-value'); self.data.assets.fleetRange = v || ''; self.data.assets.fleet = v === '0' ? 0 : (v === '1' ? 1 : (v === '2-3' ? 3 : (v === '4-10' ? 7 : 15))); });
+                document.querySelectorAll('.pill-fleet-pay.active').forEach(function(p) { self.data.assets.fleetPayRange = p.getAttribute('data-value') || ''; });
+                document.querySelectorAll('.pill-fleet-years.active').forEach(function(p) { self.data.assets.fleetYearsRange = p.getAttribute('data-value') || ''; });
+                document.querySelectorAll('.pill-risk-review.active').forEach(function(p) { var r = p.getAttribute('data-risk'); if (r) self.data.risks[r + 'Review'] = p.getAttribute('data-value') || ''; });
+                document.querySelectorAll('.pill-risk-limits.active').forEach(function(p) { var r = p.getAttribute('data-risk'); if (r) self.data.risks[r + 'Limits'] = p.getAttribute('data-value') || ''; });
+            },
+            exportData: function() {
+                this.syncFromDom();
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' }));
+                a.download = 'diagnostika-' + (this.data.company.name || 'klient').replace(/[^a-zA-Z0-9-]/g,'_') + '.json';
+                a.click();
+            },
             importData: function(e) { var f = e.target.files[0]; if (!f) return; var self = this; var r = new FileReader(); r.onload = function(ev) { try { var parsed = JSON.parse(ev.target.result); sessionStorage.setItem('diagnostika_import', JSON.stringify(parsed)); location.reload(); } catch (err) { showToast('Nepodařilo se načíst soubor. Ověřte, že jde o platný soubor z této stránky.', 'error'); } e.target.value = ''; }; r.readAsText(f); },
             reset: function() { if (confirm('Vymazat všechna data?')) location.reload(); },
             buildLeadPayload: function() {
