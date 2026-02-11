@@ -1082,13 +1082,20 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-slate-600 mb-2">Úroková sazba (výběr banky)</label>
-                                    <select id="credit-wish-bank" class="form-input w-full px-4 py-3">
-                                        <option value="unicredit">UniCredit Bank (od 4,19 %)</option>
-                                        <option value="rb">Raiffeisenbank (od 4,29 %)</option>
-                                        <option value="csob">ČSOB / Komerční banka (od 4,39 %)</option>
-                                    </select>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">Výběr banky</label>
+                                        <select id="credit-wish-bank" class="form-input w-full px-4 py-3">
+                                            <option value="unicredit">UniCredit Bank</option>
+                                            <option value="rb">Raiffeisenbank</option>
+                                            <option value="csob">ČSOB / Komerční banka</option>
+                                            <option value="other">Jiná banka</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">Úroková sazba (%)</label>
+                                        <input type="number" id="credit-wish-rate" class="form-input w-full px-4 py-3" placeholder="4,50" value="" min="0" max="20" step="0.01">
+                                    </div>
                                 </div>
                                 <button type="button" id="btn-add-credit-wish" class="btn-primary w-full py-3 rounded-xl flex items-center justify-center gap-2 mt-2">
                                     <i class="fas fa-plus"></i> Přidat úvěr / hypotéku
@@ -2140,6 +2147,8 @@
                 const subTypeBtn = document.getElementById('credit-wish-subtype-btns')?.querySelector('.bg-amber-400');
                 const subType = subTypeBtn?.dataset.subtype || (product === 'mortgage' ? 'standard' : 'consumer');
                 const selectedBankId = document.getElementById('credit-wish-bank')?.value || 'unicredit';
+                const customRateStr = document.getElementById('credit-wish-rate')?.value || '';
+                const customRate = parseFloat(customRateStr.replace(',', '.')) || 0;
                 const termYears = parseInt(document.getElementById('credit-wish-term')?.value) || 25;
                 const fixYears = parseInt(document.getElementById('credit-wish-fix')?.value) || 5;
                 const ltvBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ltv.bg-amber-400');
@@ -2152,6 +2161,10 @@
                     alert('Vyplňte prosím částku a účel úvěru.');
                     return;
                 }
+                if(customRate <= 0) {
+                    alert('Vyplňte prosím úrokovou sazbu.');
+                    return;
+                }
                 
                 // Vypočítat vlastní zdroje
                 let ownResources = 0;
@@ -2162,17 +2175,11 @@
                     ownResources = Math.round((amount * akoPercent / 100) / 1000) * 1000;
                 }
                 
-                // Vypočítat splátku
-                const bank = CREDIT_WISH_BANKS.find(b => b.id === selectedBankId) || CREDIT_WISH_BANKS[0];
+                // Vypočítat splátku - použít zadanou sazbu
                 let borrowingAmount = amount;
-                let ratePct = 5;
-                if(product === 'mortgage') {
-                    ratePct = bank.rateHypo;
-                } else {
-                    if(subType === 'auto') borrowingAmount = Math.max(0, amount - ownResources);
-                    else if(subType === 'consolidation') borrowingAmount = amount + extraAmount;
-                    ratePct = bank.rateLoan;
-                }
+                if(subType === 'auto') borrowingAmount = Math.max(0, amount - ownResources);
+                else if(subType === 'consolidation') borrowingAmount = amount + extraAmount;
+                const ratePct = customRate;
                 const rate = ratePct / 100;
                 const r = rate / 12;
                 const n = termYears * 12;
@@ -2185,6 +2192,7 @@
                     subType,
                     purpose,
                     selectedBankId,
+                    customRate: ratePct,
                     amount,
                     ownResources,
                     ltvPercent: product === 'mortgage' ? ltvPercent : undefined,
@@ -2840,7 +2848,8 @@
                 html += '<th style="text-align:right">Celkem zaplatíte</th>';
                 html += '</tr></thead><tbody>';
                 list.forEach(item => {
-                    const bank = CREDIT_WISH_BANKS.find(b => b.id === item.selectedBankId) || CREDIT_WISH_BANKS[0];
+                    const bank = item.selectedBankId && item.selectedBankId !== 'other' ? CREDIT_WISH_BANKS.find(b => b.id === item.selectedBankId) : null;
+                    const bankName = bank ? bank.name : (item.selectedBankId === 'other' ? 'Jiná banka' : 'Nezadáno');
                     const productLabel = item.product === 'mortgage' ? 'Hypotéka' : 'Úvěr';
                     const subTypeLabel = subTypeLabels[item.subType] || item.subType;
                     const purposeLabel = purposeLabels[item.purpose] || item.purpose;
@@ -2853,10 +2862,10 @@
                         ltvAko = item.akoPercent + ' %';
                     }
                     html += '<tr>';
-                    html += '<td><strong>' + productLabel + '</strong> (' + subTypeLabel + ')<br/><span style="font-size:8pt; color:#64748b;">' + purposeLabel + '</span></td>';
+                    html += '<td><strong>' + productLabel + '</strong> (' + subTypeLabel + ')<br/><span style="font-size:8pt; color:#64748b;">' + purposeLabel + '</span><br/><span style="font-size:8pt; color:#94a3b8;">' + bankName + '</span></td>';
                     html += '<td style="text-align:right">' + Math.round(item.amount).toLocaleString('cs-CZ') + ' Kč</td>';
                     html += '<td style="text-align:center">' + ltvAko + '</td>';
-                    html += '<td style="text-align:center">' + item.estimatedRate.toFixed(2).replace('.', ',') + ' %</td>';
+                    html += '<td style="text-align:center">' + (item.estimatedRate || item.customRate || 0).toFixed(2).replace('.', ',') + ' %</td>';
                     html += '<td style="text-align:right"><strong>' + Math.round(item.estimatedMonthly).toLocaleString('cs-CZ') + ' Kč</strong></td>';
                     html += '<td style="text-align:right"><strong>' + Math.round(item.estimatedTotal).toLocaleString('cs-CZ') + ' Kč</strong></td>';
                     html += '</tr>';
@@ -4287,15 +4296,22 @@
                         }
                     }
                     const bankSelect = document.getElementById('credit-wish-bank');
+                    const rateInput = document.getElementById('credit-wish-rate');
                     if(bankSelect) {
                         const productBtn = document.querySelector('.credit-wish-product.bg-amber-400');
                         const product = productBtn?.dataset.product || 'mortgage';
                         const currentBankId = bankSelect.value || 'unicredit';
                         bankSelect.innerHTML = CREDIT_WISH_BANKS.map(b => {
-                            const rate = product === 'mortgage' ? b.rateHypo : b.rateLoan;
-                            const rateStr = rate.toFixed(2).replace('.', ',');
-                            return `<option value="${b.id}" ${currentBankId === b.id ? 'selected' : ''}>${b.name} (od ${rateStr} %)</option>`;
-                        }).join('');
+                            return `<option value="${b.id}" ${currentBankId === b.id ? 'selected' : ''}>${b.name}</option>`;
+                        }).join('') + '<option value="other"' + (currentBankId === 'other' ? ' selected' : '') + '>Jiná banka</option>';
+                        // Aktualizovat výchozí sazbu podle banky, pokud není zadána
+                        if(rateInput && (!rateInput.value || rateInput.value === '')) {
+                            const bank = CREDIT_WISH_BANKS.find(b => b.id === currentBankId);
+                            if(bank) {
+                                const defaultRate = product === 'mortgage' ? bank.rateHypo : bank.rateLoan;
+                                rateInput.value = defaultRate.toFixed(2).replace('.', ',');
+                            }
+                        }
                     }
                     calculateCreditWish();
                 };
@@ -4308,8 +4324,8 @@
                     const extra = parseFloat(document.getElementById('credit-wish-extra')?.value) || 0;
                     const term = parseInt(document.getElementById('credit-wish-term')?.value) || 25;
                     const fix = parseInt(document.getElementById('credit-wish-fix')?.value) || 5;
-                    const bankId = document.getElementById('credit-wish-bank')?.value || 'unicredit';
-                    const bank = CREDIT_WISH_BANKS.find(b => b.id === bankId) || CREDIT_WISH_BANKS[0];
+                    const customRateStr = document.getElementById('credit-wish-rate')?.value || '';
+                    const customRate = parseFloat(customRateStr.replace(',', '.')) || 0;
                     let own = 0;
                     const ltvBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ltv.bg-amber-400');
                     const ltvPercent = ltvBtn ? parseInt(ltvBtn.dataset.value, 10) : 90;
@@ -4322,14 +4338,9 @@
                         own = Math.round((amount * akoPercent / 100) / 1000) * 1000;
                     }
                     let borrowingAmount = amount;
-                    let ratePct = 5;
-                    if(product === 'mortgage') {
-                        ratePct = bank.rateHypo;
-                    } else {
-                        if(subType === 'auto') borrowingAmount = Math.max(0, amount - own);
-                        else if(subType === 'consolidation') borrowingAmount = amount + extra;
-                        ratePct = bank.rateLoan;
-                    }
+                    if(subType === 'auto') borrowingAmount = Math.max(0, amount - own);
+                    else if(subType === 'consolidation') borrowingAmount = amount + extra;
+                    const ratePct = customRate || 5;
                     const rate = ratePct / 100;
                     const r = rate / 12;
                     const n = term * 12;
@@ -4385,7 +4396,7 @@
                                         <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">${subTypeLabels[item.subType] || item.subType}</span>
                                     </div>
                                     <p class="text-xs text-slate-600">${purposeLabels[item.purpose] || item.purpose}</p>
-                                    <p class="text-xs text-slate-500 mt-1">${bank.name} • ${item.estimatedRate.toFixed(2).replace('.', ',')} % • ${item.termYears} let</p>
+                                    <p class="text-xs text-slate-500 mt-1">${bank.name || 'Jiná banka'} • ${item.estimatedRate.toFixed(2).replace('.', ',')} % • ${item.termYears} let</p>
                                 </div>
                                 <button type="button" class="text-red-400 hover:text-red-600 p-2" title="Smazat">
                                     <i class="fas fa-trash"></i>
@@ -4428,14 +4439,9 @@
                 this.calculateCreditWish = calculateCreditWish;
                 this.updateCreditWishUI = updateCreditWishUI;
                 this.renderCreditWishList = renderCreditWishList;
-                this.calculateCreditWish = calculateCreditWish;
-                this.updateCreditWishUI = updateCreditWishUI;
                 document.querySelectorAll('.credit-wish-product').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const product = btn.dataset.product;
-                        this.app.data.newCreditWish.product = product;
-                        this.app.data.newCreditWish.subType = product === 'mortgage' ? 'standard' : 'consumer';
-                        this.app.saveState();
                         document.querySelectorAll('.credit-wish-product').forEach(b => {
                             b.classList.toggle('bg-amber-400', b.dataset.product === product);
                             b.classList.toggle('text-slate-900', b.dataset.product === product);
@@ -4445,16 +4451,31 @@
                             b.classList.toggle('border-slate-200', b.dataset.product !== product);
                         });
                         updateCreditWishUI();
-                        calculateCreditWish();
                     });
                 });
-                ['credit-wish-amount','credit-wish-extra','credit-wish-term','credit-wish-fix'].forEach(id => {
+                ['credit-wish-amount','credit-wish-extra','credit-wish-term','credit-wish-fix','credit-wish-rate'].forEach(id => {
                     const el = document.getElementById(id);
-                    if(el) el.addEventListener('input', () => { updateCreditWishUI(); });
-                    if(el) el.addEventListener('change', () => { updateCreditWishUI(); });
+                    if(el) el.addEventListener('input', () => { calculateCreditWish(); });
+                    if(el) el.addEventListener('change', () => { calculateCreditWish(); });
                 });
                 const creditWishBank = document.getElementById('credit-wish-bank');
-                if(creditWishBank) creditWishBank.addEventListener('change', () => { updateCreditWishUI(); });
+                if(creditWishBank) {
+                    creditWishBank.addEventListener('change', () => {
+                        const productBtn = document.querySelector('.credit-wish-product.bg-amber-400');
+                        const product = productBtn?.dataset.product || 'mortgage';
+                        const bankId = creditWishBank.value;
+                        const rateInput = document.getElementById('credit-wish-rate');
+                        if(rateInput && bankId !== 'other') {
+                            const bank = CREDIT_WISH_BANKS.find(b => b.id === bankId);
+                            if(bank) {
+                                const defaultRate = product === 'mortgage' ? bank.rateHypo : bank.rateLoan;
+                                rateInput.value = defaultRate.toFixed(2).replace('.', ',');
+                                calculateCreditWish();
+                            }
+                        }
+                        updateCreditWishUI();
+                    });
+                }
 
                 // Krok 5: Goals Listeners
                 const btnAddGoal = document.getElementById('btn-add-goal');
@@ -5422,6 +5443,7 @@
                     document.getElementById('credit-wish-term').value = '25';
                     document.getElementById('credit-wish-fix').value = '5';
                     document.getElementById('credit-wish-bank').value = 'unicredit';
+                    document.getElementById('credit-wish-rate').value = '';
                     // Nastavit výchozí produkt na hypotéku
                     document.querySelectorAll('.credit-wish-product').forEach(b => {
                         const isMortgage = b.dataset.product === 'mortgage';
