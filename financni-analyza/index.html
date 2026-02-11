@@ -3948,8 +3948,36 @@
                     this.initListeners();
                     this.renderStepper(); // Moved here, should be safe
                     this.updateView();
+                    // Po načtení dat renderovat všechny dynamické seznamy a aktualizovat pills
+                    // Použít setTimeout, aby se volalo až po dokončení všech inicializací
+                    setTimeout(() => {
+                        this.renderAllDynamicLists();
+                        this.recalcSums();
+                    }, 100);
                 } catch(e) {
                     console.error("UI Init Error", e);
+                }
+            }
+
+            // Render všechny dynamické seznamy a aktualizovat pills po načtení dat
+            renderAllDynamicLists() {
+                // Render dynamické seznamy pro všechny kroky
+                if(this.renderIncomeOtherList) this.renderIncomeOtherList();
+                if(this.renderExpenseOtherList) this.renderExpenseOtherList();
+                if(this.renderAssetInvestmentList) this.renderAssetInvestmentList();
+                if(this.renderAssetPensionList) this.renderAssetPensionList();
+                if(this.renderLoansList) this.renderLoansList();
+                if(this.renderCreditWishList) this.renderCreditWishList();
+                if(this.renderGoalsList) this.renderGoalsList();
+                // Aktualizovat součty pro všechny kategorie (pro pills)
+                if(this.app.recalcLoansTotal) this.app.recalcLoansTotal();
+                if(this.app.recalcOtherTotal) {
+                    this.app.recalcOtherTotal('incomes');
+                    this.app.recalcOtherTotal('expenses');
+                }
+                if(this.app.recalcAssetTotal) {
+                    this.app.recalcAssetTotal('investments');
+                    this.app.recalcAssetTotal('pension');
                 }
             }
 
@@ -4100,14 +4128,40 @@
                 }
                 
                 // Loans (úvěry / kreditky / kontokorent) - dynamický seznam
-                const btnAddLoan = document.getElementById('btn-add-loan');
-                if(btnAddLoan) {
-                    btnAddLoan.addEventListener('click', () => {
-                        this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
-                        this.renderLoansList();
-                        this.recalcSums();
+                // Použít delegaci událostí na kontejneru pro lepší spolehlivost
+                const step3Container = document.getElementById('step-3');
+                if(step3Container) {
+                    step3Container.addEventListener('click', (e) => {
+                        // Podporovat kliknutí na tlačítko nebo jeho ikonu/potomka
+                        const btn = e.target.closest('#btn-add-loan');
+                        if(btn || e.target.id === 'btn-add-loan' || e.target.closest('#btn-add-loan')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
+                            this.renderLoansList();
+                            this.recalcSums();
+                        }
                     });
                 }
+                // Také přidat přímo na tlačítko pro zpětnou kompatibilitu
+                const setupAddLoanButton = () => {
+                    const btnAddLoan = document.getElementById('btn-add-loan');
+                    if(btnAddLoan) {
+                        // Odstranit existující listenery klonováním
+                        const newBtn = btnAddLoan.cloneNode(true);
+                        btnAddLoan.parentNode.replaceChild(newBtn, btnAddLoan);
+                        newBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
+                            this.renderLoansList();
+                            this.recalcSums();
+                        });
+                    }
+                };
+                // Zavolat ihned a také po načtení DOM
+                setupAddLoanButton();
+                setTimeout(setupAddLoanButton, 100);
                 
                 // Liabilities listeners for details
                 const liabMortRate = document.getElementById('liab-mortgage-rate');
@@ -5493,6 +5547,23 @@
                     
                     this.renderAssetInvestmentList();
                     this.renderAssetPensionList();
+                    this.renderLoansList();
+                    
+                    // Zajistit, aby tlačítko pro přidání úvěru mělo event listener
+                    const btnAddLoan = document.getElementById('btn-add-loan');
+                    if(btnAddLoan) {
+                        // Odstranit existující listenery klonováním
+                        const newBtn = btnAddLoan.cloneNode(true);
+                        btnAddLoan.parentNode.replaceChild(newBtn, btnAddLoan);
+                        newBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
+                            this.renderLoansList();
+                            this.recalcSums();
+                        });
+                    }
+                    
                     this.recalcSums();
                 }
 
