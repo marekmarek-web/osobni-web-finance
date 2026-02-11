@@ -2467,34 +2467,8 @@
 
                 await new Promise(r => setTimeout(r, 800));
                 
-                console.log('✅ Generating PDF soubor (bez header/footer)...');
-                try {
-                    const pages = root.querySelectorAll('.pdf-page');
-                    const { jsPDF } = window.jspdf || {};
-                    if (!jsPDF) throw new Error('jsPDF není dostupný');
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfW = 210;
-                    const pdfH = 297;
-                    const margin = 10;
-                    const contentW = pdfW - 2 * margin;
-                    const contentH = pdfH - 2 * margin;
-                    for (let i = 0; i < pages.length; i++) {
-                        if (i > 0) pdf.addPage();
-                        const canvas = await html2canvas(pages[i], {
-                            scale: 2,
-                            useCORS: true,
-                            logging: false,
-                            backgroundColor: '#ffffff'
-                        });
-                        const imgData = canvas.toDataURL('image/jpeg', 0.92);
-                        pdf.addImage(imgData, 'JPEG', margin, margin, contentW, contentH);
-                    }
-                    const clientName = (appData.client?.name || 'klient').replace(/[^a-zA-Z0-9áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s-]/g, '');
-                    pdf.save(`financni-plan-${clientName}-${new Date().toISOString().split('T')[0]}.pdf`);
-                } catch (err) {
-                    console.error('PDF chyba:', err);
-                    window.print();
-                }
+                console.log('✅ Otevírání dialogu tisku (grafika se vykreslí)...');
+                window.print();
             }
 
             buildReportHTML(data) {
