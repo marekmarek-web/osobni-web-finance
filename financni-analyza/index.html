@@ -2020,12 +2020,16 @@
                 const date = new Date().toISOString().split('T')[0];
                 const filename = `financni-plan-${safeName}-${date}.json`;
                 
+                const formState = {
+                    goalType: document.getElementById('goal-type')?.value || 'renta'
+                };
                 const exportData = {
                     version: '1.0',
                     exportDate: new Date().toISOString(),
                     clientName: clientName,
                     currentStep: this.currentStep,
-                    data: this.data
+                    data: this.data,
+                    formState: formState
                 };
                 
                 const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -2061,8 +2065,12 @@
                         // Načíst data
                         this.data = { ...this.data, ...importData.data };
                         this.currentStep = importData.currentStep || 1;
-                        
-                        // Uložit do localStorage
+                        if(Array.isArray(this.data.goals)) {
+                            this.data.goals = this.data.goals.map(g => ({ ...g, type: g.type || 'renta' }));
+                        }
+                        if(importData.formState?.goalType) {
+                            sessionStorage.setItem('restore_goal_type', importData.formState.goalType);
+                        }
                         this.saveState();
                         
                         // Reload stránky pro aplikování dat
@@ -2459,8 +2467,34 @@
 
                 await new Promise(r => setTimeout(r, 800));
                 
-                console.log('✅ Report ready, opening print dialog...');
-                window.print();
+                console.log('✅ Generating PDF soubor (bez header/footer)...');
+                try {
+                    const pages = root.querySelectorAll('.pdf-page');
+                    const { jsPDF } = window.jspdf || {};
+                    if (!jsPDF) throw new Error('jsPDF není dostupný');
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfW = 210;
+                    const pdfH = 297;
+                    const margin = 10;
+                    const contentW = pdfW - 2 * margin;
+                    const contentH = pdfH - 2 * margin;
+                    for (let i = 0; i < pages.length; i++) {
+                        if (i > 0) pdf.addPage();
+                        const canvas = await html2canvas(pages[i], {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            backgroundColor: '#ffffff'
+                        });
+                        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+                        pdf.addImage(imgData, 'JPEG', margin, margin, contentW, contentH);
+                    }
+                    const clientName = (appData.client?.name || 'klient').replace(/[^a-zA-Z0-9áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s-]/g, '');
+                    pdf.save(`financni-plan-${clientName}-${new Date().toISOString().split('T')[0]}.pdf`);
+                } catch (err) {
+                    console.error('PDF chyba:', err);
+                    window.print();
+                }
             }
 
             buildReportHTML(data) {
@@ -3926,6 +3960,15 @@
                     setTimeout(() => {
                         this.renderAllDynamicLists();
                         this.recalcSums();
+                        const restoreGoalType = sessionStorage.getItem('restore_goal_type');
+                        if(restoreGoalType) {
+                            const gt = document.getElementById('goal-type');
+                            if(gt && ['renta','deti','bydleni','auto','jine'].includes(restoreGoalType)) {
+                                gt.value = restoreGoalType;
+                                gt.dispatchEvent(new Event('change'));
+                            }
+                            sessionStorage.removeItem('restore_goal_type');
+                        }
                     }, 100);
                 } catch(e) {
                     console.error("UI Init Error", e);
