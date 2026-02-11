@@ -715,8 +715,18 @@
                         <h2 class="text-3xl font-bold text-slate-900">Cashflow</h2>
                         <p class="text-slate-500 mt-1">Měsíční bilance domácnosti.</p>
                     </div>
-                    <div id="cashflow-badge" class="bg-slate-100 text-slate-500 px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-                        Bilance: 0 Kč
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2 shadow-sm">
+                            <span class="text-xs text-slate-500 uppercase font-bold tracking-wider block">Příjmy</span>
+                            <span id="cashflow-pill-income" class="text-lg font-bold text-green-600">0 Kč</span>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2 shadow-sm">
+                            <span class="text-xs text-slate-500 uppercase font-bold tracking-wider block">Výdaje</span>
+                            <span id="cashflow-pill-expense" class="text-lg font-bold text-red-600">0 Kč</span>
+                        </div>
+                        <div id="cashflow-badge" class="bg-slate-100 text-slate-500 px-4 py-2 rounded-lg text-sm font-bold transition-colors">
+                            Bilance: 0 Kč
+                        </div>
                     </div>
                 </div>
 
@@ -1503,6 +1513,10 @@
                                     <span class="text-slate-400">Měsíčně</span>
                                     <span class="font-bold" id="summary-monthly-total">0 Kč</span>
                                 </div>
+                            </div>
+                            <div id="strategy-goal-alignment" class="hidden mt-4 p-3 bg-amber-500/20 border border-amber-500/40 rounded-lg text-xs text-amber-100 relative z-10">
+                                <p class="font-bold mb-1">Srovnání s cíli</p>
+                                <p class="leading-relaxed">Cíle používají výnos z formuláře (5–9 %). Produkty zde mají vlastní výnosy (6–12 %). Při stejné částce a stejném počtu let dá produkt s vyšším výnosem vyšší FV – to je v pořádku.</p>
                             </div>
 
                             <!-- Decor -->
@@ -2453,21 +2467,9 @@
                 const today = new Date().toLocaleDateString('cs-CZ');
                 const clientName = data.client.name || "Klient";
                 
-                // Helper pro header
-                const renderHeader = (sectionTitle) => `
-                    <div class="pdf-header">
-                        <span style="font-weight: bold; color: #0f172a;">${sectionTitle}</span>
-                        <span style="color: #64748b;">Vypracoval: <strong>Marek Marek</strong> dne: <strong>${today}</strong> pro: <strong>${clientName}</strong></span>
-                    </div>
-                `;
-                
-                // Helper pro footer
-                const renderFooter = (pageNum) => `
-                    <div class="footer">
-                        <span>Marek Marek - Privátní finanční plánování | www.marek-marek.cz | +420 778 511 166</span>
-                        <span>Strana ${pageNum}</span>
-                    </div>
-                `;
+                // Header a footer vypnuty – uživatel je nechce v PDF
+                const renderHeader = (sectionTitle) => '';
+                const renderFooter = (pageNum) => '';
                 
                 // Calculations
                 const assets = data.assets || {};
@@ -2667,19 +2669,8 @@
                 const today = new Date().toLocaleDateString('cs-CZ');
                 const clientName = data.client?.name || 'Klient';
                 
-                const renderHeader = (title) => `
-                    <div class="pdf-header">
-                        <span style="font-weight: bold; color: #0f172a;">${title}</span>
-                        <span style="color: #64748b;">Vypracoval: <strong>Marek Marek</strong> dne: <strong>${today}</strong> pro: <strong>${clientName}</strong></span>
-                    </div>
-                `;
-                
-                const renderFooter = (pageNum) => `
-                    <div class="footer">
-                        <span>Marek Marek - Privátní finanční plánování | www.marek-marek.cz | +420 778 511 166</span>
-                        <span>Strana ${pageNum}</span>
-                    </div>
-                `;
+                const renderHeader = (title) => '';
+                const renderFooter = (pageNum) => '';
                 
                 return `
                     <section class="pdf-page">
@@ -3199,19 +3190,8 @@
                 const fundCount = (data.investments || []).filter(i => (i.amount||0) > 0).length;
                 const basePageNum = 3 + fundCount + 1 + 1;
                 
-                const renderHeader = (title) => `
-                    <div class="pdf-header">
-                        <span style="font-weight: bold; color: #0f172a;">${title}</span>
-                        <span style="color: #64748b;">Vypracoval: <strong>Marek Marek</strong> dne: <strong>${today}</strong> pro: <strong>${clientName}</strong></span>
-                    </div>
-                `;
-                
-                const renderFooter = (pageNum) => `
-                    <div class="footer">
-                        <span>Marek Marek - Privátní finanční plánování | www.marek-marek.cz | +420 778 511 166</span>
-                        <span>Strana ${pageNum}</span>
-                    </div>
-                `;
+                const renderHeader = (title) => '';
+                const renderFooter = (pageNum) => '';
                 
                 if (ins.netIncome === 0) {
                     return `
@@ -3468,19 +3448,8 @@
                 let pages = '';
                 let pageNum = 4;
                 
-                const renderHeader = (title) => `
-                    <div class="pdf-header">
-                        <span style="font-weight: bold; color: #0f172a;">${title}</span>
-                        <span style="color: #64748b;">Vypracoval: <strong>Marek Marek</strong> dne: <strong>${today}</strong> pro: <strong>${clientName}</strong></span>
-                    </div>
-                `;
-                
-                const renderFooter = (pNum) => `
-                    <div class="footer">
-                        <span>Marek Marek - Privátní finanční plánování | www.marek-marek.cz | +420 778 511 166</span>
-                        <span>Strana ${pNum}</span>
-                    </div>
-                `;
+                const renderHeader = (title) => '';
+                const renderFooter = (pNum) => '';
                 
                 const funds = [
                     {
@@ -5013,6 +4982,10 @@
                     if(elInc) elInc.innerText = totalInc.toLocaleString('cs-CZ') + ' Kč';
                     const elExp = document.getElementById('total-expense');
                     if(elExp) elExp.innerText = totalExp.toLocaleString('cs-CZ') + ' Kč';
+                    const pillInc = document.getElementById('cashflow-pill-income');
+                    if(pillInc) pillInc.innerText = totalInc.toLocaleString('cs-CZ') + ' Kč';
+                    const pillExp = document.getElementById('cashflow-pill-expense');
+                    if(pillExp) pillExp.innerText = totalExp.toLocaleString('cs-CZ') + ' Kč';
                     
                     const balance = totalInc - totalExp;
                     const badge = document.getElementById('cashflow-badge');
@@ -5417,6 +5390,23 @@
                 
                 const elMonthly = document.getElementById('summary-monthly-total');
                 if(elMonthly) elMonthly.innerText = Math.round(totalMonthly).toLocaleString('cs-CZ') + ' Kč';
+                
+                // Srovnání s cíli – zobrazit info box, když jsou cíle
+                const goals = this.app.data.goals || [];
+                const alignBox = document.getElementById('strategy-goal-alignment');
+                if(alignBox) {
+                    if(goals.length > 0) {
+                        alignBox.classList.remove('hidden');
+                        const g = goals[0];
+                        const pmt = g.computed?.pmt || 0;
+                        const target = g.computed?.fvTarget || 0;
+                        const rate = (g.annualRate || 0.07) * 100;
+                        const yrs = g.years || g.horizon || 0;
+                        alignBox.innerHTML = `<p class="font-bold mb-1">Srovnání s cílem „${g.name || 'Cíl'}“</p><p class="leading-relaxed">Pro dosažení cíle spořte <strong>${Math.round(pmt).toLocaleString('cs-CZ')} Kč/m</strong> při výnosu <strong>${rate} %</strong> po <strong>${yrs} let</strong> → dosáhnete <strong>${Math.round(target).toLocaleString('cs-CZ')} Kč</strong>. Produkty zde mají vlastní výnosy (6–12 %), takže při stejné částce můžete dosáhnout vyšší FV.</p>`;
+                    } else {
+                        alignBox.classList.add('hidden');
+                    }
+                }
             }
 
             updateView() {
@@ -5512,12 +5502,30 @@
                 }
                 
                 if(current === 2) {
+                    const cf = this.app.data.cashflow || {};
+                    const inc = cf.incomes || {};
+                    const exp = cf.expenses || {};
+                    const restore = (id, val) => { const el = document.getElementById(id); if(el) el.value = (val !== undefined && val !== null && val !== '') ? val : ''; };
                     const incomeType = document.getElementById('income-type');
-                    if(incomeType) incomeType.value = this.app.data.cashflow.incomeType || 'zamestnanec';
-                    
+                    if(incomeType) incomeType.value = cf.incomeType || 'zamestnanec';
+                    restore('income-main', inc.main);
+                    restore('income-partner', inc.partner);
+                    restore('income-gross', cf.incomeGross);
+                    restore('expense-housing', exp.housing);
+                    restore('expense-energy', exp.energy);
+                    restore('expense-food', exp.food);
+                    restore('expense-transport', exp.transport);
+                    restore('expense-children', exp.children);
+                    restore('expense-insurance', exp.insurance);
+                    restore('asset-cash-quick', cf.reserveCash);
+                    const reserveMonths = document.getElementById('reserve-months');
+                    if(reserveMonths) {
+                        reserveMonths.value = cf.reserveTargetMonths || 6;
+                        const disp = document.getElementById('reserve-months-display');
+                        if(disp) disp.innerText = cf.reserveTargetMonths || 6;
+                    }
                     this.renderIncomeOtherList();
                     this.renderExpenseOtherList();
-                    // ... (Restore Step 2 logic)
                     this.recalcSums();
                 }
 
