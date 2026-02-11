@@ -1090,6 +1090,15 @@
                                         <option value="csob">ČSOB / Komerční banka (od 4,39 %)</option>
                                     </select>
                                 </div>
+                                <button type="button" id="btn-add-credit-wish" class="btn-primary w-full py-3 rounded-xl flex items-center justify-center gap-2 mt-2">
+                                    <i class="fas fa-plus"></i> Přidat úvěr / hypotéku
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div class="p-6 md:p-8">
+                                <h3 class="text-lg font-bold text-slate-900 mb-4">Přidané úvěry / hypotéky</h3>
+                                <div id="credit-wish-list" class="space-y-3"></div>
                             </div>
                         </div>
                     </div>
@@ -1821,8 +1830,8 @@
                     },
                     
                     goals: [], 
-                    // Úvěry / hypotéky k vyřízení (nový krok 4)
-                    newCreditWish: { product: 'mortgage', subType: 'standard', purpose: '', selectedBankId: 'unicredit', amount: 0, ownResources: 0, ltvPercent: 90, akoPercent: 0, extraAmount: 0, termYears: 25, fixYears: 5, estimatedRate: 0, estimatedMonthly: 0 },
+                    // Úvěry / hypotéky k vyřízení (nový krok 4) - seznam úvěrů k vyřízení
+                    newCreditWishList: [], // {id, product, subType, purpose, selectedBankId, amount, ownResources, ltvPercent, akoPercent, extraAmount, termYears, fixYears, estimatedRate, estimatedMonthly, estimatedTotal}
                     // Strategy Data Model - Updated for Step 5
                     strategy: { profile: 'balanced', conservativeMode: false },
                     investments: [] 
@@ -1942,8 +1951,20 @@
                                 this.data.strategy.profile = parsed.data.strategy.profile || 'balanced';
                                 this.data.strategy.conservativeMode = parsed.data.strategy.conservativeMode || false;
                             }
-                            if(parsed.data.newCreditWish) {
-                                this.data.newCreditWish = { ...this.data.newCreditWish, ...parsed.data.newCreditWish };
+                            if(parsed.data.newCreditWishList) {
+                                this.data.newCreditWishList = Array.isArray(parsed.data.newCreditWishList) ? parsed.data.newCreditWishList : [];
+                            } else if(parsed.data.newCreditWish) {
+                                // Migrace ze starého formátu (jeden úvěr) na nový (seznam)
+                                const old = parsed.data.newCreditWish;
+                                if(old.amount > 0 || old.purpose) {
+                                    this.data.newCreditWishList = [{
+                                        id: Date.now(),
+                                        ...old,
+                                        estimatedTotal: old.estimatedMonthly * (old.termYears || 25) * 12
+                                    }];
+                                } else {
+                                    this.data.newCreditWishList = [];
+                                }
                             }
                             // Investments Merge
                             if(Array.isArray(parsed.data.investments)) {
@@ -2100,6 +2121,87 @@
                 if(!Array.isArray(this.data.liabilities.loansList)) return;
                 this.data.liabilities.loansList = this.data.liabilities.loansList.filter(l => l.id !== id);
                 this.recalcLoansTotal();
+                this.saveState();
+            }
+
+            // Správa seznamu úvěrů k vyřízení (krok 4)
+            addCreditWishItem() {
+                if(!Array.isArray(this.data.newCreditWishList)) {
+                    this.data.newCreditWishList = [];
+                }
+                const CREDIT_WISH_BANKS = [
+                    { id: 'unicredit', name: 'UniCredit Bank', rateHypo: 4.19, rateLoan: 6.2 },
+                    { id: 'rb', name: 'Raiffeisenbank', rateHypo: 4.29, rateLoan: 6.5 },
+                    { id: 'csob', name: 'ČSOB / Komerční banka', rateHypo: 4.39, rateLoan: 6.9 }
+                ];
+                const amount = parseFloat(document.getElementById('credit-wish-amount')?.value) || 0;
+                const purpose = document.getElementById('credit-wish-purpose')?.value || '';
+                const product = document.querySelector('.credit-wish-product.bg-amber-400')?.dataset.product || 'mortgage';
+                const subTypeBtn = document.getElementById('credit-wish-subtype-btns')?.querySelector('.bg-amber-400');
+                const subType = subTypeBtn?.dataset.subtype || (product === 'mortgage' ? 'standard' : 'consumer');
+                const selectedBankId = document.getElementById('credit-wish-bank')?.value || 'unicredit';
+                const termYears = parseInt(document.getElementById('credit-wish-term')?.value) || 25;
+                const fixYears = parseInt(document.getElementById('credit-wish-fix')?.value) || 5;
+                const ltvBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ltv.bg-amber-400');
+                const ltvPercent = ltvBtn ? parseInt(ltvBtn.dataset.value, 10) : 90;
+                const akoBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ako.bg-amber-400');
+                const akoPercent = akoBtn ? parseInt(akoBtn.dataset.value, 10) : 0;
+                const extraAmount = parseFloat(document.getElementById('credit-wish-extra')?.value) || 0;
+                
+                if(amount <= 0 || !purpose) {
+                    alert('Vyplňte prosím částku a účel úvěru.');
+                    return;
+                }
+                
+                // Vypočítat vlastní zdroje
+                let ownResources = 0;
+                if(product === 'mortgage' && amount > 0) {
+                    const ltv = ltvPercent / 100;
+                    ownResources = Math.round((amount * (1 / ltv - 1)) / 1000) * 1000;
+                } else if(product === 'loan' && subType === 'auto' && amount > 0) {
+                    ownResources = Math.round((amount * akoPercent / 100) / 1000) * 1000;
+                }
+                
+                // Vypočítat splátku
+                const bank = CREDIT_WISH_BANKS.find(b => b.id === selectedBankId) || CREDIT_WISH_BANKS[0];
+                let borrowingAmount = amount;
+                let ratePct = 5;
+                if(product === 'mortgage') {
+                    ratePct = bank.rateHypo;
+                } else {
+                    if(subType === 'auto') borrowingAmount = Math.max(0, amount - ownResources);
+                    else if(subType === 'consolidation') borrowingAmount = amount + extraAmount;
+                    ratePct = bank.rateLoan;
+                }
+                const rate = ratePct / 100;
+                const r = rate / 12;
+                const n = termYears * 12;
+                const monthly = (borrowingAmount > 0 && n > 0) ? (r > 0 ? (borrowingAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : borrowingAmount / n) : 0;
+                const total = monthly * n;
+                
+                this.data.newCreditWishList.push({
+                    id: Date.now() + Math.random(),
+                    product,
+                    subType,
+                    purpose,
+                    selectedBankId,
+                    amount,
+                    ownResources,
+                    ltvPercent: product === 'mortgage' ? ltvPercent : undefined,
+                    akoPercent: (product === 'loan' && subType === 'auto') ? akoPercent : undefined,
+                    extraAmount: subType === 'consolidation' ? extraAmount : 0,
+                    termYears,
+                    fixYears,
+                    estimatedRate: ratePct,
+                    estimatedMonthly: monthly,
+                    estimatedTotal: total
+                });
+                this.saveState();
+            }
+
+            removeCreditWishItem(id) {
+                if(!Array.isArray(this.data.newCreditWishList)) return;
+                this.data.newCreditWishList = this.data.newCreditWishList.filter(c => c.id !== id);
                 this.saveState();
             }
 
@@ -2584,6 +2686,8 @@
                             ${this.renderRentaFormula(data.goals)}
                         </div>
 
+                        ${this.renderCreditWishesPDF(data.newCreditWishList || [])}
+
                         <div class="pdf-section">
                             <div class="h2">Doporučené portfolio</div>
                             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -2702,6 +2806,63 @@
                     html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0;">';
                     html += '<strong>Příklad ' + (rentaGoals.length > 1 ? (idx + 1) + ': ' : '') + '</strong>P = ' + Math.round(P).toLocaleString('cs-CZ') + ' Kč/měs, n = ' + n + ' let → FV = ' + Math.round(FV).toLocaleString('cs-CZ') + ' Kč/měs → potřebný kapitál <strong>' + Math.round(capital).toLocaleString('cs-CZ') + ' Kč</strong>.</div>';
                 });
+                html += '</div>';
+                return html;
+            }
+
+            renderCreditWishesPDF(list) {
+                if(!Array.isArray(list) || list.length === 0) return '';
+                const CREDIT_WISH_BANKS = [
+                    { id: 'unicredit', name: 'UniCredit Bank' },
+                    { id: 'rb', name: 'Raiffeisenbank' },
+                    { id: 'csob', name: 'ČSOB / Komerční banka' }
+                ];
+                const purposeLabels = {
+                    'bydleni-koupě': 'Bydlení – koupě nemovitosti',
+                    'bydleni-rekonstrukce': 'Bydlení – rekonstrukce',
+                    'auto': 'Auto / vozidlo',
+                    'konsolidace': 'Konsolidace úvěrů',
+                    'ostatni': 'Ostatní'
+                };
+                const subTypeLabels = {
+                    'standard': 'Klasická', 'investment': 'Investiční', 'american': 'Americká',
+                    'consumer': 'Spotřebitelský', 'auto': 'Auto / Leasing', 'consolidation': 'Konsolidace'
+                };
+                let html = '<div class="pdf-section" style="margin-top: 10mm;">';
+                html += '<div class="h2">Úvěry / hypotéky k vyřízení</div>';
+                html += '<table class="table" style="width: 100%; font-size: 9pt; margin-top: 5mm;">';
+                html += '<thead><tr>';
+                html += '<th>Typ / Účel</th>';
+                html += '<th style="text-align:right">Částka</th>';
+                html += '<th style="text-align:center">LTV / Akontace</th>';
+                html += '<th style="text-align:center">Úrok %</th>';
+                html += '<th style="text-align:right">Měsíčně</th>';
+                html += '<th style="text-align:right">Celkem zaplatíte</th>';
+                html += '</tr></thead><tbody>';
+                list.forEach(item => {
+                    const bank = CREDIT_WISH_BANKS.find(b => b.id === item.selectedBankId) || CREDIT_WISH_BANKS[0];
+                    const productLabel = item.product === 'mortgage' ? 'Hypotéka' : 'Úvěr';
+                    const subTypeLabel = subTypeLabels[item.subType] || item.subType;
+                    const purposeLabel = purposeLabels[item.purpose] || item.purpose;
+                    const propertyValue = item.amount + (item.ownResources || 0);
+                    const ltvCalc = propertyValue > 0 ? Math.round((item.amount / propertyValue) * 100) : 0;
+                    let ltvAko = '—';
+                    if(item.product === 'mortgage' && item.ltvPercent) {
+                        ltvAko = item.ltvPercent + ' %';
+                    } else if(item.product === 'loan' && item.subType === 'auto' && item.akoPercent !== undefined) {
+                        ltvAko = item.akoPercent + ' %';
+                    }
+                    html += '<tr>';
+                    html += '<td><strong>' + productLabel + '</strong> (' + subTypeLabel + ')<br/><span style="font-size:8pt; color:#64748b;">' + purposeLabel + '</span></td>';
+                    html += '<td style="text-align:right">' + Math.round(item.amount).toLocaleString('cs-CZ') + ' Kč</td>';
+                    html += '<td style="text-align:center">' + ltvAko + '</td>';
+                    html += '<td style="text-align:center">' + item.estimatedRate.toFixed(2).replace('.', ',') + ' %</td>';
+                    html += '<td style="text-align:right"><strong>' + Math.round(item.estimatedMonthly).toLocaleString('cs-CZ') + ' Kč</strong></td>';
+                    html += '<td style="text-align:right"><strong>' + Math.round(item.estimatedTotal).toLocaleString('cs-CZ') + ' Kč</strong></td>';
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                html += '<p style="margin-top: 4mm; font-size: 8pt; color: #64748b;">Poznámka: Úrokové sazby jsou orientační a mohou se lišit podle aktuální nabídky banky a individuálních podmínek klienta.</p>';
                 html += '</div>';
                 return html;
             }
@@ -4031,9 +4192,11 @@
                     { id: 'csob', name: 'ČSOB / Komerční banka', rateHypo: 4.39, rateLoan: 6.9 }
                 ];
                 const updateCreditWishUI = () => {
-                    const w = this.app.data.newCreditWish || {};
-                    const product = w.product || 'mortgage';
-                    const subType = w.subType || (product === 'mortgage' ? 'standard' : 'consumer');
+                    // Získat aktuální hodnoty z formuláře (ne z uložených dat)
+                    const productBtn = document.querySelector('.credit-wish-product.bg-amber-400');
+                    const product = productBtn?.dataset.product || 'mortgage';
+                    const subTypeBtn = document.getElementById('credit-wish-subtype-btns')?.querySelector('.bg-amber-400');
+                    const subType = subTypeBtn?.dataset.subtype || (product === 'mortgage' ? 'standard' : 'consumer');
                     const subTypes = CREDIT_WISH_SUBTYPES[product] || [];
                     const container = document.getElementById('credit-wish-subtype-btns');
                     if(container) {
@@ -4042,13 +4205,28 @@
                         `).join('');
                         container.querySelectorAll('.credit-wish-subtype').forEach(btn => {
                             btn.addEventListener('click', () => {
-                                this.app.data.newCreditWish.subType = btn.dataset.subtype;
+                                const allBtns = container.querySelectorAll('.credit-wish-subtype');
+                                allBtns.forEach(b => {
+                                    b.classList.remove('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                    b.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                                });
+                                btn.classList.add('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                btn.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
                                 if(btn.dataset.subtype === 'investment' || btn.dataset.subtype === 'american') {
-                                    if(product === 'mortgage' && (w.ltvPercent || 90) > 70) this.app.data.newCreditWish.ltvPercent = 70;
+                                    const ltvBtns = document.getElementById('credit-wish-ltv-btns');
+                                    const activeLtv = ltvBtns?.querySelector('.bg-amber-400');
+                                    if(activeLtv && parseInt(activeLtv.dataset.value, 10) > 70) {
+                                        const btn70 = ltvBtns.querySelector('[data-value="70"]');
+                                        if(btn70) {
+                                            activeLtv.classList.remove('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                            activeLtv.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                                            btn70.classList.add('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                            btn70.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                                        }
+                                    }
                                 }
-                                this.app.saveState();
                                 updateCreditWishUI();
-                                this.calculateCreditWish();
+                                calculateCreditWish();
                             });
                         });
                     }
@@ -4068,69 +4246,88 @@
                         if(product === 'mortgage') {
                             const maxLtv = (subType === 'investment' || subType === 'american') ? 70 : 90;
                             const values = [90, 80, 70, 60, 50].filter(v => v <= maxLtv);
+                            const activeLtv = ltvContainer.querySelector('.bg-amber-400')?.dataset.value;
+                            const defaultLtv = activeLtv ? parseInt(activeLtv, 10) : 90;
                             ltvContainer.innerHTML = values.map(v => {
-                                const active = (w.ltvPercent || 90) === v;
+                                const active = defaultLtv === v;
                                 return `<button type="button" class="credit-wish-ltv px-3 py-2 rounded-lg text-sm font-bold border transition-all ${active ? 'bg-amber-400 text-slate-900 border-amber-400' : 'bg-slate-50 text-slate-600 border-slate-200'}" data-value="${v}">${v} %</button>`;
                             }).join('');
                             ltvContainer.querySelectorAll('.credit-wish-ltv').forEach(btn => {
                                 btn.addEventListener('click', () => {
-                                    this.app.data.newCreditWish.ltvPercent = parseInt(btn.dataset.value, 10);
-                                    this.app.saveState();
+                                    ltvContainer.querySelectorAll('.credit-wish-ltv').forEach(b => {
+                                        b.classList.remove('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                        b.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                                    });
+                                    btn.classList.add('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                    btn.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
                                     updateCreditWishUI();
-                                    this.calculateCreditWish();
+                                    calculateCreditWish();
                                 });
                             });
                         } else if(product === 'loan' && subType === 'auto') {
                             const values = [0, 10, 20, 30, 40, 50];
+                            const activeAko = ltvContainer.querySelector('.bg-amber-400')?.dataset.value;
+                            const defaultAko = activeAko ? parseInt(activeAko, 10) : 0;
                             ltvContainer.innerHTML = values.map(v => {
-                                const active = (w.akoPercent || 0) === v;
+                                const active = defaultAko === v;
                                 return `<button type="button" class="credit-wish-ako px-3 py-2 rounded-lg text-sm font-bold border transition-all ${active ? 'bg-amber-400 text-slate-900 border-amber-400' : 'bg-slate-50 text-slate-600 border-slate-200'}" data-value="${v}">${v} %</button>`;
                             }).join('');
                             ltvContainer.querySelectorAll('.credit-wish-ako').forEach(btn => {
                                 btn.addEventListener('click', () => {
-                                    this.app.data.newCreditWish.akoPercent = parseInt(btn.dataset.value, 10);
-                                    this.app.saveState();
+                                    ltvContainer.querySelectorAll('.credit-wish-ako').forEach(b => {
+                                        b.classList.remove('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                        b.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                                    });
+                                    btn.classList.add('bg-amber-400', 'text-slate-900', 'border-amber-400');
+                                    btn.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
                                     updateCreditWishUI();
-                                    this.calculateCreditWish();
+                                    calculateCreditWish();
                                 });
                             });
                         }
                     }
                     const bankSelect = document.getElementById('credit-wish-bank');
                     if(bankSelect) {
-                        const product = w.product || 'mortgage';
+                        const productBtn = document.querySelector('.credit-wish-product.bg-amber-400');
+                        const product = productBtn?.dataset.product || 'mortgage';
+                        const currentBankId = bankSelect.value || 'unicredit';
                         bankSelect.innerHTML = CREDIT_WISH_BANKS.map(b => {
                             const rate = product === 'mortgage' ? b.rateHypo : b.rateLoan;
                             const rateStr = rate.toFixed(2).replace('.', ',');
-                            return `<option value="${b.id}" ${(w.selectedBankId || 'unicredit') === b.id ? 'selected' : ''}>${b.name} (od ${rateStr} %)</option>`;
+                            return `<option value="${b.id}" ${currentBankId === b.id ? 'selected' : ''}>${b.name} (od ${rateStr} %)</option>`;
                         }).join('');
                     }
-                    this.calculateCreditWish();
+                    calculateCreditWish();
                 };
                 const calculateCreditWish = () => {
-                    const w = this.app.data.newCreditWish || {};
+                    const productBtn = document.querySelector('.credit-wish-product.bg-amber-400');
+                    const product = productBtn?.dataset.product || 'mortgage';
+                    const subTypeBtn = document.getElementById('credit-wish-subtype-btns')?.querySelector('.bg-amber-400');
+                    const subType = subTypeBtn?.dataset.subtype || (product === 'mortgage' ? 'standard' : 'consumer');
                     const amount = parseFloat(document.getElementById('credit-wish-amount')?.value) || 0;
                     const extra = parseFloat(document.getElementById('credit-wish-extra')?.value) || 0;
                     const term = parseInt(document.getElementById('credit-wish-term')?.value) || 25;
                     const fix = parseInt(document.getElementById('credit-wish-fix')?.value) || 5;
                     const bankId = document.getElementById('credit-wish-bank')?.value || 'unicredit';
-                    w.selectedBankId = bankId;
                     const bank = CREDIT_WISH_BANKS.find(b => b.id === bankId) || CREDIT_WISH_BANKS[0];
                     let own = 0;
-                    if(w.product === 'mortgage' && amount > 0) {
-                        const ltv = (w.ltvPercent || 90) / 100;
+                    const ltvBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ltv.bg-amber-400');
+                    const ltvPercent = ltvBtn ? parseInt(ltvBtn.dataset.value, 10) : 90;
+                    const akoBtn = document.getElementById('credit-wish-ltv-btns')?.querySelector('.credit-wish-ako.bg-amber-400');
+                    const akoPercent = akoBtn ? parseInt(akoBtn.dataset.value, 10) : 0;
+                    if(product === 'mortgage' && amount > 0) {
+                        const ltv = ltvPercent / 100;
                         own = Math.round((amount * (1 / ltv - 1)) / 1000) * 1000;
-                    } else if(w.product === 'loan' && w.subType === 'auto' && amount > 0) {
-                        own = Math.round((amount * (w.akoPercent || 0) / 100) / 1000) * 1000;
+                    } else if(product === 'loan' && subType === 'auto' && amount > 0) {
+                        own = Math.round((amount * akoPercent / 100) / 1000) * 1000;
                     }
-                    w.amount = amount; w.ownResources = own; w.extraAmount = extra; w.termYears = term; w.fixYears = fix;
                     let borrowingAmount = amount;
                     let ratePct = 5;
-                    if(w.product === 'mortgage') {
+                    if(product === 'mortgage') {
                         ratePct = bank.rateHypo;
                     } else {
-                        if(w.subType === 'auto') borrowingAmount = Math.max(0, amount - own);
-                        else if(w.subType === 'consolidation') borrowingAmount = amount + extra;
+                        if(subType === 'auto') borrowingAmount = Math.max(0, amount - own);
+                        else if(subType === 'consolidation') borrowingAmount = amount + extra;
                         ratePct = bank.rateLoan;
                     }
                     const rate = ratePct / 100;
@@ -4138,8 +4335,6 @@
                     const n = term * 12;
                     const monthly = (borrowingAmount > 0 && n > 0) ? (r > 0 ? (borrowingAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : borrowingAmount / n) : 0;
                     const total = monthly * n;
-                    w.estimatedRate = ratePct;
-                    w.estimatedMonthly = monthly;
                     const fmt = (x) => Math.round(x).toLocaleString('cs-CZ');
                     const monthlyEl = document.getElementById('credit-wish-monthly-display');
                     const rateEl = document.getElementById('credit-wish-rate-display');
@@ -4148,9 +4343,91 @@
                     if(monthlyEl) monthlyEl.textContent = borrowingAmount > 0 ? fmt(monthly) : '—';
                     if(rateEl) rateEl.textContent = borrowingAmount > 0 ? ratePct.toFixed(2).replace('.', ',') + ' %' : '—';
                     if(totalEl) totalEl.textContent = borrowingAmount > 0 ? fmt(total) + ' Kč' : '—';
-                    if(ownSummary) ownSummary.textContent = (w.product === 'mortgage' || (w.product === 'loan' && w.subType === 'auto')) ? 'Vlastní zdroje: ' + fmt(own) + ' Kč' : '';
-                    this.app.saveState();
+                    if(ownSummary) ownSummary.textContent = (product === 'mortgage' || (product === 'loan' && subType === 'auto')) ? 'Vlastní zdroje: ' + fmt(own) + ' Kč' : '';
                 };
+                const renderCreditWishList = () => {
+                    const container = document.getElementById('credit-wish-list');
+                    if(!container) return;
+                    const list = this.app.data.newCreditWishList || [];
+                    container.innerHTML = '';
+                    if(list.length === 0) {
+                        container.innerHTML = '<div class="text-xs text-slate-400 border border-dashed border-slate-200 rounded-lg px-3 py-2 text-center">Zatím žádný úvěr nepřidán. Vyplňte formulář výše a klikněte na "Přidat úvěr / hypotéku".</div>';
+                        return;
+                    }
+                    const CREDIT_WISH_BANKS = [
+                        { id: 'unicredit', name: 'UniCredit Bank' },
+                        { id: 'rb', name: 'Raiffeisenbank' },
+                        { id: 'csob', name: 'ČSOB / Komerční banka' }
+                    ];
+                    const purposeLabels = {
+                        'bydleni-koupě': 'Bydlení – koupě nemovitosti',
+                        'bydleni-rekonstrukce': 'Bydlení – rekonstrukce',
+                        'auto': 'Auto / vozidlo',
+                        'konsolidace': 'Konsolidace úvěrů',
+                        'ostatni': 'Ostatní'
+                    };
+                    const subTypeLabels = {
+                        'standard': 'Klasická', 'investment': 'Investiční', 'american': 'Americká',
+                        'consumer': 'Spotřebitelský', 'auto': 'Auto / Leasing', 'consolidation': 'Konsolidace'
+                    };
+                    list.forEach(item => {
+                        const bank = CREDIT_WISH_BANKS.find(b => b.id === item.selectedBankId) || CREDIT_WISH_BANKS[0];
+                        const propertyValue = item.amount + item.ownResources;
+                        const ltvCalc = propertyValue > 0 ? (item.amount / propertyValue) * 100 : 0;
+                        const fmt = (x) => Math.round(x).toLocaleString('cs-CZ');
+                        const div = document.createElement('div');
+                        div.className = 'p-4 bg-slate-50 rounded-xl border border-slate-200';
+                        div.innerHTML = `
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-bold text-slate-800">${item.product === 'mortgage' ? 'Hypotéka' : 'Úvěr'}</span>
+                                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded">${subTypeLabels[item.subType] || item.subType}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-600">${purposeLabels[item.purpose] || item.purpose}</p>
+                                    <p class="text-xs text-slate-500 mt-1">${bank.name} • ${item.estimatedRate.toFixed(2).replace('.', ',')} % • ${item.termYears} let</p>
+                                </div>
+                                <button type="button" class="text-red-400 hover:text-red-600 p-2" title="Smazat">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                                <div>
+                                    <span class="text-slate-500">Částka:</span>
+                                    <div class="font-bold text-slate-800">${fmt(item.amount)} Kč</div>
+                                </div>
+                                ${item.product === 'mortgage' ? `
+                                <div>
+                                    <span class="text-slate-500">LTV:</span>
+                                    <div class="font-bold text-slate-800">${Math.round(ltvCalc)} %</div>
+                                </div>
+                                ` : ''}
+                                ${item.product === 'loan' && item.subType === 'auto' ? `
+                                <div>
+                                    <span class="text-slate-500">Akontace:</span>
+                                    <div class="font-bold text-slate-800">${item.akoPercent || 0} %</div>
+                                </div>
+                                ` : ''}
+                                <div>
+                                    <span class="text-slate-500">Měsíčně:</span>
+                                    <div class="font-bold text-amber-600">${fmt(item.estimatedMonthly)} Kč</div>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500">Celkem:</span>
+                                    <div class="font-bold text-slate-800">${fmt(item.estimatedTotal)} Kč</div>
+                                </div>
+                            </div>
+                        `;
+                        div.querySelector('button').addEventListener('click', () => {
+                            this.app.removeCreditWishItem(item.id);
+                            renderCreditWishList();
+                        });
+                        container.appendChild(div);
+                    });
+                };
+                this.calculateCreditWish = calculateCreditWish;
+                this.updateCreditWishUI = updateCreditWishUI;
+                this.renderCreditWishList = renderCreditWishList;
                 this.calculateCreditWish = calculateCreditWish;
                 this.updateCreditWishUI = updateCreditWishUI;
                 document.querySelectorAll('.credit-wish-product').forEach(btn => {
@@ -4177,9 +4454,7 @@
                     if(el) el.addEventListener('change', () => { updateCreditWishUI(); });
                 });
                 const creditWishBank = document.getElementById('credit-wish-bank');
-                if(creditWishBank) creditWishBank.addEventListener('change', () => { this.app.data.newCreditWish.selectedBankId = creditWishBank.value; this.app.saveState(); calculateCreditWish(); });
-                const creditWishPurpose = document.getElementById('credit-wish-purpose');
-                if(creditWishPurpose) creditWishPurpose.addEventListener('change', (e) => { this.app.data.newCreditWish.purpose = e.target.value; this.app.saveState(); });
+                if(creditWishBank) creditWishBank.addEventListener('change', () => { updateCreditWishUI(); });
 
                 // Krok 5: Goals Listeners
                 const btnAddGoal = document.getElementById('btn-add-goal');
@@ -5140,27 +5415,25 @@
                 }
 
                 if(current === 4) {
-                    const w = this.app.data.newCreditWish || {};
-                    const restore = (id, val) => { const el = document.getElementById(id); if(el) el.value = val !== undefined && val !== '' ? val : (el.getAttribute('placeholder') || ''); };
-                    restore('credit-wish-amount', w.amount);
-                    restore('credit-wish-extra', w.extraAmount);
-                    restore('credit-wish-term', w.termYears || 25);
-                    const fixEl = document.getElementById('credit-wish-fix');
-                    if(fixEl) fixEl.value = w.fixYears || 5;
-                    const purposeEl = document.getElementById('credit-wish-purpose');
-                    if(purposeEl) purposeEl.value = w.purpose || '';
-                    const bankEl = document.getElementById('credit-wish-bank');
-                    if(bankEl) bankEl.value = w.selectedBankId || 'unicredit';
+                    // Reset formuláře na výchozí hodnoty
+                    document.getElementById('credit-wish-amount').value = '';
+                    document.getElementById('credit-wish-purpose').value = '';
+                    document.getElementById('credit-wish-extra').value = '';
+                    document.getElementById('credit-wish-term').value = '25';
+                    document.getElementById('credit-wish-fix').value = '5';
+                    document.getElementById('credit-wish-bank').value = 'unicredit';
+                    // Nastavit výchozí produkt na hypotéku
                     document.querySelectorAll('.credit-wish-product').forEach(b => {
-                        const active = b.dataset.product === (w.product || 'mortgage');
-                        b.classList.toggle('bg-amber-400', active);
-                        b.classList.toggle('text-slate-900', active);
-                        b.classList.toggle('border-amber-400', active);
-                        b.classList.toggle('bg-slate-50', !active);
-                        b.classList.toggle('text-slate-600', !active);
-                        b.classList.toggle('border-slate-200', !active);
+                        const isMortgage = b.dataset.product === 'mortgage';
+                        b.classList.toggle('bg-amber-400', isMortgage);
+                        b.classList.toggle('text-slate-900', isMortgage);
+                        b.classList.toggle('border-amber-400', isMortgage);
+                        b.classList.toggle('bg-slate-50', !isMortgage);
+                        b.classList.toggle('text-slate-600', !isMortgage);
+                        b.classList.toggle('border-slate-200', !isMortgage);
                     });
                     if(this.updateCreditWishUI) this.updateCreditWishUI();
+                    if(this.renderCreditWishList) this.renderCreditWishList();
                 }
 
                 if(current === 3) {
