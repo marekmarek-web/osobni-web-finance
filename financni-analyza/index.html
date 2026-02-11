@@ -4157,7 +4157,6 @@
                         newBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('Add loan button clicked'); // Debug
                             this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
                             this.renderLoansList();
                             this.recalcSums();
