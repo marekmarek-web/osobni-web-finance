@@ -101,7 +101,7 @@
             position: relative; 
             z-index: 1; 
             user-select: none;
-            cursor: default;
+            cursor: pointer;
             flex: 1; 
         }
         .stepper-item::before {
@@ -2404,6 +2404,14 @@
                 }
                 return false;
             }
+
+            goToStep(stepNumber) {
+                if (stepNumber >= 1 && stepNumber <= this.totalSteps) {
+                    this.currentStep = stepNumber;
+                    return true;
+                }
+                return false;
+            }
         }
         // END: APP_LOGIC
 
@@ -3957,6 +3965,12 @@
                         <div class="stepper-circle mb-2">${i}</div>
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider hidden md:block">${stepTitles[i-1]}</span>
                     `;
+                    // Přidat event listener pro kliknutí na krok
+                    stepDiv.addEventListener('click', () => {
+                        if(this.app.goToStep(i)) {
+                            this.updateView();
+                        }
+                    });
                     this.stepsContainer.appendChild(stepDiv);
                 }
             }
