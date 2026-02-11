@@ -2216,12 +2216,16 @@
             recalcLoansTotal() {
                 const list = this.data.liabilities.loansList || [];
                 const sum = list.reduce((a, b) => a + (parseFloat(b.balance) || 0), 0);
+                const sumPayments = list.reduce((a, b) => a + (parseFloat(b.pay) || 0), 0);
                 this.data.liabilities.loans = sum;
                 // Aktualizace readonly pole v UI (součet úvěrů)
                 const totalInput = document.getElementById('liability-loans');
                 if(totalInput) {
                     totalInput.value = sum ? sum : '';
                 }
+                // Aktualizace cashflow výdajů - součet měsíčních splátek úvěrů
+                if(!this.data.cashflow.expenses) this.data.cashflow.expenses = {};
+                this.data.cashflow.expenses.loans = sumPayments;
             }
 
             // Dynamic List Managers
@@ -4134,7 +4138,7 @@
                     step3Container.addEventListener('click', (e) => {
                         // Podporovat kliknutí na tlačítko nebo jeho ikonu/potomka
                         const btn = e.target.closest('#btn-add-loan');
-                        if(btn || e.target.id === 'btn-add-loan' || e.target.closest('#btn-add-loan')) {
+                        if(btn || e.target.id === 'btn-add-loan') {
                             e.preventDefault();
                             e.stopPropagation();
                             this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
@@ -4153,6 +4157,7 @@
                         newBtn.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
+                            console.log('Add loan button clicked'); // Debug
                             this.app.addLoanItem('Spotřebitelský úvěr', '', '', 0, 0, 0, 0);
                             this.renderLoansList();
                             this.recalcSums();
@@ -4162,6 +4167,7 @@
                 // Zavolat ihned a také po načtení DOM
                 setupAddLoanButton();
                 setTimeout(setupAddLoanButton, 100);
+                setTimeout(setupAddLoanButton, 500);
                 
                 // Liabilities listeners for details
                 const liabMortRate = document.getElementById('liab-mortgage-rate');
@@ -4896,7 +4902,12 @@
                     });
                     rateInp.addEventListener('input', (e) => { item.rate = parseFloat(e.target.value) || 0; this.app.saveState(); });
                     fixInp.addEventListener('input', (e) => { item.fix = parseFloat(e.target.value) || 0; this.app.saveState(); });
-                    payInp.addEventListener('input', (e) => { item.pay = parseFloat(e.target.value) || 0; this.app.saveState(); });
+                    payInp.addEventListener('input', (e) => { 
+                        item.pay = parseFloat(e.target.value) || 0; 
+                        this.app.recalcLoansTotal(); 
+                        this.recalcSums(); 
+                        this.app.saveState(); 
+                    });
 
                     div.querySelector('button').addEventListener('click', () => { 
                         this.app.removeLoanItem(item.id); 
