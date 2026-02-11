@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zásady používání Cookies | Marek Marek</title>
+    <meta name="description" content="Informace o používání souborů cookies na webu finančního partnera Marka Marka.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_M_white.png">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            dark: '#0a0f29',    /* Midnight Blue */
+                            gold: '#fbbf24',    /* Amber 500 */
+                            lightgold: '#fde047', /* Hover */
+                            main: '#0B3A7A',    /* Tmavě modrá */
+                            light: '#EAF3FF',   /* Světlé pozadí */
+                            border: '#D6E6FF',  /* Ohraničení */
+                        },
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(11, 58, 122, 0.08)',
+                        'glow': '0 0 20px rgba(251, 191, 36, 0.4)',
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2.5s infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+                            '100%': { transform: 'translateX(150%) skewX(-20deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* UPRAVENO: Hlavička je nyní viditelná (tmavá) ihned po načtení */
+        .glass-header-top { 
+            background-color: rgba(10, 15, 41, 0.95); /* Zvýšena opacita z 0.1 na 0.95 pro čitelnost */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+            transition: all 0.3s ease;
+        }
+        
+        /* Stav po scrollu - trochu průhlednější pro efekt, ale stále tmavá */
+        .glass-header-scrolled { 
+            background-color: rgba(10, 15, 41, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%); 
+            -webkit-backdrop-filter: blur(20px) saturate(180%); 
+            border-bottom: 1px solid rgba(11, 58, 122, 0.3); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+        }
+
+        .btn-sweep { position: relative; background-color: #fbbf24; color: #0a0f29; font-weight: 800; overflow: hidden; transition: all 0.4s ease; z-index: 1; box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.39); }
+        .btn-sweep::before { content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%; background-color: #fde047; transition: width 0.4s ease; z-index: -1; }
+        .btn-sweep:hover::before { width: 100%; }
+        .btn-sweep:hover { box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3); transform: translateY(-1px); }
+
+        .nav-link { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; padding: 0.6rem 1rem; border-radius: 9999px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
+    </style>
+</head>
+<body class="font-sans text-slate-600 bg-slate-50 flex flex-col min-h-screen">
+
+    <!-- 1. HEADER -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='https://www.marek-marek.cz/'">
+                <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                    <img id="logo-img" src="/images/logo_M_white.png" onerror="this.style.display='none';this.parentNode.innerHTML='M'" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                    <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
+                </div>
+            </div>
+            
+            <!-- Center Menu (Desktop only - hidden on mobile) -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="https://www.marek-marek.cz/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md px-3 py-2 rounded-md transition-colors">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="https://www.marek-marek.cz/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md px-3 py-2 rounded-md transition-colors">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="https://www.marek-marek.cz/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md px-3 py-2 rounded-md transition-colors">Podnikatelé a firmy</a>
+                </div>
+
+                <!-- Hamburger (Mobile only - hidden on desktop) -->
+                <div class="flex items-center lg:hidden">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10 border border-transparent hover:border-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="https://www.marek-marek.cz/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="https://www.marek-marek.cz/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="https://www.marek-marek.cz/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="https://www.marek-marek.cz/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="https://www.marek-marek.cz/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="https://www.marek-marek.cz/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-brand-main mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT: COOKIES -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+            
+            <!-- Header of Document -->
+            <div class="bg-brand-dark px-8 py-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-brand-gold opacity-10 rounded-full blur-3xl"></div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2 relative z-10">Zásady používání Cookies</h1>
+                <p class="text-brand-gold font-medium uppercase tracking-wider text-sm relative z-10">Transparentnost a nastavení</p>
+            </div>
+
+            <!-- Content -->
+            <div class="p-8 md:p-12 space-y-8 text-slate-700 leading-relaxed">
+                
+                <p class="text-lg font-medium">
+                    Pro správné fungování těchto webových stránek, jejich vylepšování a analýzu návštěvnosti používám na svém webu soubory cookies. Zde naleznete informace o tom, co cookies jsou, k čemu slouží a jak je můžete spravovat.
+                </p>
+
+                <!-- 1. Co jsou cookies -->
+                <section>
+                    <h2 class="text-xl font-extrabold text-brand-dark mb-4 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-gold mr-3 text-sm">1</span>
+                        Co jsou soubory cookies?
+                    </h2>
+                    <p class="text-sm">
+                        Cookies jsou malé textové soubory, které internetové stránky ukládají na váš počítač nebo mobilní zařízení v okamžiku, kdy tyto stránky začnete využívat. Stránky si tak na určitou dobu zapamatují vaše preference a úkony, které jste na nich provedli (např. přihlašovací údaje, jazyk, velikost písma a jiné zobrazovací preference), takže tyto údaje nemusíte zadávat znovu a přeskakovat z jedné stránky na druhou.
+                    </p>
+                </section>
+
+                <!-- 2. Typy cookies -->
+                <section>
+                    <h2 class="text-xl font-extrabold text-brand-dark mb-4 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-gold mr-3 text-sm">2</span>
+                        Jaké typy cookies používám
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-brand-dark mb-2 flex items-center gap-2">
+                                <i class="fas fa-shield-alt text-brand-gold"></i> Nezbytné (Technické) cookies
+                            </h3>
+                            <p class="text-sm">
+                                Tyto cookies jsou nutné pro správné fungování webu a jeho funkcí. Bez nich by stránka nemohla správně fungovat. Pro použití těchto cookies není vyžadován váš souhlas.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-brand-dark mb-2 flex items-center gap-2">
+                                <i class="fas fa-chart-pie text-brand-main"></i> Analytické cookies
+                            </h3>
+                            <p class="text-sm">
+                                Pomáhají mi porozumět, jak návštěvníci web používají. Anonymně shromažďují a sdělují informace (např. Google Analytics). Díky nim mohu web neustále vylepšovat.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-brand-dark mb-2 flex items-center gap-2">
+                                <i class="fas fa-bullhorn text-brand-gold"></i> Marketingové cookies
+                            </h3>
+                            <p class="text-sm">
+                                Používají se ke sledování návštěvníků napříč webovými stránkami. Záměrem je zobrazovat reklamu, která je relevantní a zajímavá pro jednotlivého uživatele.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Služby třetích stran -->
+                <section>
+                    <h2 class="text-xl font-extrabold text-brand-dark mb-4 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-gold mr-3 text-sm">3</span>
+                        Služby třetích stran
+                    </h2>
+                    <p class="mb-4 text-sm">
+                        Na webu používám služby třetích stran, které mohou na vaše zařízení ukládat své vlastní cookies. Jedná se zejména o:
+                    </p>
+                    <ul class="list-disc list-outside ml-5 space-y-2 text-sm text-slate-600">
+                        <li><strong>Google Analytics:</strong> Nástroj pro analýzu návštěvnosti webu.</li>
+                        <li><strong>Google Fonts:</strong> Pro načítání fontů písma.</li>
+                        <li><strong>FontAwesome:</strong> Pro zobrazování ikon.</li>
+                    </ul>
+                </section>
+
+                <!-- 4. Správa cookies -->
+                <section>
+                    <h2 class="text-xl font-extrabold text-brand-dark mb-4 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-brand-gold mr-3 text-sm">4</span>
+                        Jak odmítnout používání souborů cookies
+                    </h2>
+                    <p class="text-sm mb-4">
+                        Používání souborů cookies lze nastavit pomocí vašeho internetového prohlížeče. Většina prohlížečů soubory cookies automaticky přijímá již ve výchozím nastavení. Soubory cookies lze pomocí nastavení webového prohlížeče odmítnout nebo nastavit užívání jen některých souborů cookies.
+                    </p>
+                    <p class="text-sm mb-4">Informace o prohlížečích a způsobu nastavení předvoleb pro soubory cookies můžete nalézt na následujících webových stránkách:</p>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-bold text-brand-main">
+                        <a href="https://support.google.com/chrome/answer/95647?hl=cs" target="_blank" class="bg-brand-light p-3 rounded text-center hover:bg-brand-border transition">Google Chrome</a>
+                        <a href="https://support.mozilla.org/cs/kb/povoleni-zakazani-cookies" target="_blank" class="bg-brand-light p-3 rounded text-center hover:bg-brand-border transition">Mozilla Firefox</a>
+                        <a href="https://support.microsoft.com/cs-cz/microsoft-edge/odstran%C4%9Bn%C3%AD-soubor%C5%AF-cookie-v-aplikaci-microsoft-edge-63947406-40ac-c23d-37fd-6b9dad724129" target="_blank" class="bg-brand-light p-3 rounded text-center hover:bg-brand-border transition">Microsoft Edge</a>
+                        <a href="https://support.apple.com/cs-cz/guide/safari/sfri11471/mac" target="_blank" class="bg-brand-light p-3 rounded text-center hover:bg-brand-border transition">Safari</a>
+                    </div>
+                </section>
+
+                <hr class="border-slate-100">
+
+                <div class="text-center text-sm text-slate-500">
+                    <p>Poslední aktualizace: 1. 1. 2025.</p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 2. FOOTER -->
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="/images/logo_M_white.png" onerror="this.style.display='none';this.parentNode.innerHTML='M'" alt="M" class="w-full h-full object-contain p-1 invert">
+                        </div>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-brand-gold transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-brand-gold transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-brand-gold transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-brand-gold transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
+                        <li><a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/financni-plan/" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="https://www.marek-marek.cz/podnikatele/" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="https://www.marek-marek.cz/cookies/" class="text-white font-bold transition">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 3. MODAL -->
+    <div id="contactModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modalBackdrop"></div>
+    
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <!-- Modal panel -->
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all duration-300 sm:my-8 sm:w-full sm:max-w-lg scale-95 opacity-0" id="modalContent">
+              
+              <!-- Close button -->
+              <div class="absolute right-4 top-4 z-10">
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-500 transition-colors">
+                  <span class="sr-only">Zavřít</span>
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+    
+              <!-- Wrapper for content -->
+              <div id="modalContentContainer">
+                  <div class="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
+                    <div class="sm:flex sm:items-start">
+                      <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-2xl font-extrabold leading-6 text-brand-dark uppercase tracking-wide" id="modal-title">Nezávazná konzultace</h3>
+                        <p class="text-sm text-slate-600 mt-2 flex items-center gap-2">
+                            <i class="fas fa-comments text-brand-gold"></i>
+                            <span>Rád s Vámi proberu Vaše možnosti</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+    
+                  <div class="p-8">
+                      <form id="leadForm" class="space-y-5">
+                        <input type="hidden" name="_subject" value="Nová poptávka: Web Marek Marek">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_captcha" value="false">
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-envelope absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="email" name="email" id="email" required placeholder="vas@email.cz" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="telefon" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span class="text-slate-400 font-normal normal-case">(nepovinné)</span></label>
+                            <div class="relative">
+                                <i class="fas fa-phone absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="tel" name="telefon" id="telefon" placeholder="+420 777 ..." class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+    
+                        <div class="flex items-start gap-3 mt-2 bg-brand-light/50 p-3 rounded-lg">
+                            <input type="checkbox" id="consent" required class="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer">
+                            <label for="consent" class="text-xs text-slate-600 cursor-pointer select-none">
+                                Souhlasím se zpracováním osobních údajů.
+                            </label>
+                        </div>
+    
+                        <div class="pt-4">
+                            <button type="submit" class="btn-sweep w-full rounded-xl py-4 text-brand-dark font-bold shadow-lg transform transition hover:scale-[1.02] flex items-center justify-center gap-2 text-lg uppercase tracking-wider">
+                                <span>Odeslat nezávazně</span>
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- Navbar Scroll Logic ---
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                navbar.classList.add('glass-header-scrolled');
+                navbar.classList.remove('glass-header-top');
+            } else {
+                navbar.classList.add('glass-header-top');
+                navbar.classList.remove('glass-header-scrolled');
+            }
+        });
+
+        // --- Mobile Menu Logic ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- Modal Logic ---
+        function openModal() {
+            const modal = document.getElementById('contactModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const content = document.getElementById('modalContent');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            // Close mobile menu if open
+            if(mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            
+            // Animation timeout
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('contactModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const content = document.getElementById('modalContent');
+
+            backdrop.classList.add('opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close modal on clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('contactModal');
+            const content = document.getElementById('modalContent');
+            if (event.target == document.getElementById('modalBackdrop') || event.target == document.querySelector('#contactModal > div')) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

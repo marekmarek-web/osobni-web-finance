@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanční Plán - Wizard</title>
+    
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- START: STYLES -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        slate: { 850: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        brand: {
+                            dark: '#0a0f29',   // Hero pozadí
+                            orange: '#ea8d00', // CTA, akcenty
+                            gold: '#fbbf24',   // Jemné detaily
+                            main: '#0B3A7A',   // Hlavní modrá
+                            light: '#EAF3FF',  // Pozadí sekcí
+                            border: '#D6E6FF', // Rámečky
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --color-bg: #EAF3FF; /* brand-light */
+            --color-surface: #ffffff;
+            --color-surface-hover: #f8fafc;
+            --color-text-primary: #0f172a; /* slate-900 */
+            --color-text-secondary: #64748b; /* slate-500 */
+            --color-accent: #ea8d00; /* brand-orange */
+            --color-accent-hover: #ca7a00;
+            --color-border: #D6E6FF;
+            --color-error: #ef4444;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Glass Header classes (matching kinvestice) */
+        .glass-header-top {
+            background-color: #0a0f29;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        .glass-header-scrolled {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
+            color: #0a0f29;
+        }
+
+        /* Stepper Styles - Light Mode */
+        .stepper-item { position: relative; z-index: 1; }
+        .stepper-item::before {
+            content: ''; position: absolute; top: 50%; left: -50%; width: 100%; height: 2px;
+            background: #e2e8f0; z-index: -1; transform: translateY(-50%);
+        }
+        .stepper-item:first-child::before { display: none; }
+        
+        .stepper-circle {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #ffffff; border: 2px solid #cbd5e1; color: #64748b;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; font-weight: 600;
+        }
+        .stepper-item.active .stepper-circle {
+            border-color: var(--color-accent); color: var(--color-accent);
+            box-shadow: 0 0 0 4px rgba(234, 141, 0, 0.1); background: #fff;
+        }
+        .stepper-item.completed .stepper-circle {
+            background: var(--color-accent); border-color: var(--color-accent); color: #fff;
+        }
+        .stepper-item.completed::before { background: var(--color-accent); }
+
+        /* Form Elements - Premium Light */
+        .form-input {
+            background-color: #ffffff;
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            transition: all 0.2s;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .form-input:focus {
+            border-color: var(--color-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(234, 141, 0, 0.1);
+        }
+        .form-label {
+            display: block; font-size: 0.875rem; font-weight: 600; 
+            color: #475569; margin-bottom: 0.25rem;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #ea8d00 0%, #fbbf24 100%);
+            color: #0a0f29; font-weight: 700;
+            transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(234, 141, 0, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(234, 141, 0, 0.3);
+        }
+        .btn-secondary {
+            background-color: white; border: 1px solid #e2e8f0;
+            color: #64748b; font-weight: 600;
+        }
+        .btn-secondary:hover {
+            border-color: #cbd5e1; color: #0f172a; background-color: #f8fafc;
+        }
+
+        /* Hero Background */
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 400px;
+            background: linear-gradient(to bottom right, #0a0f29, #1e3a6e);
+            z-index: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        /* Card Style */
+        .wizard-card {
+            background: white;
+            border: 1px solid rgba(214, 230, 255, 0.6);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border-radius: 1.5rem;
+            position: relative; z-index: 10;
+        }
+
+        .step-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .step-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <!-- END: STYLES -->
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header (Glass style) -->
+    <header class="fixed w-full z-50 transition-all duration-500 glass-header-top">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-brand-dark font-bold shadow-sm">
+                    M
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-lg font-bold">Marek Marek<span class="text-brand-orange">.</span></span>
+                    <span class="text-[0.6rem] opacity-70 font-bold tracking-widest uppercase">Finanční partner</span>
+                </div>
+            </div>
+            <div class="text-sm opacity-80 font-medium" id="header-status">Nový plán</div>
+        </div>
+    </header>
+
+    <!-- Main Wizard Area -->
+    <main class="flex-grow flex flex-col items-center justify-start pt-24 pb-20 px-4 relative">
+        
+        <div class="hero-bg"></div> <!-- Hero pozadí -->
+
+        <!-- Stepper -->
+        <div class="w-full max-w-4xl mb-8 relative z-10">
+            <div class="flex justify-between items-center relative" id="stepper-container">
+                <!-- Dynamically rendered by JS -->
+            </div>
+        </div>
+
+        <!-- START: WIZARD_STRUCTURE -->
+        <div class="w-full max-w-5xl wizard-card p-8 md:p-10 mb-20">
+            
+            <!-- Krok 1: Klient -->
+            <div id="step-1" class="step-content active" data-title="Osobní údaje">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900">Osobní údaje</h2>
+                        <p class="text-slate-500 mt-1">Základní údaje pro výpočet finančního plánu.</p>
+                    </div>
+                    <div class="bg-blue-50 text-brand-main px-4 py-2 rounded-lg text-sm font-bold">
+                        <i class="fas fa-user mr-2"></i> Klient & Rodina
+                    </div>
+                </div>
+                
+                <!-- Klient -->
+                <div class="space-y-6">
+                    <h3 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2">Hlavní klient</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div class="md:col-span-4">
+                            <label class="form-label">Jméno a příjmení</label>
+                            <input type="text" id="client-name" class="form-input w-full px-4 py-3" placeholder="Jan Novák">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="form-label">Datum narození</label>
+                            <input type="date" id="client-dob" class="form-input w-full px-4 py-3">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="form-label">Věk</label>
+                            <input type="text" id="client-age" class="form-input w-full px-4 py-3 bg-slate-50 text-slate-500" readonly>
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="form-label">Email <span class="text-slate-400 font-normal">(nepovinné)</span></label>
+                            <input type="email" id="client-email" class="form-input w-full px-4 py-3" placeholder="jan@email.cz">
+                        </div>
+                    </div>
+
+                    <!-- Partner Toggle -->
+                    <div class="flex items-center gap-3 mt-4">
+                        <input type="checkbox" id="has-partner" class="w-5 h-5 text-brand-orange rounded border-slate-300 focus:ring-brand-orange">
+                        <label for="has-partner" class="text-slate-700 font-medium cursor-pointer select-none">Přidat partnera do plánu</label>
+                    </div>
+
+                    <!-- Partner Form (Hidden by default) -->
+                    <div id="partner-section" class="hidden bg-slate-50 p-6 rounded-2xl border border-slate-100 mt-4 animate-fadeIn">
+                        <h3 class="text-sm font-bold text-brand-main uppercase tracking-widest mb-4">Partner</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="form-label">Jméno partnera</label>
+                                <input type="text" id="partner-name" class="form-input w-full px-4 py-3">
+                            </div>
+                            <div>
+                                <label class="form-label">Datum narození</label>
+                                <input type="date" id="partner-dob" class="form-input w-full px-4 py-3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Děti -->
+                    <div class="mt-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-slate-800">Děti</h3>
+                            <button id="btn-add-child" class="text-sm font-bold text-brand-orange hover:text-brand-dark transition-colors">
+                                <i class="fas fa-plus-circle mr-1"></i> Přidat dítě
+                            </button>
+                        </div>
+                        <div id="children-container" class="space-y-3">
+                            <div class="text-center py-6 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-sm">
+                                Žádné děti zatím nepřidány.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Krok 2: Cashflow -->
+            <div id="step-2" class="step-content" data-title="Příjmy a výdaje">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900">Cashflow</h2>
+                        <p class="text-slate-500 mt-1">Měsíční bilance domácnosti.</p>
+                    </div>
+                    <div id="cashflow-badge" class="bg-slate-100 text-slate-500 px-4 py-2 rounded-lg text-sm font-bold">
+                        Bilance: 0 Kč
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Příjmy -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <h3 class="text-brand-main font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-arrow-down"></i> Příjmy (měsíčně)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Hlavní příjem (čistého)</label>
+                                <input type="number" data-type="income" id="income-main" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Příjem partnera</label>
+                                <input type="number" data-type="income" id="income-partner" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Ostatní (pronájem, dávky)</label>
+                                <input type="number" data-type="income" id="income-other" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
+                            <span class="text-sm font-bold text-slate-500">Celkem příjmy</span>
+                            <span id="total-income" class="text-lg font-bold text-slate-900">0 Kč</span>
+                        </div>
+                    </div>
+
+                    <!-- Výdaje -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                        <h3 class="text-red-500 font-bold mb-4 flex items-center gap-2">
+                            <i class="fas fa-arrow-up"></i> Výdaje (měsíčně)
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Bydlení (nájem/hypo + energie)</label>
+                                <input type="number" data-type="expense" id="expense-housing" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Jídlo a drogerie</label>
+                                <input type="number" data-type="expense" id="expense-living" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs uppercase text-slate-400">Doprava, zábava, ostatní</label>
+                                <input type="number" data-type="expense" id="expense-fun" class="form-input w-full px-4 py-2 text-right font-bold text-slate-700" placeholder="0">
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
+                            <span class="text-sm font-bold text-slate-500">Celkem výdaje</span>
+                            <span id="total-expense" class="text-lg font-bold text-slate-900">0 Kč</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rezerva Check -->
+                <div class="mt-6 bg-white border border-brand-border p-4 rounded-xl flex items-center justify-between shadow-sm">
+                    <div>
+                        <label class="form-label mb-0">Aktuální finanční rezerva (Hotovost)</label>
+                        <p class="text-xs text-slate-500">Kolik máte ihned k dispozici?</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="asset-cash-quick" class="form-input w-40 px-4 py-2 text-right font-bold" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Krok 3: Majetek a závazky -->
+            <div id="step-3" class="step-content" data-title="Bilance">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900">Majetek a závazky</h2>
+                        <p class="text-slate-500 mt-1">Co vlastníte a co dlužíte.</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-xs uppercase text-slate-400 font-bold">Čisté jmění</span>
+                        <span id="net-worth" class="text-2xl font-bold text-brand-dark">0 Kč</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Aktiva -->
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 pl-2 border-l-4 border-green-500">Aktiva (Majetek)</h3>
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">Položka</th>
+                                        <th class="px-6 py-3 text-right">Hodnota (Kč)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-6 py-3 font-medium text-slate-700">Nemovitosti</td>
+                                        <td class="px-6 py-2"><input type="number" data-type="asset" id="asset-realestate" class="form-input w-full text-right py-1 px-2 border-transparent hover:border-slate-200 focus:border-brand-orange bg-transparent" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-3 font-medium text-slate-700">Investice (Akcie, Fondy, Crypto)</td>
+                                        <td class="px-6 py-2"><input type="number" data-type="asset" id="asset-investments" class="form-input w-full text-right py-1 px-2 border-transparent hover:border-slate-200 focus:border-brand-orange bg-transparent" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-3 font-medium text-slate-700">Ostatní (Auto, Umění...)</td>
+                                        <td class="px-6 py-2"><input type="number" data-type="asset" id="asset-other" class="form-input w-full text-right py-1 px-2 border-transparent hover:border-slate-200 focus:border-brand-orange bg-transparent" placeholder="0"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-green-50/50">
+                                    <tr>
+                                        <td class="px-6 py-3 font-bold text-slate-700">Celkem Aktiva</td>
+                                        <td class="px-6 py-3 text-right font-bold text-green-600" id="total-assets">0 Kč</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pasiva -->
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-3 pl-2 border-l-4 border-red-500">Pasiva (Dluhy)</h3>
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3">Položka</th>
+                                        <th class="px-6 py-3 text-right">Zůstatek dluhu (Kč)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-6 py-3 font-medium text-slate-700">Hypotéka</td>
+                                        <td class="px-6 py-2"><input type="number" data-type="liability" id="liability-mortgage" class="form-input w-full text-right py-1 px-2 border-transparent hover:border-slate-200 focus:border-brand-orange bg-transparent" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-3 font-medium text-slate-700">Spotřebitelské úvěry / Leasing</td>
+                                        <td class="px-6 py-2"><input type="number" data-type="liability" id="liability-loans" class="form-input w-full text-right py-1 px-2 border-transparent hover:border-slate-200 focus:border-brand-orange bg-transparent" placeholder="0"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-red-50/50">
+                                    <tr>
+                                        <td class="px-6 py-3 font-bold text-slate-700">Celkem Pasiva</td>
+                                        <td class="px-6 py-3 text-right font-bold text-red-600" id="total-liabilities">0 Kč</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Krok 4: Cíle -->
+            <div id="step-4" class="step-content" data-title="Finanční cíle">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Finanční cíle</h2>
+                <p class="text-slate-500 mb-8">Definujte, čeho chcete dosáhnout.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Goal Card Placeholder -->
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 hover:shadow-md transition-shadow cursor-pointer border-dashed flex flex-col items-center justify-center min-h-[200px] group">
+                        <div class="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center mb-4 group-hover:border-brand-orange transition-colors">
+                            <i class="fas fa-plus text-slate-400 group-hover:text-brand-orange"></i>
+                        </div>
+                        <span class="font-bold text-slate-600 group-hover:text-brand-orange">Přidat cíl</span>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-6 border border-brand-border shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-brand-orange opacity-10 rounded-full -mr-10 -mt-10"></div>
+                        <h4 class="font-bold text-slate-900 mb-1">Vlastní bydlení</h4>
+                        <p class="text-xs text-slate-500 mb-4">Horizont: 5 let</p>
+                        <div class="text-2xl font-bold text-brand-dark mb-2">2 mil. Kč</div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 mb-2">
+                            <div class="bg-brand-orange h-1.5 rounded-full" style="width: 20%"></div>
+                        </div>
+                        <span class="text-xs font-bold text-brand-orange uppercase">Vyvážená strategie</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Krok 5: Strategie -->
+            <div id="step-5" class="step-content" data-title="Investiční strategie">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Strategie</h2>
+                <p class="text-slate-500 mb-8">Návrh řešení na míru.</p>
+                
+                <div class="bg-gradient-to-br from-brand-dark to-slate-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden mb-6">
+                    <div class="relative z-10">
+                        <h3 class="text-xl font-bold mb-2">Doporučené portfolio: <span class="text-brand-orange">Dynamický růst</span></h3>
+                        <p class="text-slate-300 text-sm mb-6 max-w-lg">Vzhledem k dlouhému horizontu a cílům doporučujeme převahu akciové složky pro maximalizaci výnosu.</p>
+                        <div class="flex gap-4">
+                            <div class="text-center">
+                                <span class="block text-2xl font-bold text-brand-gold">8-9%</span>
+                                <span class="text-xs text-slate-400 uppercase">Oček. výnos</span>
+                            </div>
+                             <div class="w-px bg-white/10 h-10"></div>
+                            <div class="text-center">
+                                <span class="block text-2xl font-bold text-white">20+</span>
+                                <span class="text-xs text-slate-400 uppercase">Let</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Decor -->
+                    <div class="absolute right-0 bottom-0 w-64 h-64 bg-brand-main opacity-20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+                </div>
+            </div>
+
+            <!-- Krok 6: Shrnutí -->
+            <div id="step-6" class="step-content" data-title="Shrnutí">
+                <div class="text-center mb-10">
+                    <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Plán je připraven</h2>
+                    <p class="text-slate-500">Zkontrolujte údaje a exportujte PDF.</p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-6 border border-slate-200 mb-6">
+                     <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-4">
+                         <span class="text-slate-600">Klient</span>
+                         <span class="font-bold text-slate-900" id="summary-client-name">--</span>
+                     </div>
+                     <div class="flex justify-between items-center">
+                         <span class="text-slate-600">Čisté jmění</span>
+                         <span class="font-bold text-brand-dark" id="summary-net-worth">--</span>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-10 flex justify-between pt-8 border-t border-slate-100">
+                <button id="btn-prev" class="btn-secondary px-6 py-3 rounded-xl hidden flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Zpět
+                </button>
+                <div class="flex items-center gap-4 ml-auto">
+                    <span id="warning-msg" class="text-sm text-brand-orange hidden animate-pulse font-medium">
+                        <i class="fas fa-exclamation-circle"></i> Některá pole nejsou vyplněna
+                    </span>
+                    <button id="btn-next" class="btn-primary px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-brand-orange/20">
+                        Další <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+        <!-- END: WIZARD_STRUCTURE -->
+
+    </main>
+
+    <!-- Scripts Block -->
+    <script>
+        // DATA PLACEHOLDER
+        const FUNDS_DATA = {
+            equity: {
+                global: { name: "Global Equity Fund", risk: 5, expReturn: 0.08 },
+                us: { name: "US Large Cap", risk: 5, expReturn: 0.09 },
+            },
+            bond: {
+                gov: { name: "Government Bonds", risk: 2, expReturn: 0.03 },
+                corp: { name: "Corporate Bonds", risk: 3, expReturn: 0.045 }
+            },
+            commodity: {
+                gold: { name: "Gold ETF", risk: 4, expReturn: 0.02 }
+            }
+        };
+
+        // START: APP_LOGIC
+        class AppState {
+            constructor() {
+                this.STORAGE_KEY = 'financial_plan_state';
+                this.currentStep = 1;
+                this.totalSteps = 6;
+                
+                this.data = {
+                    client: { name: '', dob: '', age: '', email: '', hasPartner: false },
+                    partner: { name: '', dob: '' },
+                    children: [], 
+                    cashflow: { income: {}, expense: {} }, 
+                    assets: { active: {}, liability: {} },
+                    goals: [],
+                    strategy: {}
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.loadState();
+            }
+
+            loadState() {
+                const saved = localStorage.getItem(this.STORAGE_KEY);
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        this.data = { ...this.data, ...parsed.data };
+                        // this.currentStep = parsed.currentStep || 1; // Volitelně: obnovit krok
+                    } catch (e) { console.error("Load Error", e); }
+                }
+            }
+
+            saveState() {
+                const toSave = {
+                    data: this.data,
+                    currentStep: this.currentStep,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(toSave));
+            }
+
+            updateField(category, field, value) {
+                if (this.data[category]) {
+                    this.data[category][field] = value;
+                    this.saveState();
+                }
+            }
+            
+            updateNestedData(category, subCategory, key, value) {
+                if (!this.data[category][subCategory]) this.data[category][subCategory] = {};
+                this.data[category][subCategory][key] = parseFloat(value) || 0;
+                this.saveState();
+            }
+
+            addChild() {
+                this.data.children.push({ id: Date.now(), name: '', dob: '' });
+                this.saveState();
+                return this.data.children[this.data.children.length - 1];
+            }
+
+            updateChild(id, field, value) {
+                const child = this.data.children.find(c => c.id === id);
+                if (child) {
+                    child[field] = value;
+                    this.saveState();
+                }
+            }
+
+            removeChild(id) {
+                this.data.children = this.data.children.filter(c => c.id !== id);
+                this.saveState();
+            }
+
+            nextStep() {
+                if (this.currentStep < this.totalSteps) {
+                    this.currentStep++;
+                    return true;
+                }
+                return false;
+            }
+
+            prevStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // START: UI_RENDER
+        class UI {
+            constructor(appState) {
+                this.app = appState;
+                this.stepsContainer = document.getElementById('stepper-container');
+                this.btnNext = document.getElementById('btn-next');
+                this.btnPrev = document.getElementById('btn-prev');
+                this.warningMsg = document.getElementById('warning-msg');
+                
+                this.childrenContainer = document.getElementById('children-container');
+                this.btnAddChild = document.getElementById('btn-add-child');
+                this.partnerSection = document.getElementById('partner-section');
+                this.partnerToggle = document.getElementById('has-partner');
+
+                this.initHeaderScroll();
+                this.initListeners();
+                this.renderStepper();
+                this.updateView();
+            }
+
+            initHeaderScroll() {
+                const header = document.querySelector('header');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 20) {
+                        header.classList.remove('glass-header-top');
+                        header.classList.add('glass-header-scrolled');
+                    } else {
+                        header.classList.add('glass-header-top');
+                        header.classList.remove('glass-header-scrolled');
+                    }
+                });
+            }
+
+            initListeners() {
+                this.btnNext.addEventListener('click', () => this.handleNext());
+                this.btnPrev.addEventListener('click', () => this.handlePrev());
+
+                // Krok 1
+                this.bindInput('client-name', 'client', 'name');
+                this.bindInput('client-email', 'client', 'email');
+                
+                const dobInput = document.getElementById('client-dob');
+                dobInput.addEventListener('change', (e) => {
+                    this.app.updateField('client', 'dob', e.target.value);
+                    this.calculateAge(e.target.value, 'client-age');
+                });
+
+                this.partnerToggle.addEventListener('change', (e) => {
+                    this.app.updateField('client', 'hasPartner', e.target.checked);
+                    this.togglePartner(e.target.checked);
+                });
+                this.bindInput('partner-name', 'partner', 'name');
+                document.getElementById('partner-dob').addEventListener('change', (e) => {
+                    this.app.updateField('partner', 'dob', e.target.value);
+                });
+
+                this.btnAddChild.addEventListener('click', () => {
+                    const child = this.app.addChild();
+                    this.renderChildRow(child);
+                });
+
+                // Krok 2 & 3: Auto-calc
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        const type = e.target.dataset.type;
+                        if(type) {
+                            const parts = e.target.id.split('-');
+                            if(parts.length > 1) {
+                                const category = type === 'asset' || type === 'liability' ? 'assets' : 'cashflow';
+                                const sub = type === 'asset' ? 'active' : (type === 'liability' ? 'liability' : type);
+                                this.app.updateNestedData(category, sub, parts[1], e.target.value);
+                                this.recalcSums();
+                            }
+                        }
+                    });
+                });
+            }
+
+            bindInput(elementId, category, field) {
+                const el = document.getElementById(elementId);
+                if(el) {
+                    el.addEventListener('input', (e) => {
+                        this.app.updateField(category, field, e.target.value);
+                        this.checkSoftValidation();
+                    });
+                }
+            }
+
+            calculateAge(dobVal, outputId) {
+                if(!dobVal) return;
+                const dob = new Date(dobVal);
+                const diff_ms = Date.now() - dob.getTime();
+                const age_dt = new Date(diff_ms); 
+                const age = Math.abs(age_dt.getUTCFullYear() - 1970);
+                document.getElementById(outputId).value = age;
+                this.app.updateField('client', 'age', age);
+            }
+
+            togglePartner(show) {
+                if(show) {
+                    this.partnerSection.classList.remove('hidden');
+                } else {
+                    this.partnerSection.classList.add('hidden');
+                }
+            }
+
+            renderChildRow(child) {
+                const div = document.createElement('div');
+                div.className = "flex gap-4 items-center animate-fadeIn";
+                div.innerHTML = `
+                    <input type="text" placeholder="Jméno dítěte" class="form-input flex-1 px-4 py-2" value="${child.name}">
+                    <input type="date" class="form-input w-40 px-4 py-2" value="${child.dob}">
+                    <button class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>
+                `;
+                
+                const inputs = div.querySelectorAll('input');
+                inputs[0].addEventListener('input', (e) => this.app.updateChild(child.id, 'name', e.target.value));
+                inputs[1].addEventListener('change', (e) => this.app.updateChild(child.id, 'dob', e.target.value));
+                div.querySelector('button').addEventListener('click', () => {
+                    div.remove();
+                    this.app.removeChild(child.id);
+                });
+
+                if(this.childrenContainer.children.length > 0 && this.childrenContainer.children[0].classList.contains('text-center')) {
+                    this.childrenContainer.innerHTML = '';
+                }
+                this.childrenContainer.appendChild(div);
+            }
+
+            recalcSums() {
+                const inc = this.app.data.cashflow.income;
+                const exp = this.app.data.cashflow.expense;
+                
+                const totalInc = Object.values(inc).reduce((a, b) => a + b, 0);
+                const totalExp = Object.values(exp).reduce((a, b) => a + b, 0);
+                
+                document.getElementById('total-income').innerText = totalInc.toLocaleString() + ' Kč';
+                document.getElementById('total-expense').innerText = totalExp.toLocaleString() + ' Kč';
+                
+                const balance = totalInc - totalExp;
+                const badge = document.getElementById('cashflow-badge');
+                badge.innerText = `Bilance: ${balance.toLocaleString()} Kč`;
+                badge.className = `px-4 py-2 rounded-lg text-sm font-bold ${balance >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+
+                const assets = this.app.data.assets.active;
+                const liabilities = this.app.data.assets.liability;
+
+                const totalAssets = Object.values(assets).reduce((a, b) => a + b, 0);
+                const totalLiabilities = Object.values(liabilities).reduce((a, b) => a + b, 0);
+                const netWorth = totalAssets - totalLiabilities;
+
+                if(document.getElementById('total-assets')) {
+                    document.getElementById('total-assets').innerText = totalAssets.toLocaleString() + ' Kč';
+                    document.getElementById('total-liabilities').innerText = totalLiabilities.toLocaleString() + ' Kč';
+                    document.getElementById('net-worth').innerText = netWorth.toLocaleString() + ' Kč';
+                }
+            }
+
+            renderStepper() {
+                this.stepsContainer.innerHTML = '';
+                const stepTitles = ["Klient", "Cashflow", "Majetek", "Cíle", "Strategie", "Shrnutí"];
+                for (let i = 1; i <= this.app.totalSteps; i++) {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = `stepper-item flex-1 flex flex-col items-center`;
+                    stepDiv.dataset.step = i;
+                    stepDiv.innerHTML = `
+                        <div class="stepper-circle mb-2">${i}</div>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider hidden md:block">${stepTitles[i-1]}</span>
+                    `;
+                    this.stepsContainer.appendChild(stepDiv);
+                }
+            }
+
+            updateView() {
+                const current = this.app.currentStep;
+                
+                document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+                const activeStep = document.getElementById(`step-${current}`);
+                if(activeStep) activeStep.classList.add('active');
+
+                document.querySelectorAll('.stepper-item').forEach(el => {
+                    const stepNum = parseInt(el.dataset.step);
+                    const circle = el.querySelector('.stepper-circle');
+                    el.classList.remove('active', 'completed');
+                    
+                    if (stepNum < current) {
+                        el.classList.add('completed');
+                        circle.innerHTML = '<i class="fas fa-check"></i>';
+                    } else if (stepNum === current) {
+                        el.classList.add('active');
+                        circle.innerText = stepNum;
+                    } else {
+                        circle.innerText = stepNum;
+                    }
+                });
+
+                this.btnPrev.classList.toggle('hidden', current === 1);
+                
+                if (current === this.app.totalSteps) {
+                    this.btnNext.innerHTML = '<i class="fas fa-print mr-2"></i> Exportovat PDF';
+                    this.btnNext.classList.replace('btn-primary', 'bg-slate-900');
+                    this.btnNext.classList.add('text-white');
+                    document.getElementById('summary-client-name').innerText = this.app.data.client.name || 'Nevyplněno';
+                    this.recalcSums();
+                    document.getElementById('summary-net-worth').innerText = document.getElementById('net-worth').innerText;
+
+                } else {
+                    this.btnNext.innerHTML = 'Další <i class="fas fa-arrow-right ml-2"></i>';
+                    this.btnNext.classList.remove('bg-slate-900', 'text-white');
+                    this.btnNext.classList.add('btn-primary');
+                }
+
+                if(current === 1) {
+                    document.getElementById('client-name').value = this.app.data.client.name;
+                    document.getElementById('client-email').value = this.app.data.client.email || '';
+                    document.getElementById('client-dob').value = this.app.data.client.dob || '';
+                    document.getElementById('client-age').value = this.app.data.client.age || '';
+                    document.getElementById('has-partner').checked = this.app.data.client.hasPartner;
+                    this.togglePartner(this.app.data.client.hasPartner);
+                    
+                    this.childrenContainer.innerHTML = '';
+                    if(this.app.data.children.length === 0) {
+                         this.childrenContainer.innerHTML = '<div class="text-center py-6 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-sm">Žádné děti zatím nepřidány.</div>';
+                    } else {
+                        this.app.data.children.forEach(c => this.renderChildRow(c));
+                    }
+                }
+                
+                this.checkSoftValidation();
+            }
+
+            checkSoftValidation() {
+                let missing = false;
+                if(this.app.currentStep === 1 && !this.app.data.client.name) missing = true;
+                
+                if(missing) {
+                    this.warningMsg.classList.remove('hidden');
+                } else {
+                    this.warningMsg.classList.add('hidden');
+                }
+            }
+
+            handleNext() {
+                if (this.app.currentStep === this.app.totalSteps) {
+                    window.print();
+                } else {
+                    this.app.nextStep();
+                    this.updateView();
+                }
+            }
+
+            handlePrev() {
+                this.app.prevStep();
+                this.updateView();
+            }
+        }
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = new AppState();
+            const ui = new UI(app);
+        });
+    </script>
+</body>
+</html>

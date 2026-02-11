@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Služby pro firmy a podnikatele | Marek Marek</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Komplexní finanční řízení pro české firmy a OSVČ. Od daňové optimalizace benefitů až po úvěry do 100 mil. Kč.">
+    
+    <!-- KNIHOVNY -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_M_white.png">
+    <!-- TAILWIND KONFIGURACE -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            dark: '#0a0f29',    /* Midnight Blue */
+                            gold: '#fbbf24',    /* Amber 400/500 Mix */
+                            lightgold: '#fde047', /* Hover/Gradient */
+                            darkgold: '#d97706', /* Tmavší zlatá pro formulář */
+                            main: '#0B3A7A',    /* Tmavě modrá */
+                            light: '#EAF3FF',   /* Světlé pozadí */
+                            border: '#D6E6FF',  /* Ohraničení */
+                        },
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(11, 58, 122, 0.08)',
+                        'glow': '0 0 20px rgba(251, 191, 36, 0.4)',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+                            '100%': { transform: 'translateX(150%) skewX(-20deg)' },
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2.5s infinite',
+                        'fade-in-down': 'fadeInDown 0.3s ease-out forwards',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- CUSTOM CSS -->
+    <style>
+        /* Global Styles */
+        :root { font-family: 'Inter', sans-serif; }
+        body { overflow-x: hidden; }
+        
+        /* Pro plynulý posuv na mobilu při otevření modalu */
+        body.modal-open { overflow: hidden; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #082855; }
+
+        /* Efekty pro Header (přidáno z vašeho kódu) */
+        .glass-header-top { 
+            background-color: rgba(10, 15, 41, 0.1); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        
+        .glass-header-scrolled { 
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%); 
+            -webkit-backdrop-filter: blur(20px) saturate(180%); 
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); 
+        }
+
+        .btn-sweep { 
+            position: relative; 
+            background-color: #fbbf24; 
+            color: #0a0f29; 
+            font-weight: 800; 
+            overflow: hidden; 
+            transition: all 0.4s ease; 
+            z-index: 1; 
+            box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.39); 
+        }
+        
+        .btn-sweep::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 0%; 
+            height: 100%; 
+            background-color: #fde047; 
+            transition: width 0.4s ease; 
+            z-index: -1; 
+        }
+        
+        .btn-sweep:hover::before { width: 100%; }
+        .btn-sweep:hover { 
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3); 
+            transform: translateY(-1px); 
+        }
+
+        .nav-link { 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.02em; 
+            padding: 0.6rem 1rem; 
+            border-radius: 9999px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            white-space: nowrap; 
+        }
+
+        /* Hero Text Gradient */
+        .hero-gradient-text {
+            background-image: linear-gradient(to right, #fbbf24 0%, #fde047 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        /* Range Slider Styling (Pro kalkulačku) */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #fbbf24;
+            border: 2px solid #fff;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 2px;
+        }
+        
+        /* Accordion Marker Styling */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">
+
+    <!-- =========================
+         HEADER (NAVBAR)
+    ========================== -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="../images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
+                </div>
+
+                <div class="flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                         <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- =========================
+         1. HERO SEKCE (Business Focus)
+    ========================== -->
+    <section class="relative min-h-screen flex items-center bg-[#0a0f29] overflow-hidden pt-10">
+        
+        <!-- Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <!-- Základní tmavý podklad -->
+            <div class="absolute inset-0 bg-[#0a0f29]"></div>
+            
+            <!-- UPRAVENO: Fotka podnikatelehead.png, opacity 70%, přes celou obrazovku -->
+            <img src="../images/podnikatelehead.png" alt="Background" class="absolute inset-0 w-full h-full object-cover opacity-70" onerror="this.style.display='none'">
+            
+            <!-- Gradient Overlay: Tmavý zleva (pod textem) do průhledna (aby byla fotka vpravo vidět) -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f29] via-[#0a0f29]/80 to-transparent"></div>
+            
+            <!-- Textura šumu pro zachování stylu -->
+            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-0">
+            
+            <!-- Left: Text Content -->
+            <!-- ZMĚNA: max-w-3xl -> max-w-4xl (více místa pro text na PC) -->
+            <div class="flex-1 max-w-4xl pt-10 lg:pt-0 text-center lg:text-left">
+                <!-- Label -->
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-lightgold text-xs font-bold uppercase tracking-widest mb-8 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span>
+                    SPECIALISTA NA FINANCE PRO FIRMY A PODNIKATELE
+                </div>
+                
+                <!-- Headline -->
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-4 tracking-tight drop-shadow-lg">
+                    Stabilní partner pro<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-white">české firmy.</span>
+                </h1>
+                
+                <!-- Subtitle - UPRAVENO: zmenšeno písmo (odstraněno md:text-xl), aby se vešlo na 2 řádky -->
+                <p class="text-lg text-slate-300 mb-10 leading-relaxed max-w-3xl font-light mx-auto lg:mx-0 drop-shadow-md">
+                    Komplexní finanční řízení, na které se můžete spolehnout. Od daňové optimalizace benefitů až po úvěry do 100 mil. Kč.
+                </p>
+                
+                <!-- CTA -->
+                <div class="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
+                    <button onclick="document.getElementById('benefity').scrollIntoView({behavior: 'smooth'})" class="group relative w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden flex items-center justify-center gap-3">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <span class="text-lg relative z-10">Kalkulačka úspor</span>
+                        <i data-lucide="calculator" class="relative z-10 w-5 h-5 transform group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                    
+                    <a href="#sluzby" class="px-8 py-5 rounded-xl border border-white/20 text-white font-bold hover:bg-white/5 transition-colors text-center flex items-center justify-center bg-black/20 backdrop-blur-sm">
+                        Přehled služeb
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Abstract Decoration -->
+            <div class="hidden lg:flex flex-1 items-center justify-end relative h-[600px] pointer-events-none">
+                <!-- Dekorativní prvky a rámečky kompletně odstraněny pro čistý vzhled fotografie -->
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/30 animate-bounce">
+            <i class="fas fa-chevron-down text-2xl"></i>
+        </div>
+    </section>
+
+
+    <!-- =========================
+         2. NOVÁ SEKCE: KALKULAČKA ÚSPOR (Interaktivní)
+    ========================== -->
+    <section class="py-24 bg-[#0a0f29] relative overflow-hidden" id="benefity">
+        <!-- Background effects -->
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+        <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-main/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <span class="text-brand-gold font-bold uppercase tracking-wider text-sm mb-2 block">Kalkulačka úspor</span>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-4">
+                    Přestaňte vyhazovat peníze oknem
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto text-lg">
+                    Zvýšení mzdy je pro firmu nejdražší způsob odměňování. Využijte státní limity na maximum.
+                    50 000 Kč ročně do DIP (Dlouhodobý investiční produkt) nebo životního pojištění je pro firmu daňový náklad, ale bez odvodů.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl">
+                <!-- Left: Inputs -->
+                <div class="space-y-10">
+                    
+                    <!-- Slider 1: Employees -->
+                    <div>
+                        <div class="flex justify-between items-end mb-4">
+                            <label class="text-white font-bold text-sm uppercase tracking-wide">Kolik lidí <span class="text-slate-500 normal-case">(vč. majitelů)</span> chcete odměňovat?</label>
+                            <span class="text-brand-gold font-black text-3xl" id="empCountDisplay">5</span>
+                        </div>
+                        <input type="range" id="empCountInput" min="1" max="50" value="5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-gold">
+                        <div class="flex justify-between text-xs font-medium text-slate-500 mt-2">
+                            <span>1 osoba</span>
+                            <span>50 osob</span>
+                        </div>
+                    </div>
+
+                    <!-- Toggle: Self Employed -->
+                    <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                        <span class="text-white font-bold text-sm">Zaměstnáváte sami sebe?</span>
+                        <div class="flex items-center gap-3 cursor-pointer" onclick="toggleSelfEmployed()">
+                            <span class="text-xs text-slate-400 font-bold transition-colors" id="selfEmployedLabel">NE</span>
+                            <div id="selfEmployedToggle" class="w-12 h-6 rounded-full bg-slate-700 relative transition-colors">
+                                <div class="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform duration-300" id="selfEmployedKnob"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Note -->
+                    <div id="selfEmployedNote" class="hidden flex-col bg-gradient-to-r from-brand-gold/20 to-brand-gold/5 border border-brand-gold/40 rounded-xl p-5 animate-fade-in-down">
+                        <p class="text-brand-gold font-black text-xl mb-2 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                            Jen na sobě ročně ušetříte cca 35 000 Kč!
+                        </p>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Využijte daňové úlevy tam, kde to nejvíce bolí. Zahrňte do nákladů firmy <strong class="text-white">ŽIVOTNÍ POJIŠTĚNÍ, INVESTICE (DIP) A PENZIJNÍ SPOŘENÍ</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Slider 2: Benefit Amount -->
+                    <div>
+                        <div class="flex justify-between items-end mb-4">
+                            <label class="text-white font-bold text-sm uppercase tracking-wide">Roční příspěvek <span class="text-slate-500 normal-case">(na osobu)</span></label>
+                            <span class="text-brand-gold font-black text-3xl" id="benefitAmountDisplay">50 000 Kč</span>
+                        </div>
+                        <input type="range" id="benefitAmountInput" min="12000" max="50000" step="1000" value="50000" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-gold">
+                        <p class="text-xs text-slate-500 mt-2 flex items-center gap-2">
+                            <i data-lucide="info" class="w-3 h-3"></i> Limit pro osvobození od daně je 50 000 Kč/rok.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right: Results -->
+                <div class="bg-brand-dark/50 rounded-2xl p-8 border border-white/10 shadow-inner relative overflow-hidden flex flex-col justify-center h-full text-center lg:text-left min-h-[350px]">
+                    <div class="absolute top-0 right-0 w-40 h-40 bg-brand-gold/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                    
+                    <span class="text-slate-400 text-sm uppercase tracking-wider mb-4 block font-bold">Roční úspora pro vaši firmu</span>
+                    
+                    <!-- Main Number -->
+                    <div class="text-5xl md:text-6xl font-black text-brand-gold mb-6 tracking-tight drop-shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all duration-300" id="totalSavingsDisplay">
+                        -- Kč
+                    </div>
+                    
+                    <p class="text-slate-300 text-sm mb-8 leading-relaxed border-l-2 border-brand-gold/30 pl-4">
+                        Tuto částku byste jinak zbytečně odvedli státu na sociálním a zdravotním pojištění, pokud byste stejnou částku vyplatili ve mzdě.
+                    </p>
+
+                    <a href="#kontakt" class="w-full py-4 bg-gradient-to-r from-brand-gold to-brand-lightgold text-brand-dark font-black rounded-xl hover:shadow-lg hover:shadow-brand-gold/20 transition-all text-center flex items-center justify-center gap-2 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <span class="relative z-10">Chci nastavit benefity a ušetřit</span>
+                        <i data-lucide="arrow-right" class="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =========================
+         3. GRID SLUŽEB
+    ========================== -->
+    <section class="py-24 bg-brand-light relative" id="sluzby">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-black text-brand-dark mb-4">Komplexní péče o firmu</h2>
+                <p class="text-slate-600">Jeden partner pro všechny fáze růstu.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Card 1 -->
+                <div class="group relative bg-slate-50 rounded-3xl p-8 border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 hover:bg-gradient-to-br hover:from-white hover:to-brand-gold/20 h-full">
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">1</span>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+                            <i data-lucide="building-2" class="w-7 h-7 text-brand-gold"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Firemní financování</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Provozní i investiční úvěry až do 100 mil. Kč. Faktoring, leasing technologií. Zajistím kapitál pro váš růst.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="group relative bg-slate-50 rounded-3xl p-8 border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 hover:bg-gradient-to-br hover:from-white hover:to-brand-gold/20 h-full">
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">2</span>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+                            <i data-lucide="truck" class="w-7 h-7 text-brand-gold"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Pojištění flotil</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Povinné i havarijní pojištění pro 1 i 50 aut. Hromadné slevy a správa vozového parku bez administrativní zátěže.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group relative bg-slate-50 rounded-3xl p-8 border border-slate-100 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 hover:bg-gradient-to-br hover:from-white hover:to-brand-gold/20 h-full">
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">3</span>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+                            <i data-lucide="shield-alert" class="w-7 h-7 text-brand-gold"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Pojištění odpovědnosti</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Ochrana statutárů (D&O), profesní odpovědnost, škody na zdraví i majetku. Krytí pro případ fatálních chyb.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =========================
+         4. SEKCE FIREMNÍ INVESTICE (Dark Mode)
+    ========================== -->
+    <section class="bg-brand-dark py-24 relative overflow-hidden">
+        <!-- Decorative subtle pattern -->
+        <div class="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-main opacity-20 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-10 md:p-14 border border-white/10 flex flex-col lg:flex-row items-center justify-between gap-10 shadow-2xl">
+                <div class="lg:w-2/3">
+                    <h2 class="text-3xl md:text-4xl font-black text-white mb-6">
+                        Máte na účtu volné prostředky?
+                    </h2>
+                    <p class="text-slate-300 text-lg leading-relaxed font-light">
+                        Nenechte je požírat inflací. Nabízím konzervativní <strong class="text-white font-bold">treasury management</strong> pro s.r.o. s důrazem na likviditu a bezpečnost kapitálu. Peníze pracují, ale jsou dostupné.
+                    </p>
+                </div>
+                <div class="lg:w-auto flex-shrink-0 w-full md:w-auto">
+                    <a href="#kontakt" class="group relative w-full inline-flex bg-transparent border-2 border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark font-extrabold py-4 px-8 rounded-xl transition-all overflow-hidden items-center justify-center gap-3">
+                        <span class="relative z-10">Chci zhodnotit rezervy</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =========================
+         5. SEKCE PŘÍPADOVÁ STUDIE (Social Proof)
+    ========================== -->
+    <section class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row bg-slate-50 rounded-3xl overflow-hidden border border-slate-100 shadow-lg">
+                
+                <!-- Left: Key Stats -->
+                <div class="md:w-1/3 bg-brand-main p-10 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-main to-brand-dark opacity-100"></div>
+                    <div class="relative z-10">
+                        <div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mb-6 mx-auto backdrop-blur-sm border border-white/20">
+                            <i data-lucide="pie-chart" class="w-10 h-10 text-brand-gold"></i>
+                        </div>
+                        <span class="text-4xl lg:text-5xl font-black text-white tracking-tight block mb-2 whitespace-nowrap">320 000 Kč</span>
+                        <span class="text-sm font-bold text-brand-gold uppercase tracking-widest">Roční úspora</span>
+                    </div>
+                </div>
+
+                <!-- Right: Content -->
+                <div class="md:w-2/3 p-10 md:p-12 flex flex-col justify-center">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest w-fit mb-6">
+                        <i data-lucide="file-check" class="w-3 h-3"></i> Příklad z praxe
+                    </div>
+                    <h3 class="text-3xl font-black text-brand-dark mb-6">Výrobní firma, 40 zaměstnanců</h3>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-start p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-gold mt-0.5 mr-4 flex-shrink-0"></i>
+                            <div>
+                                <span class="block font-bold text-brand-dark text-lg">Optimalizace benefitů</span>
+                                <span class="text-slate-600 text-sm">Úspora 320 000 Kč/rok na odvodech díky zavedení DIPu.</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-brand-gold mt-0.5 mr-4 flex-shrink-0"></i>
+                            <div>
+                                <span class="block font-bold text-brand-dark text-lg">Konsolidace úvěrů</span>
+                                <span class="text-slate-600 text-sm">Snížení měsíční splátky o 15 % při zachování délky splatnosti.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#kontakt" class="inline-flex items-center text-brand-main font-bold hover:text-brand-gold transition-colors group text-lg">
+                        Chcete podobné výsledky?
+                        <i data-lucide="arrow-right" class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================
+         5.5 NOVÁ SEKCE: PARTNEŘI (Loga)
+         Statický pás s logy firem
+    ========================== -->
+    <section class="py-12 bg-slate-50 border-t border-slate-100 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <p class="text-center text-slate-400 text-sm font-bold uppercase tracking-widest mb-8">Firmy, se kterými spolupracuji</p>
+             <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+                 <!-- Logo 1: Litoměřicko -->
+                 <div class="h-16">
+                     <img src="../images/litomericko-logo.png" alt="Litoměřicko" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+                 <!-- Logo 2: Lucka -->
+                 <div class="h-16">
+                     <img src="../images/lucka-logo.png" alt="Lucka" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+                 <!-- Logo 3: Rexpoint -->
+                 <div class="h-16">
+                     <img src="../images/rexpoint-logo.png" alt="Rexpoint" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+                 <!-- Logo 4: Řezníček -->
+                 <div class="h-16">
+                     <img src="../images/reznicek-logo.png" alt="Řezníček" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+                 <!-- Logo 5: Dřevovkus -->
+                 <div class="h-16">
+                     <img src="../images/drevovkus-logo.png" alt="Dřevovkus" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+                 <!-- Logo 6: Beads -->
+                 <div class="h-16">
+                     <img src="../images/beads-logo.png" alt="Beads" class="h-full object-contain" onerror="this.style.display='none'">
+                 </div>
+             </div>
+        </div>
+    </section>
+
+
+    <!-- =========================
+         6. FAQ - Často kladené otázky
+    ========================== -->
+    <section class="py-24 bg-white border-t border-slate-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-black text-brand-dark mb-4">FAQ - Často kladené otázky</h2>
+                <div class="w-20 h-1.5 bg-brand-gold mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="space-y-4">
+                
+                <!-- Q1 -->
+                <details class="group bg-slate-50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer list-none select-none">
+                        <h3 class="font-bold text-brand-dark pr-6 text-lg">Jak přesně funguje daňová úspora na zaměstnaneckých benefitech?</h3>
+                        <span class="transition-transform duration-300 group-open:rotate-180 text-brand-gold flex-shrink-0">
+                            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-200 pt-4 bg-white">
+                        Stát podporuje nepeněžní benefity (DIP, penzijní spoření, životní pojištění) až do výše 50 000 Kč ročně na zaměstnance. Pro firmu je to daňově uznatelný náklad bez odvodů (úspora 33,8 %). Zaměstnanec z této částky také neplatí daně.
+                    </div>
+                </details>
+
+                <!-- Q2 -->
+                <details class="group bg-slate-50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer list-none select-none">
+                        <h3 class="font-bold text-brand-dark pr-6 text-lg">Dokážete zajistit financování i pro začínající s.r.o. nebo OSVČ?</h3>
+                        <span class="transition-transform duration-300 group-open:rotate-180 text-brand-gold flex-shrink-0">
+                            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-200 pt-4 bg-white">
+                        Ano. Řeším provozní i investiční úvěry až do 100 mil. Kč i pro firmy s kratší historií nebo specifickým daňovým přiznáním. Vždy srovnávám nabídky více bank.
+                    </div>
+                </details>
+
+                <!-- Q3 -->
+                <details class="group bg-slate-50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer list-none select-none">
+                        <h3 class="font-bold text-brand-dark pr-6 text-lg">Proč řešit finance s vámi a ne přímo s mojí bankou?</h3>
+                        <span class="transition-transform duration-300 group-open:rotate-180 text-brand-gold flex-shrink-0">
+                            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-200 pt-4 bg-white">
+                        Bankéř prodává jen produkty své banky. Já vybírám to nejlepší z celého trhu. Díky objemu obchodů často vyjednám sazby a podmínky, na které běžný klient na pobočce nedosáhne.
+                    </div>
+                </details>
+
+                <!-- Q4 -->
+                <details class="group bg-slate-50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer list-none select-none">
+                        <h3 class="font-bold text-brand-dark pr-6 text-lg">Má smysl pojištění odpovědnosti, když "jen" sedím u počítače?</h3>
+                        <span class="transition-transform duration-300 group-open:rotate-180 text-brand-gold flex-shrink-0">
+                            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-200 pt-4 bg-white">
+                        Rozhodně. Chyba v kódu nebo výpočtu může klientovi způsobit milionové škody (ušlý zisk). Pojištění profesní odpovědnosti chrání firmu před likvidací.
+                    </div>
+                </details>
+
+                <!-- Q5 -->
+                <details class="group bg-slate-50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer list-none select-none">
+                        <h3 class="font-bold text-brand-dark pr-6 text-lg">Co stojí vaše služby pro firmy?</h3>
+                        <span class="transition-transform duration-300 group-open:rotate-180 text-brand-gold flex-shrink-0">
+                            <i data-lucide="chevron-down" class="w-6 h-6"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-200 pt-4 bg-white">
+                        Úvodní audit rizik a nákladů je zdarma. Většina služeb je placena formou provize od institucí, v případě specifického poradenství funguji na transparentním honoráři dle dohody.
+                    </div>
+                </details>
+
+            </div>
+            
+            <!-- Structured Data for FAQ (JSON-LD) -->
+            <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [{
+                "@type": "Question",
+                "name": "Jak přesně funguje daňová úspora na zaměstnaneckých benefitech?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Stát podporuje nepeněžní benefity (DIP, penzijní spoření, životní pojištění) až do výše 50 000 Kč ročně na zaměstnance. Pro firmu je to daňově uznatelný náklad bez odvodů (úspora 33,8 %). Zaměstnanec z této částky také neplatí daně."
+                }
+              }, {
+                "@type": "Question",
+                "name": "Dokážete zajistit financování i pro začínající s.r.o. nebo OSVČ?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Ano. Řeším provozní i investiční úvěry až do 100 mil. Kč i pro firmy s kratší historií nebo specifickým daňovým přiznáním. Vždy srovnávám nabídky více bank.
+"
+                }
+              }, {
+                "@type": "Question",
+                "name": "Proč řešit finance s vámi a ne přímo s mojí bankou?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Bankéř prodává jen produkty své banky. Já vybírám to nejlepší z celého trhu. Díky objemu obchodů často vyjednám sazby a podmínky, na které běžný klient na pobočce nedosáhne."
+                }
+              }, {
+                "@type": "Question",
+                "name": "Má smysl pojištění odpovědnosti, když \"jen\" sedím u počítače?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Rozhodně. Chyba v kódu nebo výpočtu může klientovi způsobit milionové škody (ušlý zisk). Pojištění profesní odpovědnosti chrání firmu před likvidací."
+                }
+              }, {
+                "@type": "Question",
+                "name": "Co stojí vaše služby pro firmy?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Úvodní audit rizik a nákladů je zdarma. Většina služeb je placena formou provize od institucí, v případě specifického poradenství funguji na transparentním honoráři dle dohody."
+                }
+              }]
+            }
+            </script>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. ČÁST: KONTAKTNÍ SEKCE (Extract)      -->
+    <!-- ========================================== -->
+    
+    <section id="kontakt" class="py-24 bg-brand-light">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl font-bold mb-4 text-brand-dark">Využijte státní podporu hned.</h2>
+            <p class="text-slate-600 mb-10 max-w-2xl mx-auto">Vyberte si termín pro nezávaznou konzultaci. Potkáme se osobně v Roudnici, u Vás nebo online z pohodlí domova.</p>
+            
+            <div class="bg-white p-10 rounded-2xl shadow-lg border border-brand-border max-w-2xl mx-auto">
+                <div class="text-center space-y-6">
+                    <div class="inline-flex p-5 bg-brand-light rounded-full text-brand-main mb-2">
+                        <i class="fas fa-envelope text-4xl"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-brand-dark">Kontaktujte mě.</h3>
+                    
+                    <!-- CTA Tlačítko (Integrované s designem Shimmer) -->
+                    <button onclick="openModal()" class="group relative w-full inline-block bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-6 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline cursor-pointer">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <div class="relative flex items-center justify-center gap-3">
+                            <span class="text-lg">Mám zájem o konzultaci</span>
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
+                        </div>
+                    </button>
+                    
+                    <div class="flex items-center justify-center gap-2 text-xs text-slate-400 mt-4">
+                        <i class="fas fa-lock"></i>
+                        <span>Respektuji vaše soukromí. Žádný spam.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="../images/logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert" onerror="this.style.display='none'">
+                        </div>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
+                        <li><a href="/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
+                        <li><a href="/financni-plan/" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="/podnikatele/" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="/cookies/" class="hover:text-white transition">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- 8. ČÁST: MODAL (Vyskakovací okno)       -->
+    <!-- ========================================== -->
+
+    <div id="contactModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"></div>
+    
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <!-- Modal panel -->
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all w-full max-w-md scale-95 opacity-0" id="modalContent">
+              
+              <!-- Close button -->
+              <div class="absolute right-4 top-4 z-10">
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-brand-dark transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                  <span class="sr-only">Zavřít</span>
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+    
+              <!-- Wrapper for content to be replaced -->
+              <div id="modalContentContainer">
+                  <div class="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
+                    <div class="sm:flex sm:items-start">
+                      <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-2xl font-bold leading-6 text-brand-dark uppercase tracking-wide" id="modal-title">Nezávazná konzultace</h3>
+                        <p class="text-sm text-slate-600 mt-2 flex items-center gap-2">
+                            <i class="fas fa-comments text-brand-gold"></i>
+                            <span>Rád s Vámi proberu Vaše možnosti</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-8">
+                      <form id="leadForm" class="space-y-5">
+                        <!-- Hidden fields for FormSubmit configuration -->
+                        <input type="hidden" name="_subject" value="Nová poptávka: Web Marek Marek (Konzultace)">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_captcha" value="false">
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-envelope absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="email" name="email" id="email" required placeholder="vas@email.cz" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="telefon" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span class="text-slate-400 font-normal normal-case">(nepovinné)</span></label>
+                            <div class="relative">
+                                <i class="fas fa-phone absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="tel" name="telefon" id="telefon" placeholder="+420 777 ..." class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 mt-2 bg-brand-light/50 p-3 rounded-lg">
+                            <input type="checkbox" id="consent" required class="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer">
+                            <label for="consent" class="text-xs text-slate-600 cursor-pointer select-none">
+                                Souhlasím se zpracováním osobních údajů pro účely konzultace.
+                            </label>
+                        </div>
+
+                        <div class="pt-4">
+                            <button type="submit" class="group relative w-full bg-brand-dark hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-dark/20 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg overflow-hidden">
+                                <span>Odeslat nezávazně</span>
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </div>
+                      </form>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- LOGIKA (Kalkulačka, ikony a Modal) -->
+    <script>
+        // --- PROMĚNNÉ PRO KALKULAČKU ---
+        const empCountInput = document.getElementById('empCountInput');
+        const benefitAmountInput = document.getElementById('benefitAmountInput');
+        const selfEmployedToggle = document.getElementById('selfEmployedToggle');
+        
+        const empCountDisplay = document.getElementById('empCountDisplay');
+        const benefitAmountDisplay = document.getElementById('benefitAmountDisplay');
+        const totalSavingsDisplay = document.getElementById('totalSavingsDisplay');
+        const selfEmployedNote = document.getElementById('selfEmployedNote');
+        const selfEmployedKnob = document.getElementById('selfEmployedKnob');
+        const selfEmployedLabel = document.getElementById('selfEmployedLabel');
+
+        let isSelfEmployed = false;
+
+        // --- LOGIKA KALKULAČKY ---
+        function formatMoney(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        function calculateSavings() {
+            if(!empCountInput || !benefitAmountInput) return;
+
+            const employees = parseInt(empCountInput.value);
+            const benefitAmount = parseInt(benefitAmountInput.value);
+            
+            // Logika výpočtu úspory:
+            const savingsRatio = 0.7; // 35000 / 50000 (cca úspora na odvodech)
+            
+            const savingsPerPerson = benefitAmount * savingsRatio;
+            const totalSavings = Math.round(savingsPerPerson * employees);
+            
+            // UI Update
+            empCountDisplay.innerText = employees;
+            benefitAmountDisplay.innerText = formatMoney(benefitAmount) + " Kč";
+            totalSavingsDisplay.innerText = formatMoney(totalSavings) + " Kč";
+        }
+
+        function toggleSelfEmployed() {
+            isSelfEmployed = !isSelfEmployed;
+            if (isSelfEmployed) {
+                selfEmployedKnob.classList.add('translate-x-6');
+                selfEmployedToggle.classList.remove('bg-slate-700');
+                selfEmployedToggle.classList.add('bg-brand-gold');
+                
+                selfEmployedNote.classList.remove('hidden');
+                selfEmployedNote.classList.add('flex');
+                
+                selfEmployedLabel.innerText = "ANO";
+                selfEmployedLabel.classList.add('text-brand-gold');
+            } else {
+                selfEmployedKnob.classList.remove('translate-x-6');
+                selfEmployedToggle.classList.add('bg-slate-700');
+                selfEmployedToggle.classList.remove('bg-brand-gold');
+                
+                selfEmployedNote.classList.add('hidden');
+                selfEmployedNote.classList.remove('flex');
+                
+                selfEmployedLabel.innerText = "NE";
+                selfEmployedLabel.classList.remove('text-brand-gold');
+            }
+        }
+
+        // --- MODAL FUNCTIONS ---
+        const modal = document.getElementById('contactModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+        const modalContainer = document.getElementById('modalContentContainer'); // Pro obnovení obsahu po zavření
+
+        // Uložení původního HTML formuláře pro reset po úspěšném odeslání
+        let originalFormHTML = '';
+        
+        function openModal() {
+            modal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+            
+            // Animace otevření
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            backdrop.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                
+                // Pokud byl formulář odeslán (obsah se změnil na "Děkuji"), resetujeme ho zpět po zavření
+                // Ale jen pokud uběhl nějaký čas, aby uživatel neviděl probliknutí
+                setTimeout(() => {
+                    if (!document.getElementById('leadForm')) {
+                         modalContainer.innerHTML = originalFormHTML;
+                         // Musíme znovu navázat event listener na nový formulář
+                         attachFormListener(); 
+                    }
+                }, 200);
+            }, 300);
+        }
+
+        // Zavření kliknutím mimo modal
+        window.onclick = function(event) {
+            // Kontrola, zda kliknuto na backdrop wrapper (který má ID contactModal nebo jeho vnitřní wrapper)
+            const modalWrapper = document.querySelector('#contactModal > div.fixed.z-10');
+            if (event.target === modalWrapper || event.target === document.querySelector('#contactModal .flex')) {
+                closeModal();
+            }
+        }
+
+        // --- Form Submission Logic ---
+        function attachFormListener() {
+            const form = document.getElementById('leadForm');
+            if(!form) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalContent = submitButton.innerHTML;
+                
+                // Loading stav
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Odesílám...';
+
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    // Odeslání na formsubmit.co přes AJAX
+                    const response = await fetch("https://formsubmit.co/ajax/kontakt@marek-marek.cz", {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        // Úspěch - Změna obsahu modalu na "Děkuji"
+                        modalContainer.innerHTML = `
+                            <div class="p-12 text-center">
+                                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm animate-bounce">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-brand-dark mb-2">Poptávka odeslána!</h3>
+                                <p class="text-slate-600 mb-8">Děkuji za zprávu. Budu Vás brzy kontaktovat.</p>
+                                <button onclick="closeModal()" class="text-brand-gold font-bold hover:text-brand-dark transition-colors border-b-2 border-brand-gold pb-1">Zavřít okno</button>
+                            </div>
+                        `;
+                    } else {
+                        throw new Error('Server returned error');
+                    }
+                } catch (error) {
+                    console.error('Chyba:', error);
+                    alert("Nepodařilo se odeslat formulář. Zkontrolujte prosím své připojení.");
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalContent;
+                }
+            });
+        }
+
+        // --- INICIALIZACE ---
+        const init = () => {
+            const byId = (id) => document.getElementById(id);
+            const $$ = (selector) => document.querySelectorAll(selector);
+
+            // Calculator Listeners
+            if(empCountInput && benefitAmountInput) {
+                empCountInput.addEventListener('input', calculateSavings);
+                benefitAmountInput.addEventListener('input', calculateSavings);
+                // Init Calc
+                calculateSavings();
+            }
+
+            // Create Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Uložíme si obsah formuláře při načtení stránky
+            if(modalContainer) originalFormHTML = modalContainer.innerHTML;
+            
+            // Inicializace listeneru pro formulář
+            attachFormListener();
+
+            // HEADER SCROLL LOGIC
+            const navbar = byId('navbar');
+            const logoIcon = byId('logo-icon');
+            const logoText = byId('logo-text');
+            const logoSubtext = byId('logo-subtext');
+            const navLinks = $$('.nav-link');
+            const dividers = $$('[id^="nav-divider"]');
+            const logoImg = byId('logo-img');
+
+            function updateHeader() {
+                if (!navbar) return;
+
+                if (window.scrollY > 20) {
+                    navbar.classList.add('glass-header-scrolled');
+                    navbar.classList.remove('glass-header-top');
+                    
+                    if(logoIcon) {
+                        logoIcon.classList.remove('bg-white', 'text-brand-dark');
+                        logoIcon.classList.add('bg-brand-dark', 'text-white');
+                    }
+                    if(logoImg) logoImg.classList.remove('invert');
+                    if(logoText) {
+                        logoText.classList.remove('text-white');
+                        logoText.classList.add('text-brand-dark');
+                    }
+                    if(logoSubtext) {
+                        logoSubtext.classList.remove('text-slate-300');
+                        logoSubtext.classList.add('text-slate-500');
+                    }
+                    navLinks.forEach(link => {
+                        link.classList.remove('text-white');
+                        link.classList.add('text-brand-main');
+                        link.classList.add('hover:bg-brand-light');
+                        link.classList.remove('hover:bg-white/10');
+                        link.classList.remove('hover:backdrop-blur-md');
+                    });
+                    dividers.forEach(div => {
+                        div.classList.remove('bg-white/20');
+                        div.classList.add('bg-brand-border');
+                    });
+                } else {
+                    navbar.classList.remove('glass-header-scrolled');
+                    navbar.classList.add('glass-header-top');
+
+                    if(logoIcon) {
+                        logoIcon.classList.add('bg-white', 'text-brand-dark');
+                        logoIcon.classList.remove('bg-brand-dark', 'text-white');
+                    }
+                    if(logoImg) logoImg.classList.add('invert');
+                    if(logoText) {
+                        logoText.classList.add('text-white');
+                        logoText.classList.remove('text-brand-dark');
+                    }
+                    if(logoSubtext) {
+                        logoSubtext.classList.add('text-slate-300');
+                        logoSubtext.classList.remove('text-slate-500');
+                    }
+                    navLinks.forEach(link => {
+                        link.classList.add('text-white');
+                        link.classList.remove('text-brand-main');
+                        link.classList.remove('hover:bg-brand-light');
+                        link.classList.add('hover:bg-white/10');
+                        link.classList.add('hover:backdrop-blur-md');
+                    });
+                    dividers.forEach(div => {
+                        div.classList.add('bg-white/20');
+                        div.classList.remove('bg-brand-border');
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', updateHeader);
+            updateHeader(); 
+
+            // MOBILE MENU
+            const btn = byId('mobile-menu-btn');
+            const menu = byId('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => { 
+                    menu.classList.toggle('hidden'); 
+                });
+                
+                $$('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        if(this.getAttribute('href').startsWith('#')) {
+                             // Only prevent default if it's a hash link on the same page
+                             // Note: In this specific file context, hrefs like /#sluzby might reload page in preview
+                             // but we keep the logic simple
+                             menu.classList.add('hidden');
+                        }
+                    });
+                });
+            }
+        };
+
+        // Spuštění po načtení okna
+        window.onload = init;
+    </script>
+</body>
+</html>
