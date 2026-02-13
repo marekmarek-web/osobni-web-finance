@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Kde firma přichází o peníze – rychlý přehled | Marek Marek</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -49,7 +49,7 @@
         .stepper-item.active .stepper-circle { border-color: var(--color-accent); color: var(--color-accent); box-shadow: 0 0 0 4px rgba(255,204,0,0.2); }
         .stepper-item.completed .stepper-circle { background: var(--color-accent); border-color: var(--color-accent); color: #0a0f29; }
         .stepper-item.completed + .stepper-item::before { background: var(--color-accent); }
-        .form-input { background: #fff; border: 1px solid var(--color-border); border-radius: 0.75rem; transition: all 0.2s; }
+        .form-input { background: #fff; border: 1px solid var(--color-border); border-radius: 0.75rem; transition: all 0.2s; font-size: 16px; }
         .form-input:focus { border-color: var(--color-accent); outline: none; box-shadow: 0 0 0 3px rgba(255,204,0,0.2); }
         /* Žádný viditelný kurzor/outline při kliknutí – jen jemný focus-visible pro klávesnici */
         *:focus { outline: none; }
@@ -308,6 +308,62 @@
             margin-bottom: 1rem;
             text-align: center;
         }
+        
+        /* === MOBILNÍ OPTIMALIZACE === */
+        @media (max-width: 767px) {
+            html { overflow-x: hidden; }
+            body { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+            .glass-header .max-w-7xl { padding-left: 1rem; padding-right: 1rem; }
+            .hero h1, .text-3xl { font-size: 1.5rem !important; line-height: 1.3; }
+            .hero p, .text-lg { font-size: 0.9375rem; }
+            #wizard-card-main { padding: 1rem !important; margin-left: 0.5rem; margin-right: 0.5rem; max-width: calc(100% - 1rem); }
+            main { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            #wizard-stepper-wrap { gap: 0; margin-bottom: 1.5rem; padding-bottom: 0.5rem; -webkit-overflow-scrolling: touch; }
+            .stepper-item { flex: 0 0 auto; min-width: 44px; }
+            .stepper-item span { display: none !important; }
+            .stepper-circle { width: 36px !important; height: 36px !important; min-width: 36px; font-size: 0.875rem; }
+            .stepper-item::before { top: 18px; left: calc(-50% + 19px); right: calc(50% + 19px); }
+            .step-content h2 { font-size: 1.25rem !important; }
+            .benefit-btn { flex-direction: column !important; padding: 1rem 0.75rem !important; text-align: center; }
+            .benefit-btn .text-left { text-align: center !important; }
+            .benefit-btn .benefit-btn-arrow { margin-left: 0 !important; margin-top: 0.25rem; }
+            .benefit-panel, .bg-slate-50.p-6 { padding: 1rem !important; }
+            .summary-box, .p-6 { padding: 1rem !important; }
+            .summary-box .grid { gap: 0.75rem !important; }
+            .summary-box .p-4 { padding: 0.75rem !important; }
+            .flex.items-center.gap-4 { flex-wrap: wrap; gap: 0.5rem !important; }
+            .flex.items-center.gap-4 input[type="range"] { min-width: 120px; }
+            .pill { min-width: 60px !important; padding: 6px 12px !important; font-size: 0.8125rem; }
+            .pill-benefit-25plus { flex-shrink: 0; }
+            .snapshot-bubble { min-width: 260px; max-width: calc(100vw - 2rem); left: 50%; right: auto; transform: translateX(-50%); }
+            .step-actions { flex-direction: column; gap: 0.75rem; }
+            .step-actions button, .step-actions a { width: 100%; justify-content: center; }
+            #wizard-btn-container { flex-direction: column; gap: 1rem; padding-top: 1.5rem !important; }
+            #wizard-btn-container .btn-secondary, #wizard-btn-container .btn-primary { width: 100%; justify-content: center; }
+            .mt-6.flex.flex-wrap { flex-direction: column; }
+            .mt-6.flex.flex-wrap button, .mt-6.flex.flex-wrap label { width: 100%; justify-content: center; }
+            .flex.flex-wrap.gap-4.justify-center { flex-direction: column; }
+            .flex.flex-wrap.gap-4.justify-center button, .flex.flex-wrap.gap-4.justify-center a { width: 100%; justify-content: center; }
+            .wizard-card.mb-8 { padding: 1rem !important; }
+            .verdict-card, .exec-card { padding: 1rem !important; }
+            .risk-gaps-score { font-size: 1.5rem !important; }
+            footer .grid { grid-template-columns: 1fr !important; gap: 2rem !important; text-align: center; }
+            footer .flex.space-x-4 { justify-content: center; }
+            .layer-badge { font-size: 0.65rem; padding: 4px 10px; }
+            .flex.justify-between.items-start { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+            .snapshot-tooltip-trigger { min-width: 44px; min-height: 44px; width: 44px; height: 44px; }
+        }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 1.35rem !important; }
+            .hero h1 br { display: none; }
+            #wizard-card-main { margin-left: 0.25rem; margin-right: 0.25rem; max-width: calc(100% - 0.5rem); padding: 0.75rem !important; }
+            .stepper-circle { width: 32px !important; height: 32px !important; min-width: 32px; font-size: 0.75rem; }
+            .stepper-item::before { top: 16px; left: calc(-50% + 17px); right: calc(50% + 17px); }
+        }
+        /* Safe area pro notched telefony */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+        }
     </style>
 </head>
 <body>
@@ -401,15 +457,15 @@
             <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto mb-8">
                 Rychlý přehled benefitů, rizik a úspor. Bez složitostí – jen pár otázek a máte jasno, co dává smysl řešit jako první.
             </p>
-            <a href="#wizard-start" class="inline-flex items-center gap-3 bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/25 transition-all hover:scale-[1.02] hover:shadow-brand-gold/30 no-underline">
+            <a href="#wizard-start" class="inline-flex items-center justify-center gap-3 w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/25 transition-all hover:scale-[1.02] hover:shadow-brand-gold/30 no-underline">
                 <i class="fas fa-arrow-right"></i>
                 <span>Začít přehled</span>
             </a>
         </div>
     </section>
 
-    <main id="wizard-start" class="pt-8 pb-16 px-4 relative z-10 scroll-mt-20">
-        <div id="wizard-card-main" class="wizard-card max-w-5xl mx-auto p-8 md:p-12">
+    <main id="wizard-start" class="pt-8 pb-16 px-3 sm:px-4 relative z-10 scroll-mt-20">
+        <div id="wizard-card-main" class="wizard-card max-w-5xl mx-auto p-4 sm:p-6 md:p-12">
             <div id="wizard-stepper-wrap" class="flex justify-between overflow-x-auto pb-4 gap-1 mb-8">
                 <div class="stepper-item active" data-step="1"><div class="stepper-circle">1</div><span class="text-xs mt-2 block text-center font-medium" style="color: var(--text-mid);">Základ<br><span style="color: var(--text-mid); opacity: 0.7;">(60 vteřin)</span></span></div>
                 <div class="stepper-item" data-step="2"><div class="stepper-circle">2</div><span class="text-xs mt-2 block text-center font-medium" style="color: var(--text-mid);">Lidi a benefity<br><span style="color: var(--text-mid); opacity: 0.7;">(1 minuta)</span></span></div>
@@ -499,8 +555,8 @@
                 </div>
                 <p class="text-sm mb-6" style="color: var(--text-mid);">Cíl: víc hodnoty pro lidi, méně nákladů pro firmu. Klikněte na benefity, které máte nebo zvažujete.</p>
                 <div class="step-grid space-y-6">
-                        <!-- Tlačítka DPS, DIP, IŽP – roztáhnout po celé šířce -->
-                        <div class="flex gap-3">
+                        <!-- Tlačítka DPS, DIP, IŽP – na mobilu pod sebou -->
+                        <div class="flex flex-col sm:flex-row gap-3">
                             <button type="button" id="btn-toggle-dps" class="benefit-btn flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer font-semibold text-slate-900" data-panel="panel-dps">
                                 <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0"><i class="fas fa-piggy-bank"></i></div>
                                 <div class="text-left"><div>DPS</div><div class="text-xs font-normal" style="color: var(--text-mid);">Doplňkové penzijní spoření</div></div>
@@ -538,9 +594,9 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Kolik zaměstnanců to využívá?</label>
-                                <div class="flex items-center gap-4">
-                                    <input type="range" id="benefit-dps-count" min="1" max="25" value="5" class="flex-1 h-2 rounded-lg accent-brand-main">
-                                    <span id="benefit-dps-count-display" class="font-bold min-w-[3rem] text-slate-800">5</span>
+                                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                                    <input type="range" id="benefit-dps-count" min="1" max="25" value="5" class="flex-1 min-w-[100px] h-3 sm:h-2 rounded-lg accent-brand-main touch-manipulation">
+                                    <span id="benefit-dps-count-display" class="font-bold min-w-[2.5rem] text-slate-800">5</span>
                                     <button type="button" class="pill-benefit-25plus pill" data-benefit="dps">25+</button>
                                 </div>
                             </div>
@@ -583,9 +639,9 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Kolik zaměstnanců to využívá?</label>
-                                <div class="flex items-center gap-4">
-                                    <input type="range" id="benefit-dip-count" min="1" max="25" value="1" class="flex-1 h-2 rounded-lg accent-brand-main">
-                                    <span id="benefit-dip-count-display" class="font-bold min-w-[3rem] text-slate-800">1</span>
+                                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                                    <input type="range" id="benefit-dip-count" min="1" max="25" value="1" class="flex-1 min-w-[100px] h-3 sm:h-2 rounded-lg accent-brand-main touch-manipulation">
+                                    <span id="benefit-dip-count-display" class="font-bold min-w-[2.5rem] text-slate-800">1</span>
                                     <button type="button" class="pill-benefit-25plus pill" data-benefit="dip">25+</button>
                                 </div>
                             </div>
@@ -610,9 +666,9 @@
                             <div class="mb-4"><label class="form-label">Kolik měsíčně? (Kč na osobu)</label><input type="number" id="benefit-izp-amount" class="form-input w-full px-4 py-3 max-w-xs" placeholder="např. 3000" min="0" step="100"></div>
                             <div class="mb-4">
                                 <label class="form-label">Kolik zaměstnanců/rodin to využívá?</label>
-                                <div class="flex items-center gap-4">
-                                    <input type="range" id="benefit-izp-count" min="1" max="25" value="1" class="flex-1 h-2 rounded-lg accent-brand-main">
-                                    <span id="benefit-izp-count-display" class="font-bold min-w-[3rem] text-slate-800">1</span>
+                                <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+                                    <input type="range" id="benefit-izp-count" min="1" max="25" value="1" class="flex-1 min-w-[100px] h-3 sm:h-2 rounded-lg accent-brand-main touch-manipulation">
+                                    <span id="benefit-izp-count-display" class="font-bold min-w-[2.5rem] text-slate-800">1</span>
                                     <button type="button" class="pill-benefit-25plus pill" data-benefit="izp">25+</button>
                                 </div>
                             </div>
