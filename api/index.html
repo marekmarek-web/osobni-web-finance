@@ -538,12 +538,11 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Kolik zaměstnanců to využívá?</label>
-                                <div class="flex gap-2 flex-wrap pills">
-                                    <button type="button" class="pill-benefit-emp pill" data-value="1-5">1–5</button>
-                                    <button type="button" class="pill-benefit-emp pill" data-value="6-10">6–10</button>
-                                    <button type="button" class="pill-benefit-emp pill" data-value="11+">11+</button>
+                                <div class="flex items-center gap-4">
+                                    <input type="range" id="benefit-dps-count" min="1" max="25" value="5" class="flex-1 h-2 rounded-lg accent-brand-main">
+                                    <span id="benefit-dps-count-display" class="font-bold min-w-[3rem] text-slate-800">5</span>
+                                    <button type="button" class="pill-benefit-25plus pill" data-benefit="dps">25+</button>
                                 </div>
-                                <input type="hidden" id="benefit-dps-count" value="">
                             </div>
                             <div>
                                 <label class="form-label">Přispíváte sami sobě (jednatelé)?</label>
@@ -582,6 +581,14 @@
                                 </div>
                                 <input type="hidden" id="benefit-dip-has-plan" value="">
                             </div>
+                            <div class="mb-4">
+                                <label class="form-label">Kolik zaměstnanců to využívá?</label>
+                                <div class="flex items-center gap-4">
+                                    <input type="range" id="benefit-dip-count" min="1" max="25" value="1" class="flex-1 h-2 rounded-lg accent-brand-main">
+                                    <span id="benefit-dip-count-display" class="font-bold min-w-[3rem] text-slate-800">1</span>
+                                    <button type="button" class="pill-benefit-25plus pill" data-benefit="dip">25+</button>
+                                </div>
+                            </div>
                             <div>
                                 <label class="form-label">Strategie portfolia</label>
                                 <div class="flex gap-2 flex-wrap pills">
@@ -600,7 +607,15 @@
                         <!-- Sloupec IŽP -->
                         <div id="panel-izp" class="benefit-panel bg-purple-50/50 p-6 rounded-2xl border-2 border-purple-200 is-hidden">
                             <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-umbrella text-purple-600"></i> IŽP – Investiční životní pojištění</h4>
-                            <div class="mb-4"><label class="form-label">Kolik měsíčně? (Kč)</label><input type="number" id="benefit-izp-amount" class="form-input w-full px-4 py-3 max-w-xs" placeholder="např. 10000" min="0" step="100"></div>
+                            <div class="mb-4"><label class="form-label">Kolik měsíčně? (Kč na osobu)</label><input type="number" id="benefit-izp-amount" class="form-input w-full px-4 py-3 max-w-xs" placeholder="např. 3000" min="0" step="100"></div>
+                            <div class="mb-4">
+                                <label class="form-label">Kolik zaměstnanců/rodin to využívá?</label>
+                                <div class="flex items-center gap-4">
+                                    <input type="range" id="benefit-izp-count" min="1" max="25" value="1" class="flex-1 h-2 rounded-lg accent-brand-main">
+                                    <span id="benefit-izp-count-display" class="font-bold min-w-[3rem] text-slate-800">1</span>
+                                    <button type="button" class="pill-benefit-25plus pill" data-benefit="izp">25+</button>
+                                </div>
+                            </div>
                             <div class="mb-4">
                                 <label class="form-label font-semibold">Platíte si životní pojištění ze mzdy?</label>
                                 <div class="flex gap-3 mt-2">
@@ -652,14 +667,14 @@
                                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                                         <h6 class="font-bold mb-2 text-slate-800">Varianta A: Mzda</h6>
                                         <div class="space-y-1 text-sm text-slate-700">
-                                            <div class="flex justify-between"><span>Náklad firmy:</span><span id="summary-wage-total" class="font-bold text-red-600">—</span></div>
+                                            <div class="flex justify-between"><span>Náklad firmy (měsíčně):</span><span id="summary-wage-total" class="font-bold text-red-600">—</span></div>
                                             <div class="flex justify-between"><span>Stát bere ~33%:</span><span id="summary-wage-tax" class="text-red-600">—</span></div>
                                         </div>
                                     </div>
                                     <div class="bg-slate-50 p-4 rounded-xl border-2 border-green-300">
                                         <h6 class="font-bold mb-2 text-green-800"><i class="fas fa-star text-amber-500 mr-1"></i> Varianta B: Benefit</h6>
                                         <div class="space-y-1 text-sm text-slate-700">
-                                            <div class="flex justify-between"><span>Náklad firmy:</span><span id="summary-benefit-total" class="font-bold text-green-600">—</span></div>
+                                            <div class="flex justify-between"><span>Náklad firmy (měsíčně):</span><span id="summary-benefit-total" class="font-bold text-green-600">—</span></div>
                                             <div class="flex justify-between"><span>100 % jde zaměstnanci</span><span class="text-green-600">✓</span></div>
                                         </div>
                                     </div>
@@ -667,10 +682,6 @@
                                 <div class="mt-4 p-4 rounded-xl text-center font-bold text-slate-900" style="background: #ffcc00;">
                                     <div>Úspora: <span id="summary-savings" class="text-xl">—</span> ročně</div>
                                 </div>
-                            </div>
-                            <div class="space-y-3">
-                                <div><span class="text-xs uppercase font-bold opacity-80">Orientační roční náklad firmy</span><div id="summary-yearly-cost" class="text-xl font-bold">—</div></div>
-                                <div><span class="text-xs uppercase font-bold opacity-80">Orientační daňové/odvodové dopady</span><div id="summary-tax-impact" class="text-xl font-bold">—</div></div>
                             </div>
                         </div>
                         <p class="text-xs text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">Výpočet je orientační, finální dle mzdové účtárny + interních směrnic.</p>
@@ -1343,7 +1354,7 @@
         var DiagnostikaApp = {
             step: 1, totalSteps: 6,
             _creatingLead: false, // Flag pro zabránění vícenásobnému volání
-            data: { meta: { leadId: null, leadSaveWarned: false }, company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, hasDps: false, hasDip: false, hasIzp: false, dps: 0, dip: 0, izp: 0, count: 0, goal: 'danova', directorsAmount: 0, directorPaysFromOwn: false, dpsCountRange: '', dpsSelf: '', dipHasPlan: '', dipStrategy: '' }, risks: { employee: 'no', director: 'no', professional: 'no', legal: 'no', lastReview: '', employeeReview: '', employeeLimits: '', directorReview: '', directorLimits: '', professionalReview: '', professionalLimits: '', legalReview: '', legalLimits: '', liabilityLimit: 0, liabilityYears: 0 }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no', propertyLimit: 0, propertyYears: 0, propertyYearsRange: '', interruptionLimit: 0, interruptionYears: 0, interruptionYearsRange: '', fleetRange: '', fleetPayRange: '', fleetYearsRange: '' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0, insDeath: 0, insInvalidity: 0, insSick: 0 }, pendingAttachments: [], uploadedFiles: [] },
+            data: { meta: { leadId: null, leadSaveWarned: false }, company: { name: '', ico: '', industry: 'office', employees: 0, cat3: '0' }, lead: { name: '', email: '', phone: '' }, benefits: { has: false, hasDps: false, hasDip: false, hasIzp: false, dps: 0, dip: 0, izp: 0, count: 0, dpsCount: 5, dipCount: 1, izpCount: 1, goal: 'danova', directorsAmount: 0, directorPaysFromOwn: false, dpsSelf: '', dipHasPlan: '', dipStrategy: '' }, risks: { employee: 'no', director: 'no', professional: 'no', legal: 'no', lastReview: '', employeeReview: '', employeeLimits: '', directorReview: '', directorLimits: '', professionalReview: '', professionalLimits: '', legalReview: '', legalLimits: '', liabilityLimit: 0, liabilityYears: 0 }, assets: { premises: 'no', machinery: '', fleet: 0, cyber: 'no', interruption: 'no', propertyLimit: 0, propertyYears: 0, propertyYearsRange: '', interruptionLimit: 0, interruptionYears: 0, interruptionYearsRange: '', fleetRange: '', fleetPayRange: '', fleetYearsRange: '' }, director: { netIncome: 0, reserve: 0, familyCount: 0, loanPayment: 0, loanBalance: 0, insDeath: 0, insInvalidity: 0, insSick: 0 }, pendingAttachments: [], uploadedFiles: [] },
             init: function() {
                 try {
                     var imported = sessionStorage.getItem('diagnostika_import');
@@ -1548,14 +1559,30 @@
                         self.updateStep2();
                     });
                 });
-                document.querySelectorAll('.pill-benefit-emp').forEach(function(pill) {
-                    pill.addEventListener('click', function() {
-                        var val = pill.getAttribute('data-value');
-                        document.querySelectorAll('.pill-benefit-emp').forEach(function(p) { p.classList.remove('active'); });
-                        pill.classList.add('active');
-                        var hid = document.getElementById('benefit-dps-count');
-                        if (hid) { hid.value = val; self.data.benefits.dpsCountRange = val; }
-                        self.updateStep2();
+                ['dps','dip','izp'].forEach(function(benefit) {
+                    var slider = document.getElementById('benefit-' + benefit + '-count');
+                    var display = document.getElementById('benefit-' + benefit + '-count-display');
+                    if (slider) {
+                        var syncFromSlider = function() {
+                            var v = parseInt(slider.value, 10) || 1;
+                            self.data.benefits[benefit + 'Count'] = v;
+                            self.data.benefits[benefit + 'Count25Plus'] = false;
+                            document.querySelectorAll('.pill-benefit-25plus[data-benefit="' + benefit + '"]').forEach(function(p) { p.classList.remove('active'); });
+                            if (display) display.textContent = (v === 25) ? '25+' : v;
+                        };
+                        slider.addEventListener('input', function() { syncFromSlider(); self.updateStep2(); });
+                        if (!self.data.benefits[benefit + 'Count']) syncFromSlider();
+                    }
+                    document.querySelectorAll('.pill-benefit-25plus[data-benefit="' + benefit + '"]').forEach(function(pill) {
+                        pill.addEventListener('click', function() {
+                            document.querySelectorAll('.pill-benefit-25plus[data-benefit="' + benefit + '"]').forEach(function(p) { p.classList.remove('active'); });
+                            pill.classList.add('active');
+                            self.data.benefits[benefit + 'Count'] = 25;
+                            self.data.benefits[benefit + 'Count25Plus'] = true;
+                            if (slider) slider.value = 25;
+                            if (display) display.textContent = '25+';
+                            self.updateStep2();
+                        });
                     });
                 });
                 document.querySelectorAll('.pill-benefit-self').forEach(function(pill) {
@@ -1788,59 +1815,66 @@
                 // #endregion
                 var criticalErr = document.getElementById('summary-critical-error');
                 if (criticalErr) criticalErr.classList.toggle('is-hidden', !b.directorPaysFromOwn);
-                var range = b.dpsCountRange || '';
-                var countMap = { '1-5': 3, '6-10': 8, '11+': (c.employees || 15) };
-                var count = range ? (countMap[range] || c.employees || 10) : (b.count || c.employees || 10);
-                b.count = count;
-                var amount = (b.dps || 0) + (b.dip || 0) + (b.izp || 0);
-                var yearlyCost = amount * count * 12, savings = 0;
-                if (amount > 0 && count > 0 && window.DIAG_BENEFITS) { var res = DIAG_BENEFITS.calcBenefitSavings(amount, count, (c.cat3 || '0') !== '0'); savings = res.yearlySavings; }
-                var sy = document.getElementById('summary-yearly-cost'), st = document.getElementById('summary-tax-impact');
-                if (sy) sy.textContent = this.fmt(yearlyCost); if (st) st.textContent = this.fmt(savings);
+                var dpsCount = Math.min(25, b.dpsCount || 5), dipCount = Math.min(25, b.dipCount || 1), izpCount = Math.min(25, b.izpCount || 1);
+                var totalMonthlyBenefit = (b.dps || 0) * dpsCount + (b.dip || 0) * dipCount + (b.izp || 0) * izpCount;
+                var totalCount = (b.dps ? dpsCount : 0) + (b.dip ? dipCount : 0) + (b.izp ? izpCount : 0);
+                var avgCount = totalCount > 0 ? totalCount : 1;
+                var avgMonthlyPerPerson = totalMonthlyBenefit > 0 ? totalMonthlyBenefit / Math.max(dpsCount, dipCount, izpCount, 1) : 0;
+                b.count = Math.max(dpsCount, dipCount, izpCount, 1);
                 
                 // WOW #1: Limit 50 000 Kč ročně na osobu
-                // Spočítáme celkový měsíční příspěvek na osobu (DPS + DIP + IŽP)
                 var monthlyPerPerson = (b.dps || 0) + (b.dip || 0) + (b.izp || 0);
                 var yearlyPerPerson = monthlyPerPerson * 12;
                 var wowLimit = document.getElementById('wow-limit-50000');
                 if (wowLimit) {
-                    if (yearlyPerPerson > 50000 && count > 0 && monthlyPerPerson > 0) {
+                    if (yearlyPerPerson > 50000 && b.count > 0 && monthlyPerPerson > 0) {
                         wowLimit.classList.remove('is-hidden');
                     } else {
                         wowLimit.classList.add('is-hidden');
                     }
                 }
                 
-                var amountForCalc = (b.izp || 10000) || 10000;
-                var grossEquiv = amountForCalc / 0.67, employerCost = grossEquiv * 1.338, taxLost = employerCost - amountForCalc;
-                var annualSavings = (employerCost - amountForCalc) * 12, ownerSavings = Math.round(amountForCalc * 12 * 0.15);
+                var grossEquiv = totalMonthlyBenefit > 0 ? totalMonthlyBenefit / 0.67 : 0;
+                var employerCost = grossEquiv * 1.338, taxLost = totalMonthlyBenefit > 0 ? employerCost - totalMonthlyBenefit : 0;
+                var annualSavings = totalMonthlyBenefit > 0 ? (employerCost - totalMonthlyBenefit) * 12 : 0, ownerSavings = Math.round(totalMonthlyBenefit * 12 * 0.15);
                 var swt = document.getElementById('summary-wage-total'), swtax = document.getElementById('summary-wage-tax');
                 var sbt = document.getElementById('summary-benefit-total'), ssav = document.getElementById('summary-savings');
-                if (swt) swt.textContent = this.fmt(employerCost); if (swtax) swtax.textContent = this.fmt(taxLost);
-                if (sbt) sbt.textContent = this.fmt(amountForCalc); if (ssav) ssav.textContent = this.fmt(annualSavings);
+                var dash = '—';
+                if (swt) swt.textContent = totalMonthlyBenefit > 0 ? this.fmt(employerCost) : dash;
+                if (swtax) swtax.textContent = totalMonthlyBenefit > 0 ? this.fmt(taxLost) : dash;
+                if (sbt) sbt.textContent = totalMonthlyBenefit > 0 ? this.fmt(totalMonthlyBenefit) : dash;
+                if (ssav) ssav.textContent = totalMonthlyBenefit > 0 ? this.fmt(annualSavings) : dash;
                 if (b.directorPaysFromOwn) {
-                    var cg = document.getElementById('calc-wage-gross'); if (cg) cg.textContent = this.fmt(grossEquiv);
-                    var cwt = document.getElementById('calc-wage-tax'); if (cwt) cwt.textContent = this.fmt(taxLost);
-                    var cwto = document.getElementById('calc-wage-total'); if (cwto) cwto.textContent = this.fmt(employerCost);
-                    var cwn = document.getElementById('calc-wage-net'); if (cwn) cwn.textContent = this.fmt(amountForCalc);
-                    var cba = document.getElementById('calc-benefit-amount'); if (cba) cba.textContent = this.fmt(amountForCalc);
-                    var cbt = document.getElementById('calc-benefit-total'); if (cbt) cbt.textContent = this.fmt(amountForCalc);
-                    var cbn = document.getElementById('calc-benefit-net'); if (cbn) cbn.textContent = this.fmt(amountForCalc);
-                    var cse = document.getElementById('calc-savings-employee'); if (cse) cse.textContent = this.fmt(annualSavings);
-                    var cso = document.getElementById('calc-savings-owner'); if (cso) cso.textContent = this.fmt(ownerSavings);
+                    var izpAmount = (b.izp || 0) * (b.izpCount || 1);
+                    var izpGross = izpAmount / 0.67, izpEmployerCost = izpGross * 1.338, izpTaxLost = izpEmployerCost - izpAmount;
+                    var izpAnnualSavings = (izpEmployerCost - izpAmount) * 12, izpOwnerSavings = Math.round(izpAmount * 12 * 0.15);
+                    var cg = document.getElementById('calc-wage-gross'); if (cg) cg.textContent = this.fmt(izpGross);
+                    var cwt = document.getElementById('calc-wage-tax'); if (cwt) cwt.textContent = this.fmt(izpTaxLost);
+                    var cwto = document.getElementById('calc-wage-total'); if (cwto) cwto.textContent = this.fmt(izpEmployerCost);
+                    var cwn = document.getElementById('calc-wage-net'); if (cwn) cwn.textContent = this.fmt(izpAmount);
+                    var cba = document.getElementById('calc-benefit-amount'); if (cba) cba.textContent = this.fmt(izpAmount);
+                    var cbt = document.getElementById('calc-benefit-total'); if (cbt) cbt.textContent = this.fmt(izpAmount);
+                    var cbn = document.getElementById('calc-benefit-net'); if (cbn) cbn.textContent = this.fmt(izpAmount);
+                    var cse = document.getElementById('calc-savings-employee'); if (cse) cse.textContent = this.fmt(izpAnnualSavings);
+                    var cso = document.getElementById('calc-savings-owner'); if (cso) cso.textContent = this.fmt(izpOwnerSavings);
                 }
                 // WOW #3: DIP daňová úleva
                 var wowDip = document.getElementById('wow-dip-tax');
                 if (wowDip) wowDip.classList.toggle('is-hidden', !(b.dip > 0));
-                document.querySelectorAll('.pill-benefit-emp').forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-value') === (b.dpsCountRange || '')); });
+                ['dps','dip','izp'].forEach(function(benefit) {
+                    var cnt = b[benefit + 'Count'] || (benefit === 'dps' ? 5 : 1);
+                    var slider = document.getElementById('benefit-' + benefit + '-count');
+                    var display = document.getElementById('benefit-' + benefit + '-count-display');
+                    if (slider) { slider.value = cnt; }
+                    if (display) display.textContent = (cnt === 25 || b[benefit + 'Count25Plus']) ? '25+' : cnt;
+                    document.querySelectorAll('.pill-benefit-25plus[data-benefit="' + benefit + '"]').forEach(function(p) { p.classList.toggle('active', b[benefit + 'Count25Plus'] === true); });
+                });
                 document.querySelectorAll('.pill-benefit-self').forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-value') === (b.dpsSelf || '')); });
                 document.querySelectorAll('.pill-dip-plan').forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-value') === (b.dipHasPlan || '')); });
                 document.querySelectorAll('.pill-dip-strategy').forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-value') === (b.dipStrategy || '')); });
                 document.querySelectorAll('.pill-izp-salary').forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-value') === (b.directorPaysFromOwn ? 'yes' : 'no')); });
                 var izpCalc = document.getElementById('izp-benefit-calc');
                 if (izpCalc) izpCalc.classList.toggle('is-hidden', !b.directorPaysFromOwn);
-                var hidDpsCount = document.getElementById('benefit-dps-count');
-                if (hidDpsCount && b.dpsCountRange) hidDpsCount.value = b.dpsCountRange;
                 this.updateSnapshot(2);
             },
             updateStep3: function() {
@@ -1873,7 +1907,8 @@
             },
             updateSnapshot: function(step) {
                 var r = this.data.risks, a = this.data.assets, b = this.data.benefits, c = this.data.company, d = this.data.director;
-                var amount = (b.dps || 0) + (b.dip || 0) + (b.izp || 0), count = b.count || c.employees || 0, savings = 0;
+                var totalMonthly = (b.dps || 0) * (b.dpsCount || 5) + (b.dip || 0) * (b.dipCount || 1) + (b.izp || 0) * (b.izpCount || 1);
+                var count = b.count || 1, amount = count > 0 ? totalMonthly / count : 0, savings = 0;
                 if (amount > 0 && count > 0 && window.DIAG_BENEFITS) { var res = DIAG_BENEFITS.calcBenefitSavings(amount, count, (c.cat3 || '0') !== '0'); savings = res.yearlySavings; }
                 
                 // Největší průšvih - prioritizace podle závažnosti
@@ -2218,7 +2253,12 @@
                 });
                 var dpsGoal = el('benefit-dps-goal'); if (dpsGoal) self.data.benefits.goal = dpsGoal.value || 'danova';
                 var dipGoal = el('benefit-dip-goal'); if (dipGoal) self.data.benefits.dipGoal = dipGoal.value;
-                var dpsCount = el('benefit-dps-count'); if (dpsCount && dpsCount.value) self.data.benefits.dpsCountRange = dpsCount.value;
+                ['dps','dip','izp'].forEach(function(benefit) {
+                    var slider = el('benefit-' + benefit + '-count');
+                    if (slider && slider.value) self.data.benefits[benefit + 'Count'] = parseInt(slider.value, 10) || (benefit === 'dps' ? 5 : 1);
+                    var pill25 = document.querySelector('.pill-benefit-25plus[data-benefit="' + benefit + '"].active');
+                    if (pill25) self.data.benefits[benefit + 'Count25Plus'] = true;
+                });
                 var dpsSelf = el('benefit-dps-self'); if (dpsSelf && dpsSelf.value) self.data.benefits.dpsSelf = dpsSelf.value;
                 var dipHas = el('benefit-dip-has-plan'); if (dipHas && dipHas.value) self.data.benefits.dipHasPlan = dipHas.value;
                 var dipStr = el('benefit-dip-strategy'); if (dipStr && dipStr.value) self.data.benefits.dipStrategy = dipStr.value;
@@ -2347,7 +2387,9 @@
                 if (btnPdf) setButtonLoading(btnPdf, true);
                 if (btnNext && self.step === self.totalSteps) setButtonLoading(btnNext, true);
 
-                var amount = (self.data.benefits.dps || 0) + (self.data.benefits.dip || 0) + (self.data.benefits.izp || 0), count = self.data.benefits.count || self.data.company.employees || 0;
+                var b = self.data.benefits;
+                var totalMonthly = (b.dps || 0) * (b.dpsCount || 5) + (b.dip || 0) * (b.dipCount || 1) + (b.izp || 0) * (b.izpCount || 1);
+                var count = b.count || self.data.company.employees || 1, amount = count > 0 ? totalMonthly / count : 0;
                 var calc = {}; if (amount > 0 && count > 0 && window.DIAG_BENEFITS) calc.benefitSavings = DIAG_BENEFITS.calcBenefitSavings(amount, count, (self.data.company.cat3 || '0') !== '0'); else calc.benefitSavings = {};
                 var r = self.data.risks; var a = self.data.assets; var riskPts = (r.director === 'yes' ? 34 : 0) + (r.professional === 'yes' ? 33 : 0) + (r.employee === 'yes' ? 33 : 0);
                 // Převod na lidské texty pro gaps
