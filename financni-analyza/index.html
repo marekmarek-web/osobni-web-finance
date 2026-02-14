@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Finanční Plán - Wizard</title>
     
     <!-- Tailwind CSS & FontAwesome -->
@@ -73,6 +73,7 @@
             -webkit-font-smoothing: antialiased;
             cursor: default;
         }
+        html, body { overflow-x: hidden; }
 
         /* Glass Header classes */
         .glass-header-top {
@@ -510,6 +511,33 @@
                 page-break-inside: avoid !important;
             }
         }
+        
+        /* === MOBILNÍ OPTIMALIZACE === */
+        @media (max-width: 767px) {
+            .stepper-item span, .stepper-label { display: none !important; }
+            .stepper-item { flex: 0 0 auto; min-width: 44px; }
+            .stepper-circle { width: 36px !important; height: 36px !important; min-width: 36px; font-size: 0.875rem; }
+            .stepper-item::before { top: 18px; left: calc(-50% + 19px); right: calc(50% + 19px); }
+            #wizard-stepper-wrap, .wizard-stepper, #stepper-container { overflow-x: auto; -webkit-overflow-scrolling: touch; gap: 0; padding-bottom: 0.5rem; }
+            .wizard-card { padding: 1rem !important; margin-left: 0.5rem; margin-right: 0.5rem; max-width: calc(100% - 1rem) !important; }
+            main { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+            .step-content h2, h2.text-2xl, h2.text-3xl { font-size: 1.25rem !important; }
+            .grid-cols-1.md\:grid-cols-2 > * { width: 100% !important; }
+            .flex.gap-3:has(.benefit-btn), .flex.gap-4:has(.benefit-btn) { flex-direction: column !important; }
+            .benefit-btn { flex-direction: column !important; padding: 1rem 0.75rem !important; text-align: center; }
+            .step-actions, #wizard-btn-container, .flex.justify-between.pt-8.border-t { flex-direction: column; gap: 0.75rem; }
+            .step-actions button, .step-actions a, #wizard-btn-container button, .flex.justify-between.pt-8.border-t button { width: 100%; justify-content: center; }
+            .form-input { font-size: 16px; }
+            input[type="range"] { min-height: 28px; touch-action: manipulation; }
+        }
+        @media (max-width: 480px) {
+            .stepper-circle { width: 32px !important; height: 32px !important; min-width: 32px; font-size: 0.75rem; }
+            .stepper-item::before { top: 16px; left: calc(-50% + 17px); right: calc(50% + 17px); }
+            .wizard-card { padding: 0.75rem !important; margin-left: 0.25rem; margin-right: 0.25rem; max-width: calc(100% - 0.5rem) !important; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+        }
     </style>
     <!-- END: STYLES -->
 </head>
@@ -594,7 +622,7 @@
     </section>
 
     <!-- Main Wizard Area -->
-    <main id="wizard-start" class="flex-grow flex flex-col items-center justify-start pt-10 pb-20 px-4 relative scroll-mt-20">
+    <main id="wizard-start" class="flex-grow flex flex-col items-center justify-start pt-10 pb-20 px-3 sm:px-4 relative scroll-mt-20">
         
         <div class="hero-bg hidden"></div> <!-- původní hero pozadí skryté -->
 
@@ -606,7 +634,7 @@
         </div>
 
         <!-- START: WIZARD_STRUCTURE -->
-        <div class="w-full max-w-5xl wizard-card p-8 md:p-10 mb-20">
+        <div class="w-full max-w-5xl wizard-card p-4 sm:p-6 md:p-10 mb-20">
             <!-- Uložit / Načíst / Nový plán – pouze ve wizardu -->
             <div class="flex flex-wrap items-center justify-end gap-3 pb-6 mb-6 border-b border-slate-200">
                 <button type="button" onclick="window.app && window.app.saveToFile()" class="text-sm px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-2 font-semibold text-slate-700" title="Uložit analýzu">

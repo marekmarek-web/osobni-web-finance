@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Životní pojištění Kalkulačka | Marek Marek - Finanční partner</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -147,6 +147,19 @@
             color: #fbbf24;    /* brand-gold */
             opacity: 0.1;      /* Průhlednost, aby byla jen jako 'vodoznak' */
             pointer-events: none; /* Aby neinterferovala s kliknutím */
+        }
+        
+        /* MOBILNÍ OPTIMALIZACE */
+        @media (max-width: 767px) {
+            main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .max-w-5xl, .max-w-4xl { margin-left: 0.5rem !important; margin-right: 0.5rem !important; max-width: calc(100% - 1rem) !important; }
+            .grid-cols-1.md\:grid-cols-2, .grid-cols-1.lg\:grid-cols-2 { grid-template-columns: 1fr !important; }
+            input[type=range] { min-height: 28px; touch-action: manipulation; }
+            input, select, textarea { font-size: 16px !important; }
+            .flex.gap-4, .flex.gap-6 { flex-wrap: wrap; gap: 0.75rem !important; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
         }
       </style>
 </head>

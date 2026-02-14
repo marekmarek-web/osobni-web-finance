@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Služby pro firmy a podnikatele | Marek Marek</title>
     
     <!-- SEO Meta Tags -->
@@ -118,6 +118,13 @@
         }
         
         .btn-sweep:hover::before { width: 100%; }
+        @media (max-width: 767px) {
+            main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .max-w-7xl, .max-w-5xl, .max-w-4xl { margin-left: 0.5rem !important; margin-right: 0.5rem !important; max-width: calc(100% - 1rem) !important; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+        }
         .btn-sweep:hover { 
             box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3); 
             transform: translateY(-1px); 

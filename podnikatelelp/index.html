@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Marek Marek - Finanční partner | Optimalizace s.r.o.</title>
     <meta name="description" content="Neplaťte zbytečně daně z penzijka a pojištění. Firemní nastavení benefitů pro majitele s.r.o.">
     
@@ -224,6 +224,12 @@
             /* Zajištění, že obsah bude nad předchozí kartou */
             z-index: 10;
         }
+        @media (max-width: 767px) {
+            main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .max-w-7xl, .max-w-5xl, .max-w-4xl { margin-left: 0.5rem !important; margin-right: 0.5rem !important; max-width: calc(100% - 1rem) !important; }
+            .sticky-card { padding: 1.5rem !important; border-radius: 1.5rem; min-height: auto; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) { #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">

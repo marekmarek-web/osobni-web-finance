@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Marek Marek | Finanční partner</title>
     
     <!-- Tailwind CSS -->
@@ -31,6 +31,11 @@
             }
         }
     </script>
+    <style>
+        body { overflow-x: hidden; }
+        @media (max-width: 767px) { main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; } }
+        @supports (padding: env(safe-area-inset-bottom)) { #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); } }
+    </style>
 </head>
 <body class="bg-light text-slate-800 antialiased flex flex-col min-h-screen">
 

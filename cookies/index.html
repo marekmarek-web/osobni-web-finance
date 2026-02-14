@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Zásady používání Cookies | Marek Marek</title>
     <meta name="description" content="Informace o používání souborů cookies na webu finančního partnera Marka Marka.">
     
@@ -81,6 +81,9 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
+        body { overflow-x: hidden; }
+        @media (max-width: 767px) { main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; } }
+        @supports (padding: env(safe-area-inset-bottom)) { #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); } }
     </style>
 </head>
 <body class="font-sans text-slate-600 bg-slate-50 flex flex-col min-h-screen">

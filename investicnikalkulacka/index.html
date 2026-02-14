@@ -2,7 +2,7 @@
 <html lang="cs" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Investiční kalkulačka – výpočet hodnoty investice v čase</title>
     
     <!-- Potřebné knihovny -->
@@ -175,16 +175,17 @@
 
         /* MOBILNÍ NASTAVENÍ */
         @media (max-width: 768px) {
-            .animate-scroll {
-                animation-duration: 20s !important; 
-            }
-            .partner-logo {
-                margin: 0 15px !important; 
-                min-width: 120px !important;
-            }
-            .partner-logo img {
-                max-height: 55px !important;
-            }
+            .animate-scroll { animation-duration: 20s !important; }
+            .partner-logo { margin: 0 15px !important; min-width: 120px !important; }
+            .partner-logo img { max-height: 55px !important; }
+            main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .max-w-5xl, .max-w-4xl { margin-left: 0.5rem !important; margin-right: 0.5rem !important; max-width: calc(100% - 1rem) !important; }
+            .grid-cols-1.md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+            input[type=range] { min-height: 28px; touch-action: manipulation; }
+            input, select { font-size: 16px !important; }
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
         }
 
         .chart-container {
