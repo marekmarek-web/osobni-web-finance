@@ -174,14 +174,16 @@ function init() {
       if (btn) { btn.disabled = true; btn.textContent = 'Odesílám…'; }
       var fd = new FormData(leadForm);
       var payload = {
+        _subject: 'Nezávazná konzultace – web',
         name: fd.get('name') || '',
         contact: fd.get('contact') || '',
-        topic: fd.get('topic') || '',
+        topic: fd.get('topic') || fd.get('message') || '',
+        message: fd.get('message') || '',
         consent: fd.get('consent') ? 'ano' : 'ne',
         page: location.href,
         created_at: new Date().toISOString()
       };
-      fetch('/api/lead', {
+      fetch('https://formsubmit.co/ajax/pribramsky@premiumbrokers.cz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload)
@@ -221,6 +223,7 @@ function init() {
       var btn = footerQuickLead.querySelector('button[type="submit"]');
       if (btn) { btn.disabled = true; btn.textContent = 'Odesílám…'; }
       var payload = {
+        _subject: 'Nezávazná konzultace – footer',
         name: name,
         email: email,
         phone: (document.getElementById('footer-phone') && document.getElementById('footer-phone').value.trim()) || '',
@@ -229,7 +232,7 @@ function init() {
         page: location.href,
         created_at: new Date().toISOString()
       };
-      fetch('/api/lead', {
+      fetch('https://formsubmit.co/ajax/pribramsky@premiumbrokers.cz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload)
@@ -244,7 +247,7 @@ function init() {
           if (btn) { btn.disabled = false; btn.textContent = 'Odeslat'; }
         })
         .catch(function () {
-          var mailto = 'mailto:info@premiumbrokers.cz?subject=Nezávazná konzultace&body=' + encodeURIComponent('Jméno: ' + name + '\nE-mail: ' + email + '\nTelefon: ' + (payload.phone || '-') + '\nZájem: ' + (payload.interest || '-'));
+          var mailto = 'mailto:pribramsky@premiumbrokers.cz?subject=Nezávazná konzultace&body=' + encodeURIComponent('Jméno: ' + name + '\nE-mail: ' + email + '\nTelefon: ' + (payload.phone || '-') + '\nZájem: ' + (payload.interest || '-'));
           window.location.href = mailto;
           if (footerMsg) footerMsg.classList.remove('hidden');
           if (btn) { btn.disabled = false; btn.textContent = 'Odeslat'; }
