@@ -2733,6 +2733,7 @@
                     <section class="pdf-page">
                         ${renderHeader('PROJEKCE')}
                         
+                        ${(data.investments || []).filter(i => (i.amount||0) > 0).length > 0 ? `
                         <div class="pdf-section avoid-break">
                             <div class="h2">Vývoj hodnoty majetku</div>
                             <div style="height: 90mm; width: 100%;">
@@ -2746,6 +2747,12 @@
                                 <canvas id="pdf-chart-allocation"></canvas>
                             </div>
                         </div>
+                        ` : `
+                        <div class="pdf-section" style="padding: 20mm 0; text-align: center; color: #64748b;">
+                            <p style="font-size: 12pt; margin-bottom: 8mm;">Pro zobrazení projekce vyberte investice v kroku 6 Strategie.</p>
+                            <p style="font-size: 10pt;">Graf vývoje hodnoty a rozložení aktiv se zobrazí až po výběru alespoň jedné investice.</p>
+                        </div>
+                        `}
                         
                         <div style="margin-top: 30px; font-size: 10px; color: #94a3b8; line-height: 1.4; border-top: 1px solid #e2e8f0; padding-top: 10px;">
                             <strong>Upozornění:</strong> Minulé výnosy nejsou zárukou budoucích. Hodnota investice může kolísat. Výpočty jsou modelové a nezohledňují inflaci, pokud není uvedeno jinak. Daňové dopady závisí na individuální situaci klienta. Uvedené zhodnocení je pracovní předpoklad plánu, nikoliv garance.
@@ -3849,10 +3856,14 @@
                 const conservative = data.strategy?.conservativeMode || false;
                 this.ensureInvestmentFV(data); // Zajistit FV pro grafy
 
-                // Growth Chart - reálná projekce z jednotlivých fondů
+                // Grafy jen když jsou vybrané investice z kroku 6
+                if (invs.length === 0) return;
+
+                // Growth Chart - pouze vybrané investice, osa X = max horizont vybraných
+                const maxYears = Math.min(30, Math.max(10, ...invs.map(i => i.years || 10)));
                 const ctxGrowth = document.getElementById('pdf-chart-growth');
                 if (ctxGrowth) {
-                    const labels = Array.from({length: 31}, (_, i) => i);
+                    const labels = Array.from({length: maxYears + 1}, (_, i) => i);
                     const growthData = labels.map((year) => {
                         let total = 0;
                         invs.forEach(inv => {
