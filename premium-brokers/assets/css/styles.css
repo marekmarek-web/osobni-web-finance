@@ -680,7 +680,7 @@ body {
 }
 .postup-cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(79, 198, 242, 0.3);
+  box-shadow: 0 8px 30px rgba(29, 35, 84, 0.4);
 }
 .postup-cta-btn:hover::before {
   animation: cta-shimmer-hover 0.8s ease-out;
@@ -747,14 +747,14 @@ body {
   }
 }
 
-/* CTA – tmavě modré v sekci Moje služby */
+/* CTA – tmavě modré v sekci Moje služby (gradient navy → navyLight) */
 .sluzby-cta-glass {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
-  background: #1D2354;
+  background: linear-gradient(135deg, #1D2354 0%, #2a3366 100%);
   border: 1px solid rgba(29, 35, 84, 0.9);
   color: #ffffff;
   font-weight: 700;
@@ -778,7 +778,7 @@ body {
 }
 .sluzby-cta-glass:hover {
   transform: translateY(-2px);
-  background: #252d5c;
+  background: linear-gradient(135deg, #252d5c 0%, #2a3366 100%);
   border-color: #1D2354;
   box-shadow: 0 4px 12px rgba(29, 35, 84, 0.35);
 }
@@ -1167,7 +1167,7 @@ body {
   box-shadow: 0 4px 14px rgba(29, 35, 84, 0.35);
 }
 .lead-cta-btn:hover {
-  background: linear-gradient(135deg, #252d5c 0%, #323c7a 100%);
+  background: linear-gradient(135deg, #252d5c 0%, #2a3366 100%);
   box-shadow: 0 6px 20px rgba(29, 35, 84, 0.4);
 }
 

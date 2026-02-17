@@ -27,6 +27,7 @@
           colors: {
             brand: {
               navy: '#1D2354',
+              navyLight: '#2a3366',
               dark: '#0a0f29',
               cyan: '#4FC6F2',
               gold: '#fbbf24',
@@ -45,6 +46,7 @@
     }
   </script>
   <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -69,7 +71,7 @@
 
   <header id="main-header" class="header-entry fixed top-0 left-0 right-0 z-50 transform -translate-y-full transition-transform duration-500 ease-out" role="banner">
   <div class="header-inner max-w-6xl mx-auto px-4 pt-4 pb-2">
-    <div class="header-glass rounded-full border border-slate-300/60 bg-white backdrop-blur-xl shadow-sm px-3 py-2 flex justify-between items-center gap-3">
+    <div class="header-glass rounded-full border border-slate-300/60 shadow-sm px-3 py-2 flex justify-between items-center gap-3">
       <a href="/" class="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1 shrink-0" aria-label="Úvodní stránka">
         <img src="assets/img/logos/pb-logo-no-bg.png" alt="Premium Brokers" class="h-8 w-auto" />
       </a>
@@ -198,7 +200,7 @@
           </div>
         </div>
         <div class="text-center">
-          <a href="/kontakt/" class="postup-cta-btn inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold bg-gradient-to-r from-brand-cyan to-brand-navy hover:shadow-2xl transition-all duration-300">
+          <a href="/kontakt/" class="postup-cta-btn inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold bg-gradient-to-r from-brand-navy to-brand-navyLight hover:shadow-2xl transition-all duration-300">
             Domluvit úvodní konzultaci
             <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
@@ -220,7 +222,7 @@
               <li class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-cyan/20 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-brand-cyan" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span><span class="text-white">Složené úročení pracující pro vás</span></li>
               <li class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-cyan/20 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-brand-cyan" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span><span class="text-white">Okamžitá dostupnost peněz (likvidita)</span></li>
             </ul>
-            <a href="/investicnikalkulacka/" class="postup-cta-btn inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold bg-gradient-to-r from-brand-cyan to-brand-navy hover:shadow-2xl transition-all duration-300">
+            <a href="/investicnikalkulacka/" class="postup-cta-btn inline-flex items-center gap-2 px-8 py-4 rounded-full text-white font-bold bg-gradient-to-r from-brand-navy to-brand-navyLight hover:shadow-2xl transition-all duration-300">
               Spočítat vlastní výnosy
               <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
@@ -233,12 +235,12 @@
                   <h3 class="text-lg font-bold text-white">Projekce majetku (10 let)</h3>
                   <p class="text-xs text-white/70">Reálný dopad složeného úročení</p>
                 </div>
-                <div class="space-y-4 text-white/90">
-                  <p class="text-sm leading-relaxed">S pravidelně investovaným kapitálem a dlouhodobým horizontem pracuje složené úročení ve váš prospěch. Čím dříve začnete, tím větší efekt.</p>
-                  <div class="flex gap-4 text-xs">
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-400"></span> Běžný účet</div>
-                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-brand-cyan"></span> Strategie fondů</div>
-                  </div>
+                <div class="relative h-64 w-full">
+                  <canvas id="wealthChart"></canvas>
+                </div>
+                <div class="mt-4 flex flex-wrap justify-between gap-2 text-xs font-bold">
+                  <div class="text-red-400 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-400"></span> Běžný účet</div>
+                  <div class="text-[#1D2354] flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#1D2354]"></span> Strategie fondů</div>
                 </div>
               </div>
             </div>

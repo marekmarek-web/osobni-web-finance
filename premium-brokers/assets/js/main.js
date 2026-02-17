@@ -394,6 +394,76 @@ function init() {
     });
   }
 
+  // Chart.js – projekce majetku (stejný graf jako osobni-web-finance-temp)
+  var chartCanvas = document.getElementById('wealthChart');
+  if (chartCanvas && typeof Chart !== 'undefined') {
+    var ctx = chartCanvas.getContext('2d');
+    var labels = ['Start', '2 roky', '4 roky', '6 let', '8 let', '10 let'];
+    var averageData = [500000, 505000, 510000, 515000, 520000, 526000];
+    var strategyData = [500000, 550000, 650000, 750000, 900000, 1100000];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Strategie fondů',
+            data: strategyData,
+            borderColor: '#1D2354',
+            backgroundColor: function(context) {
+              var ctx = context.chart.ctx;
+              var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+              gradient.addColorStop(0, 'rgba(29, 35, 84, 0.5)');
+              gradient.addColorStop(1, 'rgba(29, 35, 84, 0)');
+              return gradient;
+            },
+            borderWidth: 3,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#1D2354',
+            pointRadius: 5,
+            fill: true,
+            tension: 0.4
+          },
+          {
+            label: 'Běžný účet',
+            data: averageData,
+            borderColor: '#f87171',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            pointBackgroundColor: '#f87171',
+            pointRadius: 3,
+            fill: false,
+            tension: 0.2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('cs-CZ') + ' Kč'; }
+            }
+          }
+        },
+        scales: {
+          y: {
+            grid: { color: 'rgba(255,255,255,0.15)' },
+            ticks: { font: { size: 10 }, color: 'rgba(255,255,255,0.8)', callback: function(v) { var s = v >= 1000000 ? (v / 1000000).toFixed(1).replace('.', ',') + ' mil' : (v / 1000) + ' tis.'; return s + ' Kč'; } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 10 }, color: 'rgba(255,255,255,0.8)' }
+          }
+        }
+      }
+    });
+  }
+
   // Chart card – 3D tilt + mouse-follow glow
   var chartCard = document.querySelector('.chart-card-tilt');
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
