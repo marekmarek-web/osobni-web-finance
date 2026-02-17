@@ -1191,6 +1191,7 @@
                                         <input type="number" id="goal-initial" class="form-input w-full pl-4 pr-8 py-3 text-sm" placeholder="0">
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs">Kč</div>
                                     </div>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Pouze finanční majetek (hotovost, investice, penzijní) – bez nemovitostí</p>
                                 </div>
                                 <div>
                                     <label class="form-label">Vložím nyní</label>
@@ -2493,6 +2494,7 @@
                 if(netWorth < 0) {
                     netWorthText = "Záporné čisté jmění je často způsobeno hypotékou na začátku splácení. Důležité je, že hodnota nemovitosti v čase roste a dluh klesá.";
                 }
+                netWorthText += " Pro cíle finanční nezávislosti se počítá pouze finanční majetek (hotovost, investice, penzijní) – nemovitosti se do pokrytí nezahrnují.";
 
                 let reserveText = `Rezerva pokrývá cca ${reserveMonths} měsíců výdajů.`;
                 if(reserveCash < 3 * monthlyExp) {
@@ -2541,6 +2543,10 @@
                                 <div class="box">
                                     <span class="lbl">Čisté jmění</span>
                                     <div class="val" style="color: #0B3A7A;">${netWorth.toLocaleString('cs-CZ')} Kč</div>
+                                </div>
+                                <div class="box">
+                                    <span class="lbl">Finanční majetek (bez nemovitostí)</span>
+                                    <div class="val" style="color: #059669;">${((assets.cash||0)+(assets.investments||0)+(assets.pension||0)).toLocaleString('cs-CZ')} Kč</div>
                                 </div>
                                 <div class="box">
                                     <span class="lbl">Měsíční bilance</span>
@@ -2888,17 +2894,21 @@
             renderGoalCoverage(data) {
                 const totalTarget = (data.goals || []).reduce((acc, g) => acc + (g.computed?.fvTarget || 0), 0);
                 const totalFV = (data.investments || []).reduce((acc, i) => acc + (i.computed?.fv || 0), 0);
-                const coverage = totalTarget > 0 ? (totalFV / totalTarget) * 100 : 0;
+                // Pro finanční nezávislost jen finanční majetek (bez nemovitostí)
+                const financialAssets = (data.assets?.cash || 0) + (data.assets?.investments || 0) + (data.assets?.pension || 0);
+                const totalPotential = financialAssets + totalFV;
+                const coverage = totalTarget > 0 ? (totalPotential / totalTarget) * 100 : 0;
                 
-                const diff = totalFV - totalTarget;
+                const diff = totalPotential - totalTarget;
                 const status = diff >= 0 ? "Pokryto" : "Chybí";
                 const color = diff >= 0 ? "green" : "red";
 
                 return `
                     <div style="display:flex; justify-content:space-between;">
                         <span>Celkem cíle: <strong>${Math.round(totalTarget).toLocaleString('cs-CZ')} Kč</strong></span>
-                        <span>Potenciál portfolia: <strong>${Math.round(totalFV).toLocaleString('cs-CZ')} Kč</strong></span>
+                        <span>Potenciál (fin. majetek + portfolio): <strong>${Math.round(totalPotential).toLocaleString('cs-CZ')} Kč</strong></span>
                     </div>
+                    <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Finanční majetek ${Math.round(financialAssets).toLocaleString('cs-CZ')} Kč (bez nemovitostí) + projekce portfolia ${Math.round(totalFV).toLocaleString('cs-CZ')} Kč</div>
                     <div style="margin-top:5px; font-weight:bold; color:${color};">
                         ${status}: ${Math.abs(Math.round(diff)).toLocaleString('cs-CZ')} Kč (${coverage.toFixed(0)} %)
                     </div>
