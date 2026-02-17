@@ -1,0 +1,64 @@
+<!-- Floating pill header – Rise at Seven style -->
+<header class="fixed top-4 left-0 right-0 z-50" role="banner">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Bar -->
+    <div class="rounded-full border border-slate-200/60 bg-white/70 backdrop-blur-xl shadow-sm px-3 py-2 flex justify-between items-center gap-3">
+      
+      <!-- Logo pill (left) -->
+      <a href="/" class="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1" aria-label="Marek Příbramský – úvodní stránka">
+        <span class="w-2 h-2 rounded-full bg-[#4FC6F2]" aria-hidden="true"></span>
+        <span>Marek Příbramský</span>
+      </a>
+      
+      <!-- Nav (center) – hidden on mobile -->
+      <nav class="hidden md:flex items-center gap-1" aria-label="Hlavní navigace">
+        <a href="/#sluzby" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Služby</a>
+        <a href="/#spoluprace" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Spolupráce</a>
+        <a href="/blog/" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Blog</a>
+        
+        <!-- Nástroje dropdown -->
+        <div class="relative group" aria-haspopup="true" aria-expanded="false">
+          <button type="button" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">
+            Nástroje
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 rounded-2xl border border-slate-200/70 bg-white/90 backdrop-blur-xl shadow-lg p-2 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50">
+            <a href="/hypotecnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-inset">
+              <span class="font-medium text-slate-800">Hypoteční kalkulačka</span>
+              <span class="block text-xs text-slate-500 mt-0.5">Měsíční splátka a náklady</span>
+            </a>
+            <a href="/investicnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-inset">
+              <span class="font-medium text-slate-800">Investiční kalkulačka</span>
+              <span class="block text-xs text-slate-500 mt-0.5">Projekce zhodnocení</span>
+            </a>
+            <a href="/zivotnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-inset">
+              <span class="font-medium text-slate-800">Kalkulačka životního pojištění</span>
+              <span class="block text-xs text-slate-500 mt-0.5">Potřebné krytí</span>
+            </a>
+            <a href="/penzijnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-inset">
+              <span class="font-medium text-slate-800">Penzijní kalkulačka</span>
+              <span class="block text-xs text-slate-500 mt-0.5">Státní příspěvky</span>
+            </a>
+            <div class="border-t border-slate-100 mt-2 pt-2">
+              <a href="/kalkulacky/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition font-semibold text-[#1D2354] focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-inset">
+                Všechny kalkulačky →
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <a href="/#lead-form" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Kontakt</a>
+      </nav>
+      
+      <!-- CTA pill (right) -->
+      <a href="/kontakt/" class="flex items-center gap-2 rounded-full bg-[#1D2354] text-white px-4 py-2 text-sm font-semibold hover:opacity-95 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1 shrink-0">
+        <span>Ozvat se</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</header>

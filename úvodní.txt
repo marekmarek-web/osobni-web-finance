@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marek Marek - Finanční partner</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            dark: '#0a0f29',   // Hero pozadí
+                            orange: '#ea8d00', // CTA, akcenty
+                            gold: '#fbbf24',   // Jemné detaily
+                            main: '#0B3A7A',   // Hlavní modrá (texty, ikony)
+                            light: '#EAF3FF',  // Pozadí sekcí
+                            border: '#D6E6FF', // Rámečky
+                        },
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(11, 58, 122, 0.08)',
+                        'glow': '0 0 20px rgba(234, 141, 0, 0.4)', 
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2.5s infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+                            '100%': { transform: 'translateX(150%) skewX(-20deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern Glass Effect Classes (iOS Style) */
+        .glass-header-top {
+            background-color: rgba(10, 15, 41, 0.1); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-header-scrolled {
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        /* CTA Button s animací */
+        .btn-sweep {
+            position: relative;
+            background-color: #ea8d00;
+            color: #0a0f29; 
+            font-weight: 800;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            z-index: 1;
+            box-shadow: 0 4px 14px 0 rgba(234, 141, 0, 0.39);
+        }
+
+        .btn-sweep::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: #fbbf24; 
+            transition: width 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-sweep:hover::before {
+            width: 100%;
+        }
+
+        .btn-sweep:hover {
+            box-shadow: 0 6px 20px rgba(234, 141, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Odkaz v menu */
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .counter-value { font-variant-numeric: tabular-nums; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #082855; }
+    </style>
+</head>
+<body class="bg-white text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.scrollTo(0,0)">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-orange">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
+                    </div>
+                </div>
+                
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="#soukromi" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="#firmy" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
+                </div>
+
+                <!-- Hamburger -->
+                <div class="flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-orange hover:text-brand-gold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="#soukromi" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="#firmy" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="hypotecni_kalkulacka.html" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-orange mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="#" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <!-- Nová kalkulačka -->
+                        <a href="#" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="#kontakt" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-36 overflow-hidden bg-brand-dark min-h-screen flex items-center">
+        <!-- Background Elements -->
+        <div class="absolute top-0 right-0 w-2/3 h-full bg-brand-main/10 skew-x-12 transform origin-top-right"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-main/20 rounded-full blur-[100px]"></div>
+        <div class="absolute top-20 right-20 w-80 h-80 bg-brand-orange/10 rounded-full blur-[80px]"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                
+                <!-- Text -->
+                <div class="text-left space-y-8">
+                    
+                    <span class="inline-flex items-center py-1.5 px-3 rounded-full bg-white/5 border border-white/10 text-brand-gold text-[10px] font-bold tracking-widest uppercase mb-2 backdrop-blur-sm">
+                        <span class="w-2 h-2 rounded-full bg-brand-gold mr-2 animate-pulse"></span>
+                        Středočeský a Ústecký kraj
+                    </span>
+
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] tracking-tight">
+                        Váš partner pro <br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-white">finanční zdraví.</span>
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-xl font-medium">
+                        Jsem <span class="text-white font-bold">Marek Marek</span>. Pomáhám <span class="text-white font-bold">firmám i jednotlivcům</span> nastavit finance tak, aby dávaly <span class="text-white font-bold">ekonomický i lidský smysl</span>. Dám vašim penězům <span class="text-white font-bold">řád a plán</span>.
+                    </p>
+
+                    <!-- Counter -->
+                    <div class="grid grid-cols-3 gap-6 pt-6 pb-2 border-t border-white/10" id="stats-section">
+                        <div>
+                            <span class="block text-3xl font-bold text-white counter-value" data-target="250">0</span>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Klientů</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-bold text-white"><span class="counter-value" data-target="10">0</span> let</span>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Zkušeností</span>
+                        </div>
+                        <div>
+                            <span class="block text-3xl font-bold text-white"><span class="counter-value" data-target="135">0</span> mil.</span>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">V portfoliích</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                        <a href="hypotecni_kalkulacka.html" class="group relative w-full sm:w-auto inline-block bg-gradient-to-r from-[#ea8d00] to-[#fbbf24] hover:to-[#ea8d00] text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-orange-500/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline text-center">
+                            <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                            <div class="relative flex items-center justify-center gap-3">
+                                <i class="fas fa-calculator text-xl text-brand-dark"></i>
+                                <span class="text-lg">Spočítat vlastní výnosy</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Photo -->
+                <div class="relative w-full max-w-md mx-auto lg:max-w-none flex justify-center lg:justify-end">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50 border border-white/10 bg-brand-dark aspect-[3/4] w-full max-w-[400px] group">
+                        <img src="marekuvodni.png.png" 
+                             alt="Marek Marek" 
+                             class="w-full h-full object-cover object-top transition duration-700 group-hover:scale-105"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-full h-full flex-col items-center justify-center bg-brand-dark text-slate-400 p-8 text-center">
+                            <i class="fas fa-user-tie text-6xl mb-4 text-slate-500"></i>
+                            <p>Zde se načte Vaše fotka</p>
+                        </div>
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-brand-dark to-transparent p-6 pt-24">
+                            <h3 class="text-white text-xl font-bold">Marek Marek</h3>
+                            <p class="text-brand-orange text-xs font-bold uppercase tracking-wide">10 let praxe v oboru</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: TŘI KROKY -->
+    <section id="audit-proces" class="py-24 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-brand-orange font-bold tracking-widest uppercase text-xs mb-3 block">Můj postup</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark mb-6">Tři kroky k optimální investiční strategii</h2>
+                <p class="text-lg text-slate-600 leading-relaxed font-light">
+                    Získejte nezávislé posouzení Vašeho stávajícího portfolia. Proces je transparentní, rychlý a vede k maximálnímu využití Vašeho majetku. Vše začíná u auditu v hodnotě <span class="font-semibold text-brand-dark">20 000 Kč</span>, který máte nyní zdarma.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 1 -->
+                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-orange text-2xl mb-6 relative z-10 border border-brand-border">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold text-brand-main mb-3">Komplexní audit majetku</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Detailní analýza stávajících smluv, fondů a cílů. Odhalím skryté poplatky a neefektivní alokaci kapitálu, která brzdí Váš růst.
+                        </p>
+                    </div>
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">1</span>
+                </div>
+                <!-- 2 -->
+                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-orange text-2xl mb-6 relative z-10 border border-brand-border">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold text-brand-main mb-3">Strategie a diverzifikace</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Sestavení Vašeho profilu (Mírný, Vyvážený, Dynamický). Navrhnu řešení s využitím osvědčených nástrojů (Atris, CREIF, MSCI World ETF).
+                        </p>
+                    </div>
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">2</span>
+                </div>
+                <!-- 3 -->
+                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-orange text-2xl mb-6 relative z-10 border border-brand-border">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="text-lg font-bold text-brand-main mb-3">Spuštění a dlouhodobý růst</h3>
+                        <p class="text-slate-600 leading-relaxed text-sm">
+                            Pomoc s bezproblémovou implementací zvolené strategie. Zajistím pravidelný monitoring a úpravy, aby Váš majetek rostl efektivně i za 5, 10, či 15 let.
+                        </p>
+                    </div>
+                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">3</span>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <a href="#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-[#ea8d00] to-[#fbbf24] hover:to-[#ea8d00] text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-orange-500/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
+                    <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                    <div class="relative flex items-center justify-center gap-3">
+                        <span class="text-lg">Zarezervovat audit a plán ZDARMA</span>
+                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: MOJE SLUŽBY -->
+    <section id="sluzby" class="py-24 bg-brand-light/30 border-t border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-brand-orange font-bold tracking-widest uppercase text-xs mb-2 block">Portfolio</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark">Moje služby</h2>
+            </div>
+
+            <!-- Grid 3 sloupce na velké obrazovce -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- 1. Investice -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Investiční plánování</h3>
+                            <p class="text-slate-500 text-sm mt-1">Ochrana a zhodnocení kapitálu</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Vytvořím pro vás portfolio na míru, které odolá inflaci a zajistí vám rentu. Využívám nízkonákladové ETF fondy.
+                    </p>
+                    <a href="#" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-calculator mr-2"></i> Spočítejte si investice
+                    </a>
+                </div>
+
+                <!-- 2. Hypotéky -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Hypoteční úvěr</h3>
+                            <p class="text-slate-500 text-sm mt-1">Financování bydlení chytře</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Pomohu vám nastavit hypotéku tak, aby vás nezatížila, a poradím, jak na refinancování nebo čerpání úvěru pro vaše bydlení.
+                    </p>
+                    <a href="hypotecni_kalkulacka.html" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-calculator mr-2"></i> Hypoteční kalkulačka
+                    </a>
+                </div>
+
+                <!-- 3. Pojištění -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Zabezpečení rizik</h3>
+                            <p class="text-slate-500 text-sm mt-1">Životní i majetkové pojištění</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Provedu audit vašich smluv, odstraním duplicity a nastavím krytí tak, aby vás skutečně chránilo v kritických situacích.
+                    </p>
+                    <a href="#" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-file-contract mr-2"></i> Nastavení pojištění
+                    </a>
+                </div>
+
+                <!-- 4. Úvěry -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Úvěry a konsolidace</h3>
+                            <p class="text-slate-500 text-sm mt-1">Optimalizace dluhů</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Máte více půjček? Pomohu vám je sloučit do jedné, snížit měsíční splátku a celkové přeplacení.
+                    </p>
+                    <a href="#" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-calculator mr-2"></i> Spočítat úsporu
+                    </a>
+                </div>
+
+                <!-- 5. Penze -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Doplňkové penzijní spoření</h3>
+                            <p class="text-slate-500 text-sm mt-1">Státní příspěvky</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Získejte od státu maximum. Pomohu vám nastavit penzijní spoření tak, abyste využili všechny státní příspěvky a daňové úlevy naplno.
+                    </p>
+                    <a href="#" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-piggy-bank mr-2"></i> Optimální nastavení penze
+                    </a>
+                </div>
+
+                <!-- 6. Realitní služby (NEW) -->
+                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
+                            <i class="fas fa-sign-hanging"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-brand-dark">Realitní služby</h3>
+                            <p class="text-slate-500 text-sm mt-1">Prodej, nákup a pronájem</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 mb-6 text-sm flex-grow">
+                        Kompletní servis při prodeji či nákupu nemovitosti. Zajistím tržní odhad, profesionální prezentaci, právní servis a bezpečný převod.
+                    </p>
+                    <a href="#" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
+                        <i class="fas fa-key mr-2"></i> Konzultace realit
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: NORSKÝ FOND -->
+    <section id="reseni" class="py-20 bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:flex lg:items-center lg:gap-16">
+                <div class="lg:w-1/2 mb-10 lg:mb-0">
+                    <span class="text-brand-orange font-bold tracking-widest uppercase text-xs">Investiční filozofie</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6 text-brand-dark">Jak to dělají nejbohatší fondy světa?</h2>
+                    <p class="text-slate-600 mb-6 text-lg">Inspiruji se strategií jako je např. <a href="https://www.nbim.no/" target="_blank" class="text-brand-main hover:text-brand-orange font-bold underline decoration-brand-orange/30">Norský ropný fond</a>. Diverzifikace, nízké náklady a dlouhodobý horizont.</p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
+                            <span class="text-slate-700">Investice do globálních ETF fondů</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
+                            <span class="text-slate-700">Složené úročení pracující pro vás</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
+                            <span class="text-slate-700">Okamžitá dostupnost peněz (likvidita)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="lg:w-1/2">
+                    <div class="bg-white rounded-xl shadow-xl p-6 border border-brand-border">
+                         <div class="mb-6 border-b border-slate-50 pb-4">
+                            <h3 class="text-lg font-bold text-brand-dark">Projekce majetku (10 let)</h3>
+                            <p class="text-xs text-slate-500">Reálný dopad složeného úročení</p>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="wealthChart"></canvas>
+                        </div>
+                        <div class="mt-4 flex justify-between text-xs font-bold">
+                            <div class="text-red-500 flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Běžný účet
+                            </div>
+                            <div class="text-brand-main flex items-center">
+                                <span class="w-3 h-3 rounded-full bg-brand-main mr-2"></span> Norský ropný fond
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="kontakt" class="py-24 bg-brand-light">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-3xl font-bold mb-4 text-brand-dark">Zastavte znehodnocování majetku ještě dnes</h2>
+            <p class="text-slate-600 mb-10 max-w-2xl mx-auto">Vyberte si termín pro nezávaznou konzultaci. Potkáme se osobně v Roudnici nebo online z pohodlí domova.</p>
+            
+            <div class="bg-white p-10 rounded-2xl shadow-lg border border-brand-border max-w-2xl mx-auto">
+                <div class="text-center space-y-6">
+                    <div class="inline-flex p-5 bg-brand-light rounded-full text-brand-main mb-2">
+                        <i class="fas fa-calendar-alt text-4xl"></i>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-brand-dark">Sjednat schůzku</h3>
+                    
+                    <a href="https://calendly.com/" target="_blank" rel="noopener noreferrer" class="group relative w-full inline-block bg-gradient-to-r from-[#ea8d00] to-[#fbbf24] hover:to-[#ea8d00] text-brand-dark font-extrabold py-5 px-6 rounded-xl shadow-lg shadow-orange-500/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <div class="relative flex items-center justify-center gap-3">
+                            <span class="text-lg">Vybrat termín v kalendáři</span>
+                            <i class="fas fa-external-link-alt group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
+                        </div>
+                    </a>
+                    
+                    <div class="flex items-center justify-center gap-2 text-xs text-slate-400 mt-4">
+                        <i class="fas fa-lock"></i>
+                        <span>Respektuji vaše soukromí. Žádný spam.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">M</div>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#sluzby" class="hover:text-brand-orange transition">Služby</a></li>
+                        <li><a href="hypotecni_kalkulacka.html" class="hover:text-brand-orange transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="#" class="hover:text-brand-orange transition">Investiční kalkulačka</a></li>
+                        <li><a href="#soukromi" class="hover:text-brand-orange transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="#firmy" class="hover:text-brand-orange transition">Podnikatelé a firmy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-orange"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-brand-orange"></i>
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-orange"></i>
+                            <span>kontakt@marek-marek.cz</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="#" class="hover:text-white transition">Cookies</a></li>
+                        <li><a href="#" class="hover:text-white transition">Investiční disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- HELPER FUNCTIONS ---
+            const byId = (id) => document.getElementById(id);
+            const $ = (selector) => document.querySelector(selector);
+            const $$ = (selector) => document.querySelectorAll(selector);
+
+            // --- HEADER SCROLL LOGIC (LIQUID GLASS) ---
+            const navbar = byId('navbar');
+            const logoIcon = byId('logo-icon');
+            const logoText = byId('logo-text');
+            const logoSubtext = byId('logo-subtext');
+            const navLinks = $$('.nav-link');
+            const dividers = $$('[id^="nav-divider"]');
+            const logoImg = byId('logo-img');
+
+            function updateHeader() {
+                if (!navbar) return;
+
+                if (window.scrollY > 20) {
+                    // SCROLLED (Light Glass)
+                    navbar.classList.add('glass-header-scrolled');
+                    navbar.classList.remove('glass-header-top');
+                    
+                    if(logoIcon) {
+                        logoIcon.classList.remove('bg-white', 'text-brand-dark');
+                        logoIcon.classList.add('bg-brand-dark', 'text-white');
+                    }
+                    
+                    if(logoImg) {
+                        logoImg.classList.remove('invert');
+                    }
+                    
+                    if(logoText) {
+                        logoText.classList.remove('text-white');
+                        logoText.classList.add('text-brand-dark');
+                    }
+                    
+                    if(logoSubtext) {
+                        logoSubtext.classList.remove('text-slate-300');
+                        logoSubtext.classList.add('text-slate-500');
+                    }
+
+                    navLinks.forEach(link => {
+                        link.classList.remove('text-white');
+                        link.classList.add('text-brand-main');
+                        link.classList.add('hover:bg-brand-light');
+                        link.classList.remove('hover:bg-white/10');
+                        link.classList.remove('hover:backdrop-blur-md');
+                    });
+
+                    dividers.forEach(div => {
+                        div.classList.remove('bg-white/20');
+                        div.classList.add('bg-brand-border');
+                    });
+
+                } else {
+                    // TOP (Dark Glass)
+                    navbar.classList.remove('glass-header-scrolled');
+                    navbar.classList.add('glass-header-top');
+
+                    if(logoIcon) {
+                        logoIcon.classList.add('bg-white', 'text-brand-dark');
+                        logoIcon.classList.remove('bg-brand-dark', 'text-white');
+                    }
+
+                    if(logoImg) {
+                        logoImg.classList.add('invert');
+                    }
+                    
+                    if(logoText) {
+                        logoText.classList.add('text-white');
+                        logoText.classList.remove('text-brand-dark');
+                    }
+                    
+                    if(logoSubtext) {
+                        logoSubtext.classList.add('text-slate-300');
+                        logoSubtext.classList.remove('text-slate-500');
+                    }
+
+                    navLinks.forEach(link => {
+                        link.classList.add('text-white');
+                        link.classList.remove('text-brand-main');
+                        link.classList.remove('hover:bg-brand-light');
+                        link.classList.add('hover:bg-white/10');
+                        link.classList.add('hover:backdrop-blur-md');
+                    });
+
+                    dividers.forEach(div => {
+                        div.classList.add('bg-white/20');
+                        div.classList.remove('bg-brand-border');
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', updateHeader);
+            updateHeader(); 
+
+            // --- CHART.JS ---
+            const chartCanvas = byId('wealthChart');
+            if (chartCanvas) {
+                const ctx = chartCanvas.getContext('2d');
+                const labels = ['Start', '2 roky', '4 roky', '6 let', '8 let', '10 let'];
+                const averageData = [500000, 510000, 520000, 530000, 540000, 550000];
+                const strategyData = [500000, 580000, 690000, 820000, 980000, 1200000];
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Norský ropný fond',
+                                data: strategyData,
+                                borderColor: '#0B3A7A',
+                                backgroundColor: (context) => {
+                                    const ctx = context.chart.ctx;
+                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                                    gradient.addColorStop(0, 'rgba(11, 58, 122, 0.4)');
+                                    gradient.addColorStop(1, 'rgba(11, 58, 122, 0.0)');
+                                    return gradient;
+                                },
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#0B3A7A',
+                                pointRadius: 5,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Běžný účet',
+                                data: averageData,
+                                borderColor: '#ef4444',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointBackgroundColor: '#ef4444',
+                                pointRadius: 3,
+                                fill: false,
+                                tension: 0.2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { intersect: false, mode: 'index' },
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8', callback: value => value / 1000 + 'k' } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
+                        }
+                    }
+                });
+            }
+
+            // --- COUNTER ---
+            const counters = $$('.counter-value');
+            const statsSection = byId('stats-section');
+            const duration = 2000; 
+
+            if (counters.length && statsSection) {
+                const animateCounters = () => {
+                    counters.forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        const startTime = performance.now();
+                        const updateCount = (currentTime) => {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            const easeOut = 1 - Math.pow(1 - progress, 3);
+                            const currentVal = Math.floor(easeOut * target);
+                            
+                            if (target === 250) {
+                                counter.innerText = currentVal + (progress === 1 ? '+' : '');
+                            } else {
+                                counter.innerText = currentVal;
+                            }
+                            if (progress < 1) requestAnimationFrame(updateCount);
+                        };
+                        requestAnimationFrame(updateCount);
+                    });
+                }
+                let animated = false;
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if(entry.isIntersecting && !animated) {
+                            animateCounters();
+                            animated = true;
+                        }
+                    });
+                }, { threshold: 0.5 });
+                observer.observe(statsSection);
+            }
+
+            // --- MOBILE MENU ---
+            const btn = byId('mobile-menu-btn');
+            const menu = byId('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => { 
+                    menu.classList.toggle('hidden'); 
+                });
+                
+                $$('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        menu.classList.add('hidden');
+                        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

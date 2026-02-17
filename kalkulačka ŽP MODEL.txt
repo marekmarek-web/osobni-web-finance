@@ -1,0 +1,1228 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  HeartPulse, 
+  Activity, 
+  Umbrella, 
+  Users, 
+  Landmark,
+  ArrowRight,
+  Zap,
+  Info,
+  ShieldCheck,
+  Scale,
+  FileText,
+  CheckCircle2,
+  X,
+  Mail,
+  Phone,
+  UploadCloud,
+  ChevronDown,
+  ChevronUp,
+  TrendingUp,
+  Menu,
+  MapPin,
+  Facebook,
+  Linkedin,
+  Instagram,
+  MessageCircle,
+  Sparkles, // Added for AI feature
+  Bot       // Added for AI feature
+} from 'lucide-react';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  Legend,
+  LabelList
+} from 'recharts';
+
+const InsuranceCalculator = () => {
+  // --- STATE ---
+  const [age, setAge] = useState(30);
+  const [netIncome, setNetIncome] = useState(30000); 
+  const [expenses, setExpenses] = useState(20000); 
+  const [liabilities, setLiabilities] = useState(2000000); 
+  const [reserves, setReserves] = useState(100000); 
+  const [children, setChildren] = useState(2);
+  const [hasSpouse, setHasSpouse] = useState(true);
+  
+  // State pro MODAL
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState('general'); // 'general' | 'check' | 'proposal'
+  const [contactForm, setContactForm] = useState({ email: '', phone: '' });
+  const [formStatus, setFormStatus] = useState('idle'); // idle | submitting | success
+  
+  // State pro AI MODAL
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // State pro FAQ
+  const [openFaq, setOpenFaq] = useState(null);
+  
+  // State pro Nahrání souboru v modalu
+  const fileInputRef = useRef(null);
+  const [fileName, setFileName] = useState(null);
+
+  // State pro Header (Scroll a Mobile Menu)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Scroll Listener pro Header
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Přepočet na hrubou (pro DVZ)
+  const estimatedGrossIncome = Math.round(netIncome / 0.74);
+
+  // --- LOGIKA VÝPOČTU ---
+
+  const formatCurrency = (val) => {
+    return new Intl.NumberFormat('cs-CZ', {
+      style: 'decimal',
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    }).format(val).replace(/\,/g, ' '); 
+  };
+
+  const roundTo10k = (val) => {
+      return Math.round(val / 10000) * 10000;
+  };
+
+  // 1. DVZ a PN
+  const calculateSicknessBenefit = (grossIncome) => {
+    const rh1 = 1466; 
+    const rh2 = 2199;
+    const rh3 = 4397;
+    const dailyGross = (grossIncome * 12) / 365;
+    
+    let reducedDaily = 0;
+    if (dailyGross <= rh1) reducedDaily = dailyGross * 0.9;
+    else if (dailyGross <= rh2) reducedDaily = (rh1 * 0.9) + ((dailyGross - rh1) * 0.6);
+    else if (dailyGross <= rh3) reducedDaily = (rh1 * 0.9) + ((rh2 - rh1) * 0.6) + ((dailyGross - rh2) * 0.3);
+    else reducedDaily = (rh1 * 0.9) + ((rh2 - rh1) * 0.6) + ((rh3 - rh2) * 0.3);
+
+    const dailyBenefit = reducedDaily * 0.66; 
+    return Math.round(dailyBenefit * 30);
+  };
+
+  const stateSicknessMonthly = calculateSicknessBenefit(estimatedGrossIncome);
+  const pnGapMonthly = Math.max(0, netIncome - stateSicknessMonthly);
+  const pnDailyNeed = Math.ceil((pnGapMonthly / 30) / 100) * 100;
+
+  // 2. INVALIDITA & RENTA
+  const yearsToRetirement = Math.max(0, 65 - age);
+  
+  const calculateCapitalNeeded = (monthlyGap, yearsToCover) => { // Opravená definice
+      if (monthlyGap <= 0) return 0;
+      if (yearsToCover <= 0) return 0;
+      const rate = 0.06; 
+      const annualGap = monthlyGap * 12;
+      const pv = annualGap * ((1 - Math.pow(1 + rate, -yearsToCover)) / rate);
+      return Math.round(pv);
+  };
+
+  let pensionD3 = 0;
+  if (netIncome < 20000) pensionD3 = netIncome * 0.85;
+  else if (netIncome < 40000) pensionD3 = netIncome * 0.55;
+  else if (netIncome < 80000) pensionD3 = 22000 + (netIncome - 40000) * 0.15;
+  else pensionD3 = 25000 + (netIncome - 100000) * 0.1; 
+
+  const targetMonthlyIncome = Math.max(expenses, netIncome);
+  const gapD3 = Math.max(0, targetMonthlyIncome - pensionD3);
+  
+  // Opraveno: Předání yearsToRetirement
+  const capitalD3Raw = Math.max(0, calculateCapitalNeeded(gapD3, yearsToRetirement) - reserves);
+  const capitalD3 = roundTo10k(capitalD3Raw);
+
+  // 4. SMRT - LOGIKA PRO RODINU
+  const survivorStateSupport = (hasSpouse || children > 0) ? 10000 : 0; 
+  const deathGapMonthly = Math.max(0, targetMonthlyIncome - survivorStateSupport);
+  const capitalDeathIncome = calculateCapitalNeeded(deathGapMonthly, yearsToRetirement);
+  
+  let spouseLumpSum = 0;
+  if (hasSpouse) {
+      if (age < 40) spouseLumpSum = 4000000;
+      else if (age < 50) spouseLumpSum = 2000000;
+      else spouseLumpSum = 1000000;
+  }
+
+  let childrenLumpSum = 0;
+  if (children > 0) {
+      let perChild = 0;
+      if (age < 50) perChild = 1000000;
+      else if (age < 60) perChild = 500000;
+      else perChild = 0;
+      childrenLumpSum = children * perChild;
+  }
+
+  const familyProtection = Math.max(capitalDeathIncome, spouseLumpSum + childrenLumpSum);
+  const deathCoverageRaw = Math.max(0, liabilities + familyProtection - reserves);
+  const deathCoverage = roundTo10k(deathCoverageRaw);
+
+  // 5. TRVALÉ NÁSLEDKY (TN)
+  let tnBase = 1000000;
+  if (netIncome > 100000) tnBase = 3000000;
+  else if (netIncome > 30000) tnBase = 2000000;
+
+  // --- DATA PRO GRAF ---
+  const chartData = [
+    { 
+      name: 'Nemocenská',
+      type: 'PN',
+      prijem: netIncome,
+      stat: stateSicknessMonthly,
+      chybi: pnGapMonthly,
+      label: 'Pracovní neschopnost'
+    },
+    { 
+      name: 'Invalidita',
+      type: 'INV',
+      prijem: netIncome,
+      stat: pensionD3,
+      chybi: gapD3,
+      label: 'Invalidita 3. st.'
+    },
+  ];
+
+  // --- FAQ DATA ---
+  const faqData = [
+    {
+      question: "Co je kalkulačka životního pojištění a k čemu slouží?",
+      answer: "Kalkulačka životního pojištění slouží k orientačnímu výpočtu, jaké pojistné krytí by mohlo dávat smysl vzhledem k vašemu příjmu, výdajům a závazkům. Pomáhá ujasnit si, na jaká rizika má smysl se zaměřit a v jakém rozsahu."
+    },
+    {
+      question: "Jak kalkulačka životního pojištění počítá doporučené částky?",
+      answer: "Výpočet vychází z několika základních vstupů – zejména z výše příjmu, délky ekonomické aktivity, závazků (například hypotéky) a finančních rezerv. Cílem není přesná nabídka, ale realistický odhad potřebného krytí."
+    },
+    {
+      question: "Je výsledek z kalkulačky závazný?",
+      answer: "Ne. Výsledek je orientační a slouží jako podklad pro další úvahu. Každá životní situace je jiná a finální nastavení pojištění se vždy řeší individuálně podle konkrétních potřeb."
+    },
+    {
+      question: "Jaká rizika kalkulačka životního pojištění zohledňuje?",
+      answer: "Kalkulačka se zaměřuje především na klíčová rizika, jako je smrt, invalidita a pracovní neschopnost. Právě tato rizika mají největší dopad na příjem a finanční stabilitu domácnosti."
+    },
+    {
+      question: "Pro koho je kalkulačka životního pojištění vhodná?",
+      answer: "Kalkulačka je vhodná pro jednotlivce, rodiny i živnostníky, kteří chtějí získat základní přehled o tom, zda je jejich zajištění dostatečné. Nejčastěji ji využívají lidé s rodinou, hypotékou nebo nepravidelným příjmem."
+    },
+    {
+      question: "Jaký je rozdíl mezi rizikovým a investičním životním pojištěním?",
+      answer: "Rizikové životní pojištění slouží výhradně ke krytí rizik (například smrt nebo invalidita). Investiční životní pojištění kombinuje pojištění s investiční složkou. Kalkulačka pracuje primárně s rizikovou částí, tedy se zajištěním příjmů a závazků."
+    },
+    {
+      question: "Musím po výpočtu sjednat životní pojištění?",
+      answer: "Nemusíte. Kalkulačka slouží k orientaci a pochopení situace. Pokud budete chtít, lze výsledek následně projít a vysvětlit, případně navrhnout další postup. Rozhodnutí je vždy na vás."
+    },
+    {
+      question: "Mohu výsledek konzultovat s poradcem?",
+      answer: "Ano. Výsledek kalkulačky lze využít jako základ pro nezávaznou konzultaci, kde se vysvětlí jednotlivé částky a jejich význam v rámci celé finanční situace."
+    }
+  ];
+
+  // Schema Markup (JSON-LD)
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
+  // --- HANDLERS ---
+  const handleOpenModal = (type) => {
+    setModalType(type);
+    setIsModalOpen(true);
+    setFormStatus('idle');
+    setFileName(null);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+        setFileName(e.target.files[0].name);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus('submitting');
+    setTimeout(() => {
+        setFormStatus('success');
+    }, 1500);
+  };
+
+  const toggleFaq = (index) => {
+      setOpenFaq(openFaq === index ? null : index);
+  };
+  
+  // --- GEMINI AI HANDLER ---
+  const generateAiAnalysis = async () => {
+    setIsAiModalOpen(true);
+    // Pokud již máme odpověď a vstupy se nezměnily zásadně (pro jednoduchost generujeme vždy při kliknutí pro "fresh" feel, nebo kontrola prázdnosti)
+    setIsAiLoading(true);
+    setAiResponse('');
+    
+    // API KEY PLACEHOLDER: Prosím, vložte Váš klíč pro produkční použití.
+    const apiKey = "AIzaSyC9x_JW7SZaOt-TaC9FCc0Gwz7V0ukp-HY"; 
+    
+    const prompt = `
+      Jsem finanční poradce (Marek Marek). Mám klienta s těmito parametry:
+      - Věk: ${age} let
+      - Čistý měsíční příjem: ${netIncome} Kč
+      - Měsíční výdaje: ${expenses} Kč
+      - Závazky (hypotéka atd.): ${liabilities} Kč
+      - Finanční rezervy: ${reserves} Kč
+      - Rodina: ${children} dětí, ${hasSpouse ? 's manželem/manželkou' : 'single'}
+      
+      Kalkulačka pro něj spočítala tato doporučená krytí:
+      - Smrt: ${deathCoverage} Kč (pro zajištění rodiny a splacení závazků)
+      - Invalidita: ${capitalD3} Kč (pro generování renty a krytí výpadku příjmu)
+      - Pracovní neschopnost: ${pnDailyNeed} Kč/den (pro krátkodobý výpadek)
+      
+      Tvým úkolem je napsat pro tohoto klienta stručné, přátelské a personalizované shrnutí (max 3-4 odstavce) v češtině.
+      1. Zhodnoť jeho situaci (např. poměr rezerv k závazkům, zabezpečení dětí).
+      2. Vysvětli jednoduše, proč mu vyšla taková částka na invaliditu nebo smrt (vazba na rentu/závazky).
+      3. Přidej jedno "finanční moudro" nebo upozornění specifické pro jeho situaci (např. inflace, čekací doby). Vždy zdůrazni, že přesné nastavení je nutné prokonzultovat, aby nedostal nedostatečné krytí/špatnou smlouvu, a nesmí si to sjednat sám online bez konzultace.
+      
+      Formátuj výstup pomocí jednoduchého HTML (použij <p>, <strong>, <ul>, <li>). Nepoužívej markdown bloky. Buď konkrétní a empatický.
+    `;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            })
+        });
+        
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Omlouváme se, AI analýzu se nepodařilo vygenerovat. Zkuste to prosím později.";
+        
+        // Simple cleanup of markdown code blocks if Gemini sends them
+        const cleanText = text.replace(/```html/g, '').replace(/```/g, '');
+        setAiResponse(cleanText);
+    } catch (error) {
+        console.error("AI Error:", error);
+        setAiResponse("<p>Omlouváme se, došlo k chybě při spojení s AI asistentem. Zkuste to prosím za chvíli.</p>");
+    } finally {
+        setIsAiLoading(false);
+    }
+  };
+
+  const closeAiModal = () => {
+      setIsAiModalOpen(false);
+  };
+
+
+  return (
+    <div className="min-h-screen bg-[#EAF3FF] font-sans text-slate-800 relative pt-20">
+      
+      {/* VLOŽENÉ STYLY */}
+      <style>{`
+        .glass-header-top {
+            background-color: #0a0f29; 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-header-scrolled {
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #ea8d00;
+            border: 3px solid #fff;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 4px 6px rgba(234, 141, 0, 0.4);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: skewX(-20deg) translateX(-150%); }
+            100% { transform: skewX(-20deg) translateX(150%); }
+        }
+        .animate-shimmer {
+            animation: shimmer 2.5s infinite;
+        }
+        
+        /* AI Typing effect or fade in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .ai-content strong {
+            color: #0a0f29;
+        }
+        .ai-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+      `}</style>
+
+      {/* --- HEADER --- */}
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'glass-header-scrolled' : 'glass-header-top'}`} id="navbar">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-20 items-center gap-4">
+                
+                {/* Logo */}
+                <a href="#" className="flex items-center gap-3 cursor-pointer shrink-0" onClick={(e) => e.preventDefault()}>
+                    <div id="logo-icon" className={`font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden ${isScrolled ? 'bg-[#0a0f29] text-white' : 'bg-white text-[#0a0f29]'}`}>
+                        <img id="logo-img" src="logo_M_white.png" alt="M" className={`w-3/5 h-3/5 object-contain transition-all duration-300 ${isScrolled ? 'invert' : 'invert'}`} />
+                    </div>
+                    <div className="flex flex-col leading-tight">
+                        <span id="logo-text" className={`text-lg font-bold transition-colors duration-300 ${isScrolled ? 'text-[#0a0f29]' : 'text-white'}`}>Marek Marek<span className="text-[#ea8d00]">.</span></span>
+                        <span id="logo-subtext" className={`text-[0.6rem] font-bold tracking-widest uppercase transition-colors duration-300 ${isScrolled ? 'text-slate-500' : 'text-slate-300'}`}>Finanční partner</span>
+                    </div>
+                </a>
+                
+                {/* Center Menu */}
+                <div className="hidden lg:flex items-center justify-center flex-1 gap-6">
+                    <a href="#sluzby" className={`nav-link hover:backdrop-blur-md ${isScrolled ? 'text-[#0B3A7A] hover:bg-[#EAF3FF]' : 'text-white hover:bg-white/10'}`}>Služby</a>
+                    <div id="nav-divider" className={`h-4 w-px mx-2 transition-colors duration-300 ${isScrolled ? 'bg-[#D6E6FF]' : 'bg-white/20'}`}></div>
+                    <a href="#soukromi" className={`nav-link hover:backdrop-blur-md ${isScrolled ? 'text-[#0B3A7A] hover:bg-[#EAF3FF]' : 'text-white hover:bg-white/10'}`}>Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" className={`h-4 w-px mx-2 transition-colors duration-300 ${isScrolled ? 'bg-[#D6E6FF]' : 'bg-white/20'}`}></div>
+                    <a href="#firmy" className={`nav-link hover:backdrop-blur-md ${isScrolled ? 'text-[#0B3A7A] hover:bg-[#EAF3FF]' : 'text-white hover:bg-white/10'}`}>Podnikatelé a firmy</a>
+                </div>
+
+                {/* Hamburger */}
+                <div className="flex items-center">
+                    <button 
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className={`hover:text-[#fbbf24] focus:outline-none p-2 rounded-full transition-colors ${isScrolled ? 'text-[#ea8d00] hover:bg-slate-100' : 'text-[#ea8d00] hover:bg-white/10'}`}
+                    >
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+            <div className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-slate-100 shadow-xl py-6 px-4 flex flex-col gap-4 z-40">
+                <div>
+                    <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div className="space-y-1">
+                        <a href="#sluzby" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="#soukromi" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="#firmy" className="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div className="pt-4">
+                    <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div className="space-y-2">
+                        <a href="hypotecni_kalkulacka.html" className="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-[#EAF3FF]/50 rounded-xl border border-[#D6E6FF]/50">
+                            <Landmark className="w-5 h-5 text-[#ea8d00] mr-3" /> Hypoteční kalkulačka
+                        </a>
+                        <a href="#" className="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <TrendingUp className="w-5 h-5 text-[#0B3A7A] mr-3" /> Investiční kalkulačka
+                        </a>
+                        <a href="#" className="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <HeartPulse className="w-5 h-5 text-red-500 mr-3" /> Kalkulačka životního pojištění
+                        </a>
+                    </div>
+                </div>
+                
+                <div className="pt-8 px-4">
+                    <a href="#kontakt" className="block w-full py-4 bg-[#0a0f29] text-white text-center rounded-xl font-bold shadow-lg shadow-[#0a0f29]/20">Kontaktovat</a>
+                </div>
+            </div>
+        )}
+      </nav>
+
+      {/* 1. HERO SECTION (KALKULAČKA) */}
+      <div className="py-8 px-4 md:py-12 mt-16">
+        <div className="max-w-7xl mx-auto">
+          {/* Container Headeru */}
+          <div className="relative rounded-3xl mb-10 min-h-[400px] flex flex-col justify-center shadow-2xl">
+             
+             {/* 1. Vrstva: POZADÍ */}
+             <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+                 <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f29] to-[#1e3a6e]"></div>
+                 {/* Background Blob */}
+                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#ea8d00] opacity-10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+             </div>
+
+             {/* 2. Vrstva: OBSAH */}
+             <div className="relative z-10 p-8 md:p-12 text-white flex flex-col lg:flex-row justify-between items-center lg:items-start gap-8">
+                
+                <div className="flex-1 max-w-3xl">
+                    <h2 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">
+                        Kalkulačka životního pojištění – <span className="text-[#ea8d00]">výpočet potřebného krytí</span>
+                    </h2>
+                    <p className="text-blue-100 opacity-90 text-lg mb-8 leading-relaxed max-w-2xl">
+                        Spočítejte si orientačně, jaké krytí životního pojištění dává smysl podle příjmu, výdajů a závazků. 
+                        Výsledek vysvětlím a navrhnu další postup. Telefon je volitelný.
+                    </p>
+                    
+                    <div className="inline-flex flex-wrap gap-3 items-center">
+                        <div className="px-4 py-2 rounded-lg text-sm font-bold bg-[#ea8d00] text-white shadow-lg flex items-center gap-2">
+                           <HeartPulse className="w-4 h-4" />
+                           Analýza potřeb
+                        </div>
+
+                        {/* 6% Rentiér Badge */}
+                        <div className="group relative px-4 py-2 rounded-lg text-sm font-bold bg-white/10 text-white backdrop-blur-md flex items-center gap-2 border border-white/10 cursor-help">
+                           <TrendingUp className="w-4 h-4 text-[#ea8d00]" />
+                           6% Rentiér
+                           
+                           {/* Tooltip */}
+                           <div className="absolute top-full left-0 mt-3 w-80 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0">
+                               <p className="leading-relaxed"><strong>Rentiérský výpočet:</strong> Pojistná částka (např. 1 mil. Kč) se zainvestuje s výnosem 6 % p.a. To generuje rentu 60 000 Kč ročně (5 000 Kč měsíčně), která dlouhodobě dorovnává výpadek příjmu při invaliditě.</p>
+                               <div className="absolute -top-2 left-6 w-4 h-4 bg-white transform rotate-45 border-t border-l border-slate-100"></div>
+                           </div>
+                        </div>
+                        
+                        {/* EFPA Tooltip / Badge */}
+                        <div className="group relative px-4 py-2 rounded-lg text-sm font-bold bg-white/10 text-white backdrop-blur-md flex items-center gap-2 border border-white/10 cursor-help">
+                           <ShieldCheck className="w-4 h-4" />
+                           Dle metodiky EFPA
+                           
+                           {/* Tooltip */}
+                           <div className="absolute top-full left-0 mt-3 w-72 p-4 bg-white text-slate-800 text-xs font-normal rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-100 pointer-events-none transform translate-y-2 group-hover:translate-y-0">
+                               <p className="leading-relaxed"><strong>EFPA (European Financial Planning Association)</strong> je organizace určující evropské standardy v oblasti finančního poradenství a plánování. Metodika zaručuje objektivní a profesionální výpočet.</p>
+                               <div className="absolute -top-2 left-6 w-4 h-4 bg-white transform rotate-45 border-t border-l border-slate-100"></div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+          </div>
+
+          {/* NOVÁ OBSAHOVÁ SEKCE (INFO CARD) */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-10">
+              <h3 className="text-base font-bold text-[#0a0f29] mb-3 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-[#ea8d00]" />
+                  Informace ke kalkulaci
+              </h3>
+              <div className="text-slate-600 space-y-2 leading-relaxed text-xs md:text-sm">
+                  <p>
+                      Tato kalkulačka slouží k orientačnímu výpočtu potřebného krytí životního pojištění na základě vašich příjmů, výdajů a závazků. 
+                      Pomáhá získat základní přehled o tom, jaká pojistná ochrana může dávat smysl v konkrétní životní situaci.
+                  </p>
+                  <p>
+                      Výpočet zohledňuje zejména zajištění příjmů rodiny, závazky jako je hypotéka a délku ekonomické aktivity.
+                  </p>
+                  <p>
+                      Výsledné částky nejsou nabídkou pojištění, ale orientačním doporučením.
+                  </p>
+                  <p>
+                      Každá situace je individuální a finální nastavení se vždy řeší po osobní nebo online konzultaci, kde se vysvětlí jednotlivé možnosti a jejich dopad.
+                  </p>
+              </div>
+          </div>
+
+          {/* 2. HLAVNÍ GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* LEVÁ ČÁST: VSTUPY (7 cols) */}
+            <div className="lg:col-span-7 space-y-6">
+                
+                {/* Karta Vstupů */}
+                <div className="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-slate-200">
+                    <h3 className="text-slate-500 font-bold uppercase tracking-wider text-sm mb-8 flex items-center gap-2">
+                        <Users className="w-4 h-4 text-[#ea8d00]" />
+                        Vaše údaje
+                    </h3>
+
+                    <InputGroup 
+                        label="Váš věk" 
+                        subLabel="(let)"
+                        value={age} 
+                        setValue={setAge} 
+                        min={18} max={64} step={1}
+                        unit="let"
+                    />
+
+                    <InputGroup 
+                        label="Čistý měsíční příjem" 
+                        subLabel="(Kč)"
+                        value={netIncome} 
+                        setValue={setNetIncome} 
+                        min={15000} max={250000} step={1000}
+                        unit="Kč"
+                    />
+
+                    <div className={`transition-all duration-300 ${expenses > netIncome ? 'p-4 bg-red-50 rounded-xl border border-red-100' : ''}`}>
+                        <InputGroup 
+                            label="Nutné měsíční výdaje" 
+                            subLabel="(Kč)"
+                            value={expenses} 
+                            setValue={setExpenses} 
+                            min={5000} max={200000} step={500}
+                            unit="Kč"
+                            isCompact={expenses > netIncome}
+                        />
+                        {expenses > netIncome && (
+                            <div className="text-xs text-red-600 font-bold mt-2 flex items-center gap-2">
+                                <Info className="w-4 h-4"/>
+                                Pozor: Výdaje převyšují příjem. Pojištění bude kalkulováno z výdajů.
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="h-px bg-slate-100 my-8"></div>
+                    
+                    <h3 className="text-slate-500 font-bold uppercase tracking-wider text-sm mb-8 flex items-center gap-2">
+                        <Landmark className="w-4 h-4 text-[#ea8d00]" />
+                        Majetek a Rodina
+                    </h3>
+
+                    <InputGroup 
+                        label="Hypotéka a závazky" 
+                        subLabel="(celkem)"
+                        value={liabilities} 
+                        setValue={setLiabilities} 
+                        min={0} max={20000000} step={50000}
+                        unit="Kč"
+                    />
+
+                    <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100/50 mb-8">
+                        <InputGroup 
+                            label="Vlastní rezervy" 
+                            subLabel="(investice, hotovost)"
+                            value={reserves} 
+                            setValue={setReserves} 
+                            min={0} max={5000000} step={10000}
+                            unit="Kč"
+                            isCompact
+                        />
+                        <div className="text-xs text-[#ea8d00] font-medium mt-2 flex items-center gap-2">
+                            <Info className="w-3 h-3"/> Rezervy se odečítají od potřebné pojistné částky.
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Děti</label>
+                            <input 
+                                type="number" min="0" max="10"
+                                value={children}
+                                onChange={(e) => setChildren(Number(e.target.value))}
+                                className="w-full bg-slate-50 border border-slate-200 text-[#0a0f29] font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ea8d00]"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Manžel/ka</label>
+                            <button 
+                                onClick={() => setHasSpouse(!hasSpouse)}
+                                className={`w-full py-3.5 rounded-xl font-bold border-2 transition-all ${hasSpouse ? 'border-[#ea8d00] bg-orange-50 text-[#ea8d00]' : 'border-slate-200 text-slate-400'}`}
+                            >
+                                {hasSpouse ? 'ANO' : 'NE'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Graf */}
+                <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 hidden md:block">
+                     <div className="flex justify-between items-center mb-2">
+                        <h4 className="text-sm font-bold text-slate-500 uppercase">Analýza rizika (Měsíční bilance)</h4>
+                     </div>
+                     <p className="text-xs text-slate-500 mb-6">
+                         Graf znázorňuje propad příjmů v případě nemoci nebo invalidity a částku, kterou je třeba dokrýt.
+                     </p>
+                     
+                     <div className="h-80 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={chartData} margin={{top: 20, left: 0, right: 0, bottom: 0}} barCategoryGap={40}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9"/>
+                                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{fill: '#0f172a', fontSize: 13, fontWeight: 700}} dy={10} />
+                                <YAxis hide />
+                                <Tooltip 
+                                    cursor={{fill: '#f8fafc'}}
+                                    contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}}
+                                    formatter={(val) => formatCurrency(val) + " Kč"} 
+                                />
+                                <Legend verticalAlign="top" height={36}/>
+                                
+                                <Bar dataKey="prijem" name="Váš čistý příjem" fill="#94a3b8" radius={[4,4,4,4]} barSize={10} />
+                                
+                                <Bar dataKey="stat" stackId="cover" name="Kryto státem" fill="#cbd5e1" radius={[0,0,4,4]} barSize={50} />
+                                <Bar dataKey="chybi" stackId="cover" name="Nutno pojistit" fill="#ea8d00" radius={[4,4,0,0]} barSize={50}>
+                                    <LabelList dataKey="chybi" position="top" fill="#ea8d00" fontSize={12} fontWeight="bold" formatter={(val) => formatCurrency(val)} />
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                     </div>
+                     <div className="mt-4 text-xs text-slate-500 text-center leading-relaxed">
+                         Oranžová část představuje finanční mezeru, kterou stát nepokryje a je nutné ji zajistit z vlastních zdrojů nebo pojištění.
+                     </div>
+                </div>
+            </div>
+
+            {/* PRAVÁ ČÁST: STICKY RESULTS (5 cols) */}
+            <div className="lg:col-span-5">
+                <div className="sticky top-24 space-y-4">
+                    
+                    {/* Dark Result Card */}
+                    <div className="bg-[#0a0f29] text-white rounded-2xl shadow-2xl shadow-[#0a0f29]/30 border border-slate-800 p-8 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-[#0B3A7A] opacity-20 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#ea8d00] opacity-10 rounded-full blur-xl -ml-10 -mb-10"></div>
+
+                        <h3 className="text-slate-400 font-medium mb-6 relative z-10 text-sm uppercase tracking-wider flex items-center justify-between">
+                            Doporučené pojistné částky
+                            <span className="text-[#ea8d00] text-xs normal-case bg-[#ea8d00]/10 px-2 py-1 rounded font-bold">Klesající do 65 let</span>
+                        </h3>
+
+                        <div className="space-y-6 relative z-10">
+                            
+                            {/* Smrt */}
+                            <ResultRow 
+                                label="Smrt" 
+                                value={deathCoverage} 
+                                icon={<Umbrella className="w-5 h-5 text-slate-300" />}
+                                subtext={`Včetně zabezpečení ${hasSpouse ? 'manželky' : ''} ${children > 0 ? `a ${children} dětí` : ''}`}
+                            />
+                            
+                            {/* Invalidita */}
+                            <ResultRow 
+                                label="Invalidita III. + II. st." 
+                                value={capitalD3} 
+                                icon={<Activity className="w-5 h-5 text-red-400" />}
+                                subtext={`Krytí renty ${formatCurrency(Math.max(0, targetMonthlyIncome - pensionD3))} Kč/měs`}
+                                highlight
+                            />
+
+                            {/* PN */}
+                            <ResultRow 
+                                label="Pracovní neschopnost" 
+                                value={pnDailyNeed} 
+                                icon={<HeartPulse className="w-5 h-5 text-blue-400" />}
+                                subtext="Denní dávka (od 29. dne)"
+                                isDaily
+                            />
+                            
+                            {/* TN */}
+                            <div className="pt-4 border-t border-white/10 mt-2">
+                                <div className="flex justify-between items-center mb-1">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-white/5 rounded-lg">
+                                            <Zap className="w-4 h-4 text-[#fbbf24]" />
+                                        </div>
+                                        <span className="text-slate-300 text-sm font-medium">Trvalé následky</span>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-xl font-bold text-white tracking-tight">
+                                            {formatCurrency(tnBase)}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center pl-11">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Lineární plnění</span>
+                                    <span className="text-[10px] text-[#fbbf24] font-bold bg-[#fbbf24]/10 px-2 py-0.5 rounded">
+                                        Až 10násobná progrese ({formatCurrency(tnBase * 10)})
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {/* EUCS Card */}
+                            <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-4 relative overflow-hidden group hover:bg-white/10 transition-colors">
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-[#ea8d00] opacity-5 blur-xl -mr-5 -mt-5"></div>
+                                <div className="flex items-start gap-4 relative z-10">
+                                   <div className="bg-white p-2 rounded-lg shrink-0 w-12 h-12 flex items-center justify-center">
+                                       <Scale className="w-6 h-6 text-[#0a0f29]" />
+                                   </div>
+                                   
+                                   <div className="flex-1 min-w-0">
+                                       <div className="text-white font-bold text-sm mb-1">Právní ochrana EUCS</div>
+                                       <p className="text-xs text-slate-300 leading-snug mb-2 pr-1">
+                                           Zajistí, že vám pojišťovna vyplatí <strong>maximální plnění</strong>. Nutnost ke smlouvě.
+                                       </p>
+                                       <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#fbbf24]">
+                                           <span className="bg-[#fbbf24]/10 px-1.5 py-0.5 rounded border border-[#fbbf24]/20 whitespace-nowrap">49 Kč / os.</span>
+                                           <span className="bg-[#fbbf24]/10 px-1.5 py-0.5 rounded border border-[#fbbf24]/20 whitespace-nowrap">149 Kč / rodina</span>
+                                       </div>
+                                   </div>
+                                </div>
+                            </div>
+                            
+                            {/* AI BUTTON */}
+                            <button 
+                                onClick={generateAiAnalysis}
+                                className="w-full mt-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3 group"
+                            >
+                                <Sparkles className="w-5 h-5 text-yellow-300 animate-pulse" />
+                                <span>AI Analýza situace</span>
+                            </button>
+
+                        </div>
+
+                        {/* CTA Buttons */}
+                        <div className="mt-8 relative z-10 space-y-3">
+                            {/* Primary - Řešení na míru */}
+                            <button 
+                                onClick={() => handleOpenModal('general')}
+                                className="group relative w-full bg-gradient-to-r from-[#ea8d00] to-[#fbbf24] hover:to-[#ea8d00] text-[#0a0f29] font-extrabold py-5 px-6 rounded-xl shadow-lg shadow-orange-500/20 transition-all transform hover:scale-[1.02] overflow-hidden"
+                            >
+                                <div className="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                                <div className="relative flex items-center justify-center gap-3">
+                                    <span className="text-lg">Chci řešení na míru</span>
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                            </button>
+                            
+                            {/* Third - Mám smlouvu ke kontrole */}
+                            <button 
+                                onClick={() => handleOpenModal('check')}
+                                className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                            >
+                                <UploadCloud className="w-4 h-4 text-slate-400" />
+                                Mám smlouvu ke kontrole
+                            </button>
+
+                            <p className="text-xs text-slate-500 mt-2 text-center leading-relaxed opacity-60">
+                                Kliknutím získáte nezávaznou konzultaci.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+          </div>
+          
+          {/* FAQ SECTION */}
+          <div className="max-w-4xl mx-auto mt-12 mb-10">
+               <h2 className="text-2xl font-bold text-[#0a0f29] mb-6 text-center">FAQ – Kalkulačka životního pojištění</h2>
+               <div className="space-y-4">
+                  {faqData.map((item, idx) => (
+                      <div key={idx} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                          <button 
+                              onClick={() => toggleFaq(idx)}
+                              className="w-full flex justify-between items-center p-5 text-left bg-white hover:bg-slate-50 transition-colors"
+                          >
+                              <span className="font-bold text-[#0a0f29] pr-4 text-base md:text-lg">{item.question}</span>
+                              {openFaq === idx ? (
+                                  <ChevronUp className="w-5 h-5 text-[#ea8d00] shrink-0" />
+                              ) : (
+                                  <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />
+                              )}
+                          </button>
+                          {openFaq === idx && (
+                              <div className="p-5 pt-0 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-50">
+                                  {item.answer}
+                              </div>
+                          )}
+                      </div>
+                  ))}
+               </div>
+          </div>
+
+          {/* MAIN CTA SECTION */}
+          <div className="max-w-4xl mx-auto mb-16 text-center">
+              <div className="bg-gradient-to-br from-[#0a0f29] to-[#1e3a6e] rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
+                 {/* Background decoration */}
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#ea8d00] opacity-10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                 
+                 <div className="relative z-10">
+                   <h2 className="text-2xl md:text-3xl font-extrabold mb-4">Chcete konkrétní návrh životního pojištění?</h2>
+                   <p className="text-blue-100 opacity-90 text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
+                     Výsledek z kalkulačky slouží jako orientační výpočet. Rád vám jej vysvětlím a navrhnu řešení odpovídající vaší konkrétní situaci. Telefon je volitelný.
+                   </p>
+                   <button 
+                     onClick={() => handleOpenModal('proposal')}
+                     className="group inline-flex items-center gap-3 bg-[#ea8d00] hover:bg-[#d67f00] text-white font-bold py-4 px-8 rounded-xl shadow-lg transition-all transform hover:-translate-y-1"
+                   >
+                     Chci návrh životního pojištění
+                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                   </button>
+                 </div>
+              </div>
+          </div>
+
+          {/* SPOČÍTEJTE SI SAMI SECTION (Původně Další služby) */}
+          <div className="max-w-6xl mx-auto mb-20">
+              <h3 className="text-2xl font-bold text-[#0a0f29] mb-8 text-center">Spočítejte si sami</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                
+                {/* Card 1: Investice */}
+                <a href="#" className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg hover:border-[#ea8d00] transition-all group flex flex-col items-center text-center">
+                   <div className="w-16 h-16 bg-blue-50 text-[#0a0f29] rounded-full flex items-center justify-center mb-4 group-hover:bg-[#ea8d00] group-hover:text-white transition-colors">
+                     <TrendingUp className="w-8 h-8" />
+                   </div>
+                   <h4 className="text-lg font-bold text-[#0a0f29] mb-2">Investiční kalkulačka</h4>
+                   <p className="text-slate-500 text-sm">Zhodnocování úspor a tvorba renty na stáří.</p>
+                </a>
+
+                {/* Card 2: Hypotéky */}
+                <a href="hypotecni_kalkulacka.html" className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-lg hover:border-[#ea8d00] transition-all group flex flex-col items-center text-center">
+                   <div className="w-16 h-16 bg-blue-50 text-[#0a0f29] rounded-full flex items-center justify-center mb-4 group-hover:bg-[#ea8d00] group-hover:text-white transition-colors">
+                     <Landmark className="w-8 h-8" />
+                   </div>
+                   <h4 className="text-lg font-bold text-[#0a0f29] mb-2">Hypotéky a úvěry</h4>
+                   <p className="text-slate-500 text-sm">Financování bydlení a optimalizace závazků.</p>
+                </a>
+              </div>
+          </div>
+          
+        </div>
+      </div>
+
+      {/* FOOTER (Identický s úvodní.txt + plné ikony) */}
+      <footer className="bg-[#0a0f29] text-slate-400 py-16 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-4 gap-12 mb-12">
+                <div className="col-span-1 md:col-span-1">
+                    <div className="flex items-center gap-2 mb-4">
+                        <div className="bg-white text-[#0a0f29] font-bold w-8 h-8 flex items-center justify-center rounded">M</div>
+                        <span className="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p className="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div className="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" className="text-slate-400 hover:text-white transition"><Instagram className="w-5 h-5"/></a>
+                        <a href="https://www.facebook.com/SMMarkx" className="text-slate-400 hover:text-white transition"><Facebook className="w-5 h-5"/></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" className="text-slate-400 hover:text-white transition"><Linkedin className="w-5 h-5"/></a>
+                        <a href="http://wa.me/420778511166" className="text-slate-400 hover:text-white transition"><MessageCircle className="w-5 h-5"/></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul className="space-y-2 text-sm">
+                        <li><a href="#sluzby" className="hover:text-[#ea8d00] transition">Služby</a></li>
+                        <li><a href="hypotecni_kalkulacka.html" className="hover:text-[#ea8d00] transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="#" className="hover:text-[#ea8d00] transition">Investiční kalkulačka</a></li>
+                        <li><a href="#soukromi" className="hover:text-[#ea8d00] transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="#firmy" className="hover:text-[#ea8d00] transition">Podnikatelé a firmy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul className="space-y-3 text-sm">
+                        <li className="flex items-start">
+                            <MapPin className="w-4 h-4 mt-1 mr-2 text-[#ea8d00]" fill="#ea8d00" strokeWidth={0} />
+                            <span>Jana z Dražic 99<br/>Roudnice nad Labem</span>
+                        </li>
+                        <li className="flex items-center">
+                            <Phone className="w-4 h-4 mr-2 text-[#ea8d00]" fill="#ea8d00" strokeWidth={0} />
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li className="flex items-center">
+                            <Mail className="w-4 h-4 mr-2 text-[#ea8d00]" fill="#ea8d00" strokeWidth={0} />
+                            <span>kontakt@marek-marek.cz</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul className="space-y-2 text-sm">
+                        <li><a href="#" className="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="#" className="hover:text-white transition">Cookies</a></li>
+                        <li><a href="#" className="hover:text-white transition">Investiční disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+      </footer>
+      {/* --- FOOTER (KONEC) --- */}
+
+      {/* AI MODAL */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0a0f29]/80 backdrop-blur-sm" onClick={closeAiModal}></div>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+            
+            {/* Header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 flex justify-between items-center text-white">
+              <div className="flex items-center gap-3">
+                  <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                      <Sparkles className="w-6 h-6 text-yellow-300" />
+                  </div>
+                  <div>
+                      <h3 className="text-xl font-bold">AI Finanční Asistent</h3>
+                      <p className="text-xs text-indigo-100 opacity-80">Powered by Gemini</p>
+                  </div>
+              </div>
+              <button onClick={closeAiModal} className="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              {isAiLoading ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-6"></div>
+                      <h4 className="text-lg font-bold text-slate-800 mb-2">Analyzuji vaši situaci...</h4>
+                      <p className="text-sm text-slate-500 max-w-xs">Prosím strpení, AI právě počítá rizika a připravuje doporučení.</p>
+                  </div>
+              ) : (
+                  <div className="ai-content text-slate-700 text-sm md:text-base leading-relaxed" dangerouslySetInnerHTML={{__html: aiResponse}}></div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="bg-slate-50 p-4 border-t border-slate-100 flex justify-end">
+                <button onClick={closeAiModal} className="text-slate-600 font-bold hover:text-indigo-600 text-sm px-4 py-2">
+                    Zavřít
+                </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL PRO KONTROLU SMLOUVY / POPTÁVKU */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0a0f29]/80 backdrop-blur-sm" onClick={handleCloseModal}></div>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+            
+            {/* Header */}
+            <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-[#0a0f29]">
+                    {modalType === 'general' ? 'Mám zájem o nabídku' : 
+                     modalType === 'proposal' ? 'Získejte nezávazný návrh' : 'Kontrola smlouvy'}
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                    {modalType === 'general' ? 'Nechte mi kontakt, ozvu se vám.' : 
+                     modalType === 'proposal' ? 'Na základě vašich údajů připravím návrh.' :
+                     'Nahrajte své životní pojištění a nechte si jej nezávazně zkontrolovat.'}
+                </p>
+              </div>
+              <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-800 p-2 rounded-full hover:bg-slate-200 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6">
+              {formStatus === 'success' ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-2">Odesláno!</h4>
+                  <p className="text-slate-600 mb-6">Děkujeme. Ozveme se vám co nejdříve s analýzou.</p>
+                  <button onClick={handleCloseModal} className="text-[#ea8d00] font-bold hover:underline">Zavřít okno</button>
+                </div>
+              ) : (
+                <form onSubmit={handleFormSubmit} className="space-y-4">
+                  
+                  {/* Kontakt Info */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Váš e-mail <span className="text-red-500">*</span></label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
+                        <input 
+                          type="email" 
+                          required 
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#ea8d00] outline-none"
+                          placeholder="vas@email.cz"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Telefon <span className="text-slate-400 font-normal">(nepovinné)</span></label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-3.5 w-5 h-5 text-slate-400" />
+                        <input 
+                          type="tel" 
+                          value={contactForm.phone}
+                          onChange={(e) => setContactForm({...contactForm, phone: e.target.value})}
+                          className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#ea8d00] outline-none"
+                          placeholder="+420 777 ..."
+                        />
+                      </div>
+                    </div>
+
+                    {/* File Upload Section (Only for Check) */}
+                    {modalType === 'check' && (
+                        <div>
+                            <label className="block text-sm font-bold text-slate-700 mb-1">Nahrát soubor <span className="text-slate-400 font-normal">(nepovinné)</span></label>
+                            <div 
+                                onClick={() => fileInputRef.current.click()}
+                                className="border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-[#ea8d00] transition-all group"
+                            >
+                                <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    className="hidden" 
+                                    onChange={handleFileChange}
+                                    accept=".pdf,.jpg,.png,.doc,.docx"
+                                />
+                                {fileName ? (
+                                    <div className="flex items-center gap-2 text-[#ea8d00] font-medium">
+                                        <FileText className="w-5 h-5" />
+                                        <span className="text-sm truncate max-w-[200px]">{fileName}</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <UploadCloud className="w-8 h-8 text-slate-300 group-hover:text-[#ea8d00] mb-2 transition-colors" />
+                                        <span className="text-xs text-slate-500">Klikněte pro nahrání smlouvy</span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4">
+                    <button 
+                      type="submit" 
+                      disabled={formStatus === 'submitting'}
+                      className="w-full bg-[#0a0f29] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-slate-900 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                    >
+                      {formStatus === 'submitting' ? 'Odesílám...' : 
+                       (modalType === 'general' ? 'Odeslat poptávku' : 
+                        modalType === 'proposal' ? 'Odeslat formulář' : 'Odeslat ke kontrole')}
+                      {!formStatus === 'submitting' && <ArrowRight className="w-4 h-4" />}
+                    </button>
+                    <p className="text-[10px] text-slate-400 text-center mt-3">
+                      Odesláním souhlasíte se zpracováním osobních údajů pro účely {modalType === 'general' ? 'poptávky' : modalType === 'proposal' ? 'návrhu' : 'kontroly'}.
+                    </p>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* JSON-LD Schema */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(faqSchema)}} />
+    </div>
+  );
+};
+
+// --- SUB-KOMPONENTY ---
+
+const InputGroup = ({ label, subLabel, value, setValue, min, max, step, unit, isCompact }) => {
+    const displayValue = new Intl.NumberFormat('cs-CZ').format(value).replace(/\,/g, ' ');
+
+    const handleChange = (e) => {
+        const raw = e.target.value.replace(/\s/g, '');
+        const num = parseInt(raw, 10);
+        if (!isNaN(num)) setValue(num);
+        else if (raw === '') setValue(0);
+    };
+
+    return (
+        <div className={isCompact ? 'mb-0' : 'mb-10'}>
+            <div className="flex justify-between items-end mb-4">
+                <label className="text-sm font-bold text-slate-600 tracking-wide">
+                    <span className="uppercase">{label}</span> <span className="text-slate-400 font-normal normal-case">{subLabel}</span>
+                </label>
+                <div className="relative">
+                    <input 
+                        type="text" 
+                        value={displayValue}
+                        onChange={handleChange}
+                        className="text-right font-extrabold text-2xl md:text-3xl text-[#0a0f29] border-b-2 border-slate-200 focus:border-[#ea8d00] outline-none w-48 md:w-56 bg-transparent transition-colors p-1"
+                    />
+                </div>
+            </div>
+            <input 
+                type="range" 
+                min={min} max={max} step={step} 
+                value={value} 
+                onChange={(e) => setValue(Number(e.target.value))}
+                className="w-full"
+            />
+            <div className="flex justify-between text-xs font-medium text-slate-400 mt-3">
+                <span>{new Intl.NumberFormat('cs-CZ', {notation: "compact"}).format(min)} {unit}</span>
+                <span>{new Intl.NumberFormat('cs-CZ', {notation: "compact"}).format(max)} {unit}</span>
+            </div>
+        </div>
+    );
+};
+
+const ResultRow = ({ label, value, icon, subtext, highlight, isDaily }) => (
+    <div className={`flex justify-between items-center py-3 border-b border-white/10 ${highlight ? 'bg-white/5 -mx-4 px-4 rounded-lg border-none my-1' : ''}`}>
+        <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${highlight ? 'bg-[#ea8d00]/20' : 'bg-white/5'}`}>
+                {icon}
+            </div>
+            <div>
+                <div className={`text-sm font-bold ${highlight ? 'text-white' : 'text-slate-200'}`}>{label}</div>
+                <div className="text-xs text-slate-500">{subtext}</div>
+            </div>
+        </div>
+        <div className="text-right">
+            <div className={`text-xl md:text-2xl font-bold tracking-tight ${highlight ? 'text-[#fbbf24]' : 'text-white'}`}>
+                {new Intl.NumberFormat('cs-CZ').format(value).replace(/\,/g, ' ')}
+            </div>
+            <div className="text-xs text-slate-500 uppercase font-bold">{isDaily ? 'Kč / den' : 'Kč'}</div>
+        </div>
+    </div>
+);
+
+export default InsuranceCalculator;

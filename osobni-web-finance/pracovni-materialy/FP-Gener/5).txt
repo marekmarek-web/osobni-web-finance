@@ -1,0 +1,252 @@
+Navazuji na Task 2 (Cashflow + Majetek). Teď implementuj krok CÍLE (Goals) a základ INVESTIČNÍ PLÁNOVÁNÍ tak, aby výstupy odpovídaly logice finančních plánů a byly připravené pro finální report.
+
+0) Neřeš ještě pojištění ani finální PDF report.
+
+Jen krok Goals + fund katalog + výpočty + grafy + texty.
+
+A) Krok “Goals” — UI / UX (premium)
+
+Vytvoř stránku se 3 bloky:
+
+1) Cíle (cards)
+
+Přidat cíle jako dynamické položky:
+
+Finanční nezávislost (renta) (hlavní)
+
+Děti (nekonečná renta / budoucí zajištění) (volitelné)
+
+Konkrétní cíl (částka v čase) (např. auto, rekonstrukce) (volitelné)
+
+Každý cíl: možnost zapnout/vypnout, editovat, přidat více cílů.
+
+Každá karta cíle má:
+
+Název cíle
+
+Cílový horizont: za kolik let nebo do věku (preferuj “do věku” a dopočti roky z věku klienta)
+
+Cílová částka nebo cílová renta (měsíčně)
+
+Počáteční kapitál pro daný cíl (uživatel vybere kolik ze svého majetku chce “alokovat” na cíl)
+
+Volba strategie: Dynamická / Vyvážená / Konzervativní
+
+Přepínač: “Jednorázově / Pravidelně / Kombinace”
+
+Výstup: doporučená měsíční investice + graf růstu + textové odůvodnění
+
+2) Shrnutí (sticky panel)
+
+Zobrazuj:
+
+Součet doporučených měsíčních investic (všechny cíle)
+
+Porovnání s freeCashflow z Task 2
+
+Stav: “OK / chybí X Kč / je prostor na rezervu”
+
+3) Grafy (Chart.js)
+
+Graf A: Růst portfolia v čase (line) pro vybraný cíl (dropdown)
+
+Graf B: Rozpad cíle (stacked) – počáteční kapitál vs měsíční vklady vs zhodnocení
+
+B) Klíčová logika cílů (musí sedět na “1 mil = 5 000 Kč při 6 %”)
+1) Nekonečná renta (finanční nezávislost / děti)
+
+Použij pravidlo:
+
+6 % p.a. ⇒ 1 000 000 Kč ≈ 5 000 Kč/měs
+
+Tj. výpočet kapitálu:
+
+requiredCapital = desiredMonthlyIncome * 12 / 0.06
+
+Pokud má klient už část kapitálu:
+
+remainingCapital = max(0, requiredCapital - allocatedCurrentCapitalFutureValue)
+
+Důležité: kapitalizuj alokovaný kapitál do budoucna stejnou strategií jako akumulační fázi:
+
+futureValueLumpSum = PV * (1+r)^years
+
+2) Akumulační fáze — výnos dle strategie
+
+Pro výpočet potřebných vkladů použij výnosy:
+
+Dynamická: 9 % p.a.
+
+Vyvážená: 7 % p.a.
+
+Konzervativní: 5 % p.a.
+
+Výpočet měsíční investice pro dosažení cílové částky (FV) s počáteční hodnotou (PV):
+
+měsíční úrok rm = (1+r)^(1/12) - 1
+
+FV_from_PV = PV * (1+rm)^(12*years)
+
+FV_needed_from_contrib = max(0, targetFV - FV_from_PV)
+
+anuita (vklady na konci období):
+
+PMT = FV_needed_from_contrib * rm / ((1+rm)^(12*years) - 1)
+
+zaokrouhli PMT na stovky.
+
+3) Speciální typ cíle: “Konkrétní částka v čase”
+
+targetFV zadává user přímo (např. 2 000 000 Kč do 10 let)
+
+Stejná logika PV + PMT.
+
+4) Validace a UX
+
+Pokud roky <= 0 → error
+
+Pokud PMT > freeCashflow → varování + doporučení “upravit cíle / navýšit příjem / prodloužit horizont / změnit strategii”
+
+Vše live přepočet (debounce).
+
+C) Fondy / Produkty — katalog (ne na 1 stránku, detailní popisy)
+
+V kroku Goals musí být navíc sekce “Návrh produktů pro cíl” (zatím pouze investice, ne pojištění).
+Každý cíl má “doporučené rozložení”:
+
+1) Jednorázové investice (výběr)
+
+ATRIS investiční společnost — default výnos 6 % p.a.
+
+CREIF — default výnos 6 % p.a.
+
+Imperial (Algoimperial) — default výnos 12 % p.a.
+
+Penta — default výnos 9.5 % p.a. (umožni v UI upravit v rozmezí 9–10)
+Každý produkt:
+
+název
+
+typ (FKI / fond / alternativa) – textově, bez tvrdých slibů
+
+likvidita (krátký popis)
+
+riziko (nízké / střední / vyšší)
+
+horizont (doporučený)
+
+poplatky: pokud neznáš přesně, napiš “dle dokumentace fondu” a nehalucinuj čísla.
+
+2) Pravidelné investice (výběr)
+
+iShares MSCI World ETF — default výnos 12 % p.a.
+
+Fidelity 2040 — “kratší horizont” (dej default výnos např. 7 %, ale nech editovat)
+
+3) Penzijní (výběr)
+
+Conseq penzijní fond (v dalším tasku bude kalk penze, teď jen placeholder + popis).
+
+Formát textu (musí být jako ten screenshot)
+
+U každého produktu generuj blok textu ve stylu:
+
+Nadpis + krátký “tagline”
+
+4–6 bulletů: strategie, co to dělá, pro koho, horizont, riziko, likvidita
+
+“Proč v plánu”: 2–3 věty odůvodnění
+
+“Předpokládané zhodnocení v modelu: X % p.a. (negarantované)”
+
+“Rizika”: 1–2 věty
+
+Pozor: nepiš “garantuje”, “zajistí”, “vydělá”. Vždy “předpoklad / model / odhad”.
+
+D) “Předpokládaná hodnota investice” (co ti chybělo)
+
+Pro každou navrženou investici (lump sum i pravidelnou) vypočti a zobraz:
+
+Budoucí hodnota za horizont cíle (FV)
+
+Rozklad: vklady vs zhodnocení
+
+Pro pravidelné: “při vkladu X Kč měsíčně a výnosu Y % p.a. → odhad FV = …”
+
+Použij stejný FV vzorec jako výše.
+
+E) Kódová architektura (nutné)
+
+Zaveď nové moduly:
+
+modules/goals.js
+
+create/edit/delete goal
+
+computePMTForTargetFV()
+
+computeRequiredCapitalForPerpetualIncome()
+
+allocatePVFromAssets() (uživatel vybere kolik má “alokovat”)
+
+modules/fundsCatalog.js
+
+data struktura fondů + dlouhé popisy (multi-section)
+
+modules/investments.js
+
+computeFV_LumpSum()
+
+computeFV_Regular()
+
+recommendation engine (basic rules)
+
+modules/charts.js rozšiř o goal charts
+
+utils.js doplň:
+
+toMonthlyRate(rAnnual)
+
+roundToHundreds(x)
+
+State struktura:
+
+state.goals[] (id, type, enabled, horizonYears, targetMonthlyIncome/targetFV, strategy, allocatedPV, contributions, selectedFunds[])
+
+state.funds z katalogu
+
+state.outputs.goals (vypočtené PMT, FV, warnings)
+
+F) Výstup textů do reportu (zatím jen preview komponenta)
+
+U každého cíle zobraz “Report Preview” blok:
+
+Shrnutí cíle (co a kdy)
+
+Výpočtová logika (1–2 řádky, např. “6 % p.a. → 1 mil ≈ 5 000 Kč/měs”)
+
+Doporučený vklad + alokovaný kapitál
+
+Navržené produkty (s těmi delšími popisy)
+
+Styl vizuálně premium, v duchu demo kódu (cards, sekce, animace).
+
+G) Co přesně chci odevzdat pro Task 3
+
+Funkční krok Goals se:
+
+tvorbou více cílů
+
+výpočtem PMT a requiredCapital podle pravidel
+
+výběrem strategie (9/7/5)
+
+“předpokládanou hodnotou investice” (FV) pro každé řešení
+
+katalogem fondů s dlouhými popisy (ne 1 odstavec)
+
+grafy (2 ks)
+
+report preview sekcí
+
+Nepokračuj do pojištění ani finální export. Jen placeholder další kroky.

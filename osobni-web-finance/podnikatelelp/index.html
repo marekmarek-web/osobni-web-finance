@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marek Marek - Finanční partner | Optimalizace s.r.o.</title>
+    <meta name="description" content="Neplaťte zbytečně daně z penzijka a pojištění. Firemní nastavení benefitů pro majitele s.r.o.">
+    
+    <!-- KNIHOVNY -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo_M_white.png">
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        brand: {
+                            dark: '#0a0f29',       /* Midnight Blue */
+                            gold: '#fbbf24',       /* Amber 400/500 Mix */
+                            lightgold: '#fde047', /* Hover/Gradient */
+                            darkgold: '#d97706',  /* Tmavší zlatá pro formulář */
+                            main: '#0B3A7A',      /* Tmavě modrá */
+                            light: '#EAF3FF',     /* Světlé pozadí */
+                            border: '#D6E6FF',    /* Ohraničení */
+                        },
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(11, 58, 122, 0.08)',
+                        'glow': '0 0 20px rgba(251, 191, 36, 0.4)',
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        shimmer: {
+                            '0%': { transform: 'skewX(-20deg) translateX(-150%)' },
+                            '100%': { transform: 'skewX(-20deg) translateX(150%)' }
+                        }
+                    },
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.3s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'shimmer': 'shimmer 2.5s infinite',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        /* Global Styles */
+        :root { 
+            font-family: 'Inter', sans-serif; 
+            
+            /* CTA – homepage-like Variables */
+            --cta-bg: #fbbf24;      /* amber-400 */
+            --cta-bg2: #fde047;     /* yellow-300 */
+            --cta-text: #0a0f29;    /* dark */
+            --cta-shadow: 0 10px 30px rgba(251,191,36,.22);
+            --cta-shadow-hover: 0 16px 40px rgba(251,191,36,.30);
+        }
+        
+        body { overflow-x: hidden; }
+        body.modal-open { overflow: hidden; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #082855; }
+
+        /* Hide Scrollbar for Slider */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Modern Glass Effect Classes (iOS Style) for Header */
+        .glass-header-top {
+            background-color: rgba(10, 15, 41, 0.1); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-header-scrolled {
+            background-color: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Odkaz v menu */
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        /* CTA – homepage-like styles */
+        .cta-home {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .6rem;
+            padding: 1rem 2rem;
+            border-radius: 16px; 
+            font-weight: 800;
+            color: var(--cta-text);
+            background: linear-gradient(90deg, var(--cta-bg) 0%, var(--cta-bg2) 55%, var(--cta-bg) 100%);
+            box-shadow: var(--cta-shadow);
+            transform: translateY(0);
+            transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+            overflow: hidden;
+            isolation: isolate; 
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* hover feel */
+        .cta-home:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--cta-shadow-hover);
+            filter: saturate(1.05);
+        }
+
+        /* shimmer (zesílený efekt pro viditelnost) */
+        @keyframes cta-shimmer {
+            0%   { transform: translateX(-150%) skewX(-20deg); }
+            100% { transform: translateX(150%) skewX(-20deg); }
+        }
+
+        .cta-home::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transform: translateX(-150%);
+            animation: cta-shimmer 3s infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* hover sweep */
+        .cta-home::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,.0);
+            transition: background .25s ease;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .cta-home:hover::before {
+            background: rgba(255,255,255,.1);
+        }
+
+        /* obsah vždy nad efekty */
+        .cta-home > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* a11y: respekt reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .cta-home::after { animation: none; }
+            .cta-home { transition: none; }
+        }
+
+        /* Accordion Marker Styling */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        /* Custom Checkbox */
+        .custom-checkbox:checked {
+            background-color: #fbbf24;
+            border-color: #fbbf24;
+        }
+
+        /* STICKY CARDS EFEKT */
+        .sticky-card {
+            position: sticky;
+            background-color: white;
+            border: 1px solid #D6E6FF;
+            border-radius: 40px;
+            padding: 40px;
+            /* Stín upraven do brand barvy pro lepší integraci */
+            box-shadow: 0 -10px 40px rgba(11, 58, 122, 0.08); 
+            margin-bottom: 40px;
+            min-height: 400px;
+            /* Zajištění, že obsah bude nad předchozí kartou */
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col min-h-screen">
+
+    <!-- NAVIGATION HEADER -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='https://www.marek-marek.cz/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <!-- Placeholder for Logo if image not found -->
+                        <span id="logo-placeholder" class="block">M</span>
+                        <img id="logo-img" src="/images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300 hidden" onerror="this.style.display='none'; document.getElementById('logo-placeholder').style.display='block';">
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="https://www.marek-marek.cz/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="https://www.marek-marek.cz/financni-plan" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="https://www.marek-marek.cz/podnikatele" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
+                </div>
+
+                <div class="flex items-center">
+                    <!-- Desktop Contact Button (Calls existing Modal) -->
+                    <button onclick="openModal()" class="hidden md:block px-6 py-2 bg-brand-gold text-brand-dark font-bold rounded-full hover:bg-brand-lightgold transition-colors text-sm">
+                        Kontaktovat
+                    </button>
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="md:hidden text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="https://www.marek-marek.cz/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="https://www.marek-marek.cz/financni-plan" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="https://www.marek-marek.cz/podnikatele" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="https://www.marek-marek.cz/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="https://www.marek-marek.cz/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                         <a href="https://www.marek-marek.cz/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="w-full overflow-x-hidden">
+
+        <!-- (1) HERO / ABOVE THE FOLD -->
+        <section class="relative bg-brand-dark text-white pb-20 pt-20 md:pt-32 rounded-b-[3rem] overflow-hidden lg:min-h-[85vh] flex items-center">
+            <!-- Background Image User -->
+            <div class="absolute inset-0 z-0 opacity-70 pointer-events-none bg-cover bg-center bg-no-repeat" style="background-image: url('/images/fotkaheroLP.png');"></div>
+            
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 z-0 bg-gradient-to-r from-brand-dark/95 via-brand-dark/80 to-brand-dark/60 pointer-events-none"></div>
+            <div class="absolute inset-0 z-0 bg-gradient-to-b from-brand-dark/20 via-brand-dark/40 to-brand-dark pointer-events-none"></div>
+
+            <div class="relative z-10 container mx-auto px-6 md:px-12 max-w-7xl">
+                <!-- Grid layout vrácen zpět (text vlevo) -->
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    
+                    <!-- Left Content -->
+                    <div>
+                        <!-- Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 backdrop-blur-sm text-sm font-medium text-brand-gold mb-8">
+                            <span class="flex h-2 w-2 rounded-full bg-brand-gold animate-pulse"></span>
+                            Možná jsme si právě volali
+                        </div>
+
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.2] mb-6">
+                            Finanční partner pro majitele s.r.o.: <br class="hidden xl:block" />
+                            <span class="bg-brand-gold text-brand-dark px-1 leading-normal box-decoration-clone">pořádek, plán a jasná rozhodnutí.</span>
+                        </h1>
+                        
+                        <!-- Zarovnání zpět vlevo -->
+                        <div class="mb-10 pl-2 space-y-4 max-w-xl">
+                            <p class="text-lg md:text-xl text-brand-border/90 leading-relaxed">
+                                Nezačínám produktem. Nejdřív posoudím situaci a pošlu stručné shrnutí a doporučení dalšího kroku – použitelné i pro účetní.
+                            </p>
+                            <p class="text-sm text-slate-400 leading-relaxed italic">
+                                V úvodním posouzení nic nenabízím a nic nepodepisujete.
+                            </p>
+                        </div>
+
+                        <!-- Bullets -->
+                        <ul class="space-y-3 mb-10">
+                            <li class="flex items-start gap-3">
+                                <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span class="text-slate-300"><strong>Vhodnost:</strong> má to vůbec smysl?</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span class="text-slate-300"><strong>Kontrola nastavení:</strong> benefity, daně, možnosti</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="text-brand-gold mt-1 shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span class="text-slate-300"><strong>Finanční plán:</strong> jasný, věcný a vysvětlený</span>
+                            </li>
+                        </ul>
+
+                        <!-- CTA Row - zarovnání zpět vlevo (odstraněno justify-center) -->
+                        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                            <!-- New Design CTA Triggering Modal -->
+                            <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden no-underline text-center cursor-pointer">
+                                <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                                <div class="relative flex items-center justify-center gap-3 text-lg">
+                                    Chci úvodní posouzení
+                                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm"></i>
+                                </div>
+                            </button>
+                            
+                            <a href="#kalkulacka" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-medium rounded-2xl border border-white/20 transition-all backdrop-blur-sm flex items-center justify-center gap-2 text-center w-full sm:w-auto shadow-lg shadow-brand-dark/20">
+                                Spočítejte si sami
+                            </a>
+                        </div>
+                        
+                        <p class="text-xs text-slate-500 pl-4 mb-8 lg:mb-0">Zanecháte jen jméno a telefon. Ozvu se osobně.</p>
+
+                        <!-- Mobile Hero Form (Visible only on mobile/tablet) -->
+                        <div class="lg:hidden mt-10 p-6 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm max-w-md mx-auto text-left">
+                            <h3 class="text-lg font-bold text-white mb-4 text-center">Rychlá konzultace</h3>
+                            <form id="heroLeadFormMobile" class="space-y-3"
+                                onsubmit="event.preventDefault(); document.getElementById('heroLeadFormMobile').classList.add('hidden'); document.getElementById('heroLeadSuccessMobile').classList.remove('hidden');">
+                                
+                                <div class="flex flex-col gap-2 mb-2">
+                                    <label class="flex items-center gap-3 text-sm text-slate-300">
+                                        <input type="radio" name="status_mobile" class="accent-brand-gold w-4 h-4" checked> Platím ze mzdy
+                                    </label>
+                                    <label class="flex items-center gap-3 text-sm text-slate-300">
+                                        <input type="radio" name="status_mobile" class="accent-brand-gold w-4 h-4"> Platí firma
+                                    </label>
+                                </div>
+
+                                <input required type="text" class="w-full px-4 py-3 rounded-xl bg-brand-dark/60 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-gold" placeholder="Jméno">
+                                <input required type="tel" class="w-full px-4 py-3 rounded-xl bg-brand-dark/60 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-gold" placeholder="Telefon">
+                                
+                                <button type="submit" class="group relative w-full bg-gradient-to-r from-brand-gold to-brand-lightgold text-brand-dark font-bold py-3 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm overflow-hidden">
+                                    <span>Odeslat</span>
+                                </button>
+                                <p class="text-[10px] text-slate-500 text-center mt-2">Bez spamu.</p>
+                            </form>
+
+                            <div id="heroLeadSuccessMobile" class="hidden text-center py-4">
+                                <div class="text-emerald-400 font-bold mb-1">✓ Odesláno</div>
+                                <p class="text-sm text-slate-400">Ozvu se vám brzy.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column (Empty - removed the card) -->
+                    <div></div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- (2) NEW SECTION: Kdy to má smysl (a kdy ne) -->
+        <section class="py-16 px-6 md:px-12 bg-slate-50 border-b border-slate-100">
+            <div class="container mx-auto max-w-5xl">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-brand-dark">Kdy to má smysl (a kdy ne)</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Positive -->
+                    <div class="bg-white p-8 rounded-3xl border border-emerald-100 shadow-sm">
+                         <h3 class="text-xl font-bold text-emerald-700 mb-6 flex items-center gap-3">
+                            <i class="fas fa-check-circle text-2xl"></i> Má smysl, pokud:
+                         </h3>
+                         <ul class="space-y-4 text-slate-700">
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Věci se platí „ze zvyku“ a nikdo už neověřil, jestli to pořád sedí.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Chcete mít jasno, co patří do firmy a co do soukromí (kvůli přehledu a účetní).</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-emerald-500 mt-1"><i class="fas fa-check"></i></span>
+                                 <span>Chcete rozhodovat podle čísel, ne podle dojmů.</span>
+                             </li>
+                         </ul>
+                    </div>
+                    <!-- Negative -->
+                    <div class="bg-white p-8 rounded-3xl border border-red-100 shadow-sm">
+                         <h3 class="text-xl font-bold text-red-700 mb-6 flex items-center gap-3">
+                            <i class="fas fa-times-circle text-2xl"></i> Nemá smysl, pokud:
+                         </h3>
+                         <ul class="space-y-4 text-slate-700">
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Chcete jen produkt „za lepší cenu“.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Nechcete nic měnit, jen „se pobavit“.</span>
+                             </li>
+                             <li class="flex items-start gap-3">
+                                 <span class="text-red-500 mt-1"><i class="fas fa-times"></i></span>
+                                 <span>Čekáte garance úspor nebo výnosů (vždy záleží na trhu a situaci).</span>
+                             </li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- (2) PAIN vs GAIN -->
+        <section class="py-24 px-6 md:px-12 bg-white">
+            <div class="container mx-auto max-w-5xl">
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-main mb-4">Kolik vás stojí vyplácet to přes mzdu?</h2>
+                    
+                    <p class="text-slate-600 text-lg">
+                        Když to jde přes mzdu, výrazná část odteče na daních a odvodech. <br class="hidden md:block">
+                        <strong>Porovnejte náklad firmy vs. kolik reálně skončí u vás.</strong>
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <!-- PAIN CARD -->
+                    <div class="bg-white rounded-3xl p-8 border border-red-100 shadow-soft relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-1">Cesta přes mzdu</h3>
+                        
+                        <div class="space-y-4 mt-6">
+                            <div class="flex justify-between items-center text-sm text-slate-600">
+                                <span>Vám zůstane (čistého):</span>
+                                <span class="font-bold">50 000 Kč</span>
+                            </div>
+                            <div class="h-px bg-slate-100 w-full"></div>
+                            <div class="flex justify-between items-center text-sm text-slate-500">
+                                <span>+ Daně a odvody (stát)</span>
+                                <span>~ 41 000 Kč</span>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-2xl mt-4 border border-red-100">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-red-900">Náklad firmy celkem</span>
+                                    <span class="font-bold text-xl text-red-600">~ 91 000 Kč</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GAIN CARD -->
+                    <div class="bg-brand-dark rounded-3xl p-8 border border-slate-800 shadow-xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-gold/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="text-xl font-bold text-white">Cesta přes zam. benefity</h3>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-gold text-brand-dark uppercase">Doporučuji</span>
+                        </div>
+                        
+                        <div class="space-y-4 mt-6 relative z-10">
+                             <div class="flex justify-between items-center text-sm text-slate-300">
+                                <span>Na vašem účtu (DIP/DPS):</span>
+                                <span class="font-bold text-brand-gold">50 000 Kč</span>
+                            </div>
+                            <div class="h-px bg-slate-700 w-full"></div>
+                            <div class="flex justify-between items-center text-sm text-slate-400">
+                                <span>Daně a odvody</span>
+                                <span class="text-white font-medium">0 Kč</span>
+                            </div>
+                            <div class="bg-slate-800 p-4 rounded-2xl mt-4 border border-slate-700">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-white">Náklad firmy celkem</span>
+                                    <span class="font-bold text-xl text-emerald-400">50 000 Kč</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- (3) NOVÁ SEKCE: LEGISLATIVNÍ ZMĚNY -->
+        <section class="py-24 px-6 md:px-12 bg-slate-50 border-t border-slate-200">
+            <div class="container mx-auto max-w-6xl">
+                
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-dark mb-4">
+                        Proč se potkat se mnou: změny, které dnes reálně hýbou náklady firmy
+                    </h2>
+                    <p class="text-slate-600 text-lg">
+                        Nejde jen o „novinky“. V posouzení ověřím, jestli se to týká i vás a jak to nastavit čistě a obhajitelně pro účetní.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    
+                    <!-- Karta 1: DIP -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-brand-light text-brand-main text-xs font-bold uppercase tracking-wider mb-3">Od 1. 1. 2024</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">DIP: nový způsob, kam může firma přispívat</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                Od roku 2024 je DIP <strong>daňově podporovaný produkt</strong> na stáří a zaměstnavatel může přispívat zaměstnancům (v souhrnu s dalšími „produkty na stáří“ až do zákonného limitu).
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30 mb-4">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Zda u vás dává smysl DIP zařadit / nahradit část stávajícího nastavení a jak to procesně uchopit ve firmě (bez chaosu).
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Karta 2: Riziková práce 2026 -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3">Od 1. 1. 2026</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">Povinný příspěvek u rizikové práce</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                Zákon zavádí <strong>povinnost zaměstnavatele platit příspěvek zaměstnancům</strong> vykonávajícím rizikovou práci (typicky 3. kategorie); výše cca <strong>4 % z vyměřovacího základu</strong>.
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Jestli se vás to může týkat (kategorie prací, směny) a co to znamená pro nastavení benefitů a administrativu ve firmě.
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Karta 3: DPS 2024 -->
+                    <details class="bg-white rounded-3xl shadow-sm border border-slate-100 group hover:shadow-md transition-all duration-300 overflow-hidden h-fit">
+                        <summary class="p-8 cursor-pointer list-none flex items-start justify-between gap-4 select-none">
+                            <div class="text-left">
+                                <span class="inline-block px-3 py-1 rounded-full bg-brand-light text-brand-main text-xs font-bold uppercase tracking-wider mb-3">Nové smlouvy</span>
+                                <h3 class="text-xl font-bold text-brand-dark leading-tight">DPS: změna zdanění u nových smluv</h3>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-open:rotate-180 transition-transform shrink-0 mt-1">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </summary>
+                        <div class="px-8 pb-8 pt-0">
+                            <p class="text-slate-600 text-sm mb-6 border-t border-slate-100 pt-4">
+                                U smluv od 1. 1. 2024 se v případě <strong>jednorázového vyrovnání nově nedodaňují příspěvky zaměstnavatele</strong>, což mění rozhodování „nechat / převést / založit nové“.
+                            </p>
+                            
+                            <div class="bg-brand-light/30 p-4 rounded-xl border border-brand-border/30">
+                                <div class="flex gap-2 mb-1">
+                                    <i class="fas fa-check-circle text-brand-gold mt-0.5"></i>
+                                    <span class="text-xs font-bold text-brand-main uppercase">Co prověřím</span>
+                                </div>
+                                <p class="text-xs text-slate-700 font-medium">
+                                    Zda vám dává smysl upravit nastavení tak, aby to bylo férové vůči zaměstnanci a čisté vůči účetní.
+                                </p>
+                            </div>
+                        </div>
+                    </details>
+
+                </div>
+
+                <div class="text-center">
+                    <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden no-underline cursor-pointer">
+                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                        <div class="relative flex items-center justify-center gap-3 text-lg">
+                            Požádat o krátké posouzení
+                            <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
+                        </div>
+                    </button>
+                    <p class="text-slate-500 text-sm mt-4 max-w-xl mx-auto">
+                        V prvním hovoru nic nenabízím a nic nepodepisujete. Ověříme jen, jestli se vás některá z těch změn týká a zda má smysl to řešit.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- (4) ORIENTAČNÍ KALKULAČKA -->
+        <section id="kalkulacka" class="py-24 px-6 md:px-12 bg-white border-t border-slate-100">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="text-3xl font-bold text-brand-main mb-12 text-center">Spočítejte si sami o kolik peněz možná přicházíte.</h2>
+                
+                <div class="bg-slate-50 rounded-[2.5rem] p-8 md:p-12 border border-slate-200 shadow-soft relative overflow-hidden mb-12">
+                    <div class="grid gap-12 relative z-10">
+                        
+                        <!-- Step 1: Self-employed? -->
+                        <div id="step1" class="space-y-6">
+                            <h3 class="text-xl font-bold text-slate-900 text-center mb-6">Zaměstnáváte sami sebe (majitel s.r.o.)?</h3>
+                            <div class="flex justify-center gap-4">
+                                <button onclick="showStep2()" class="px-8 py-4 rounded-2xl border-2 border-brand-gold bg-brand-gold text-brand-dark font-bold hover:shadow-lg transition-all text-lg min-w-[120px]">
+                                    ANO
+                                </button>
+                                <button onclick="alert('Tato kalkulace je primárně určena pro majitele s.r.o., kteří si vyplácejí mzdu.')" class="px-8 py-4 rounded-2xl border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition-all text-lg min-w-[120px]">
+                                    NE
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Pay from wage? -->
+                        <div id="step2" class="hidden space-y-6 animate-fade-in-down relative">
+                            <button onclick="showStep1()" class="absolute -top-6 left-0 text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Zpět
+                            </button>
+                            <h3 class="text-xl font-bold text-slate-900 text-center mb-6 mt-4">Platíte si životní pojištění / investice ze mzdy?</h3>
+                            <div class="flex justify-center gap-4">
+                                <button onclick="showStep3()" class="px-8 py-4 rounded-2xl border-2 border-brand-gold bg-brand-gold text-brand-dark font-bold hover:shadow-lg transition-all text-lg min-w-[120px]">
+                                    ANO
+                                </button>
+                                <button onclick="showStep3()" class="px-8 py-4 rounded-2xl border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition-all text-lg min-w-[120px]">
+                                    NE / NEVÍM
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Amount selection & Result -->
+                        <div id="step3" class="hidden animate-fade-in-down relative">
+                            <button onclick="showStep2()" class="absolute -top-6 left-0 text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Zpět
+                            </button>
+
+                            <div class="bg-red-50 border border-red-100 rounded-2xl p-6 mb-8 text-center mt-4">
+                                <div class="flex justify-center mb-3 text-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                                </div>
+                                <h4 class="font-bold text-red-700 text-lg mb-2">Pravděpodobně platíte zbytečné odvody</h4>
+                                <p class="text-red-600/80 text-sm">
+                                    U příspěvku z firmy často odpadá <strong>33,8 %</strong> odvodů zaměstnavatele.
+                                </p>
+                            </div>
+
+                            <div class="text-center space-y-8">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
+                                        Kolik orientačně platíte za životní pojištění?
+                                    </label>
+                                    <div class="flex flex-wrap justify-center gap-3">
+                                        <button onclick="calculateSaving(1000)" class="amount-btn px-6 py-3 rounded-xl border border-slate-200 hover:border-brand-gold hover:bg-brand-light font-bold text-slate-700 transition-all">1 000 Kč</button>
+                                        <button onclick="calculateSaving(2000)" class="amount-btn px-6 py-3 rounded-xl border border-slate-200 hover:border-brand-gold hover:bg-brand-light font-bold text-slate-700 transition-all">2 000 Kč</button>
+                                        <button onclick="calculateSaving(3000)" class="amount-btn px-6 py-3 rounded-xl border border-slate-200 hover:border-brand-gold hover:bg-brand-light font-bold text-slate-700 transition-all">3 000 Kč</button>
+                                        <button onclick="calculateSaving(4000)" class="amount-btn px-6 py-3 rounded-xl border border-slate-200 hover:border-brand-gold hover:bg-brand-light font-bold text-slate-700 transition-all">4 000 Kč</button>
+                                    </div>
+                                    
+                                    <!-- Custom Amount Input -->
+                                    <div class="mt-6 max-w-xs mx-auto">
+                                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Nebo zadejte přesnou částku</label>
+                                        <div class="relative">
+                                            <input type="number" id="customAmountInput" oninput="handleCustomInput(this.value)" class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-200 font-bold text-slate-700 text-center focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold transition-all placeholder-slate-300" placeholder="0">
+                                            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 font-bold">Kč</div>
+                                        </div>
+                                    </div>
+
+                                    <p class="text-xs text-slate-400 mt-4">*Limit pro daňové osvobození je 50 000 Kč ročně (cca 4 166 Kč měsíčně).</p>
+                                </div>
+
+                                <div id="resultBox" class="hidden bg-brand-dark text-white p-8 rounded-3xl relative overflow-hidden shadow-xl transition-all">
+                                    <div class="absolute top-0 right-0 w-40 h-40 bg-brand-gold/20 rounded-full blur-3xl pointer-events-none"></div>
+                                    
+                                    <div class="relative z-10">
+                                        <p class="text-slate-300 text-sm font-medium mb-1">Roční úspora na odvodech firmy</p>
+                                        <div class="text-4xl md:text-5xl font-extrabold text-brand-gold mb-2 tracking-tight">
+                                            <span id="savingAmount">0</span> Kč
+                                        </div>
+                                        
+                                        <!-- Added Tax Base Deduction Line -->
+                                        <div id="taxDeductionRow" class="mt-4 pt-4 border-t border-white/10 mb-6 text-left">
+                                            <div class="flex items-start gap-3 text-sm text-slate-300">
+                                                <div class="mt-0.5 bg-brand-gold/20 p-1 rounded text-brand-gold shrink-0">
+                                                    <i data-lucide="trending-down" class="w-4 h-4"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="block font-bold text-white">Snížení základu daně firmy</span>
+                                                    <span class="text-xs text-slate-400">Celá částka (<span id="deductibleAmount">0</span> Kč) jde do nákladů.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button onclick="openModal()" class="cta-home !text-[#0a0f29] !no-underline w-full md:w-auto cursor-pointer">
+                                            To chci
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Life Insurance Check Link -->
+            <div class="max-w-3xl mx-auto px-6">
+                <a href="https://www.marek-marek.cz/zivotnikalkulacka/" target="_blank" class="group relative block overflow-hidden rounded-2xl bg-brand-dark p-8 shadow-xl transition-all hover:shadow-2xl hover:-translate-y-1 border border-brand-gold/20">
+                    <!-- Decorative background elements -->
+                    <div class="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-brand-gold/10 blur-3xl transition-all group-hover:bg-brand-gold/20"></div>
+                    
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-gold/20 text-brand-gold group-hover:bg-brand-gold group-hover:text-brand-dark transition-colors shadow-lg shadow-brand-gold/10">
+                            <i data-lucide="shield-check" class="h-8 w-8"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-white mb-2">Máte nastavené životní pojištění správně?</h3>
+                            <p class="text-slate-400 group-hover:text-slate-200 transition-colors">
+                                Většina smluv je zastaralá. Zkontrolujte si nastavení v mé kalkulačce.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 font-bold text-brand-gold group-hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-xl border border-white/5 group-hover:border-brand-gold/30">
+                            Otevřít kalkulačku <i data-lucide="arrow-right" class="h-5 w-5 transition-transform group-hover:translate-x-1"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- (4) SECTION: TŘI KROKY (pro majitele s.r.o.) -->
+        <section id="audit-proces" class="py-24 bg-white relative overflow-hidden">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <div class="text-center max-w-3xl mx-auto mb-20">
+              <span class="text-brand-gold font-bold tracking-widest uppercase text-xs mb-3 block">Můj postup</span>
+              <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark mb-6">
+                Tři kroky k chytrému nastavení benefitů (DIP/DPS/IŽP)
+              </h2>
+              <p class="text-lg text-slate-600 leading-relaxed font-light">
+                U majitelů s.r.o. často dává smysl přeskládat placení „na stáří“ a pojištění tak, aby peníze
+                zbytečně neodtékaly přes mzdu. Začínáme rychlým auditem zdarma a končíme zavedením a administrativou.
+              </p>
+            </div>
+
+            <!-- STICKY CARDS CONTAINER -->
+            <div class="max-w-3xl mx-auto relative">
+
+              <!-- KARTA 1 -->
+              <!-- top: 120px (aby to nebylo schované pod fixním headerem, který má cca 80px) -->
+              <div class="sticky-card group transition-all duration-300" style="top: 100px;">
+                <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">1</span>
+                </div>
+
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Úvodní posouzení vhodnosti</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Finanční analýza + audit smluv. Zjistíme, co se dnes dá dělat lépe.
+                </p>
+
+                <ul class="space-y-3 text-slate-600 mb-8">
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Mzda vs. firma: jak to dnes platíte</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Limity + rizika + logika nastavení</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Výstup: jasné „co upravit / co ponechat“</span>
+                    </li>
+                </ul>
+
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="far fa-clock"></i> 15–20 minut
+                    </span>
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-white border border-brand-border text-slate-600">
+                      <i class="fas fa-check text-emerald-500"></i> Bez závazku
+                    </span>
+                </div>
+              </div>
+
+              <!-- KARTA 2 -->
+              <!-- top: 140px (překryje 1. kartu, ale nechá kousek nahoře) -->
+              <div class="sticky-card group transition-all duration-300" style="top: 140px;">
+                 <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">2</span>
+                </div>
+
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Komplexní řešení</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Sestavím finanční plán tak, aby benefity, ochrana a investice dávaly ekonomicky smysl a byly čisté i pro účetní.
+                </p>
+
+                <ul class="space-y-3 text-slate-600 mb-8">
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Strategie: co měnit a v jakém pořadí</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Benefity + pojištění + investice v jedné logice</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Výstup: finanční plán + čísla + zavedení</span>
+                    </li>
+                </ul>
+
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="fas fa-map"></i> Jasný plán
+                    </span>
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-white border border-brand-border text-slate-600">
+                      <i class="fas fa-envelope text-slate-500"></i> Výstup do e-mailu
+                    </span>
+                </div>
+              </div>
+
+              <!-- KARTA 3 -->
+              <!-- top: 180px -->
+              <div class="sticky-card group transition-all duration-300" style="top: 180px;">
+                 <div class="flex items-start justify-between gap-6 mb-8">
+                    <div class="w-16 h-16 bg-brand-light rounded-2xl flex items-center justify-center text-brand-main text-2xl border border-brand-border shrink-0">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <span class="text-[5rem] leading-none font-black text-brand-main opacity-[0.05] select-none">3</span>
+                </div>
+
+                <h3 class="text-2xl font-bold text-brand-dark mb-4">Zavedení a administrativa</h3>
+                <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                    Připravím podklady, provedu vás podpisy a pohlídám zavedení tak, aby vše bylo čisté a správně nastavené.
+                </p>
+
+                <ul class="space-y-3 text-slate-600 mb-8">
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Podpisy + změny smluv (co jde, řeším za vás)</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Komunikace s účetní / dokumentace</span>
+                    </li>
+                    <li class="flex gap-3">
+                      <span class="mt-2 w-2 h-2 rounded-full bg-brand-darkgold shrink-0"></span>
+                      <span class="flex-1 font-medium">Následná revize a průběžná péče</span>
+                    </li>
+                </ul>
+
+                <div class="mt-auto flex flex-wrap gap-2">
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-brand-light border border-brand-border text-brand-main">
+                      <i class="fas fa-receipt"></i> Papírování je na mně
+                    </span>
+                    <span class="inline-flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-full bg-amber-50 border border-amber-100 text-amber-900">
+                      <i class="fas fa-lock text-amber-700"></i> Podpisy až zde
+                    </span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mt-16 text-center">
+              <a href="#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
+                <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                <div class="relative flex items-center justify-center gap-3">
+                  <span class="text-lg">Taková spolupráce mě zajímá</span>
+                  <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </div>
+              </a>
+              <p class="text-slate-500 text-sm mt-4">
+                Po 1. kroku dostanete jasný závěr a doporučení. Teprve potom se rozhodnete, jestli pokračovat.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- (5) DŮVĚRA / SOCIAL PROOF (GOOGLE RECENZE SLIDER) -->
+        <section class="py-24 px-6 md:px-12 bg-white">
+            <div class="container mx-auto max-w-6xl">
+                
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-brand-dark mb-4">Jak mě hodnotí klienti:</h2>
+                    
+                    <!-- Google Rating Badge -->
+                    <div class="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full px-4 py-1.5 shadow-sm">
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <!-- Google G Icon -->
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/250px-Google_Favicon_2025.svg.png" alt="Google" class="w-full h-full">
+                        </div>
+                        <span class="font-bold text-slate-700 text-sm">5.0/5</span>
+                        <div class="flex gap-0.5 text-yellow-400 text-xs">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-slate-400 text-xs ml-1 font-medium">10+ recenzí</span>
+                    </div>
+                </div>
+                
+                <!-- Reviews Carousel Container -->
+                <div class="relative group px-4 md:px-12">
+                    
+                    <!-- Navigation Buttons (Desktop) -->
+                    <button id="prevReviewBtn" class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:text-brand-main hover:scale-110 transition-all hidden md:flex cursor-pointer disabled:opacity-50">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button id="nextReviewBtn" class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:text-brand-main hover:scale-110 transition-all hidden md:flex cursor-pointer disabled:opacity-50">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <!-- Slider Viewport -->
+                    <div id="reviewsViewport" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar gap-6 pb-4">
+                        
+                        <!-- Review 1 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0">AP</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Alena Pavlová</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 5 měsíci</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Velmi doporučujeme. Vřelé jednání, individuální přístup, vše skvěle vysvětleno a rychlá vzdálená komunikace. Kdyby šlo dát více hvězdiček, tak je dám s velkou radostí :-)"
+                            </p>
+                        </div>
+
+                        <!-- Review 2 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm shrink-0">PP</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Patrik Paulus</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 5 měsíci</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Pana Marka můžeme s přítelkyní doporučit každému kdo bude chtít řešit hypotéku bezstarostně. Veškeré dotazy a požadavky nám vždy vstřícně a rychle vyřešil/ vysvětlil a celé řešení hypotéky bylo rychlejší než jsme očekávali."
+                            </p>
+                        </div>
+
+                        <!-- Review 3 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-sm shrink-0">AZ</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Anna Zemanová</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 9 měsíci</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Pan Marek všemu perfektně rozumí a vysvětlí i několikrát, pokud je třeba. Mohu jen doporučit."
+                            </p>
+                        </div>
+
+                        <!-- Review 4 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm shrink-0">KM</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Klára Mrázová</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 10 měsíci</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Skvělý a odborný přístup. Pan Marek ochotně vše vysvětlil, poradil nám, co bude pro nás nejlepší a jaké jsou možnosti. Upřímně Vám řekne, co má smysl a co ne."
+                            </p>
+                        </div>
+
+                        <!-- Review 5 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-sm shrink-0">W</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Dominik L.</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před rokem</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Marka znám už 17 let a vím, že se na něj můžu vždycky spolehnout. Když něco dělá, tak naplno a pořádně. Díky němu jsem získal super podmínky a všechno vyřešil bez starostí."
+                            </p>
+                        </div>
+
+                        <!-- New Review 6 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-sm shrink-0">PB</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Pavel Barcal</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Jsme spokojeni. Příjemná komunikace."
+                            </p>
+                        </div>
+
+                        <!-- New Review 7 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">VX</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Václav XXX</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Služby pana Marka využívám přes rok a po roce zkušenosti mohu s klidným srdcem napsat velmi kladné hodnocení. Ze začátku jsem měl obavy, v dnešní době někomu svěřit své úspory není jen tak."
+                            </p>
+                        </div>
+
+                        <!-- New Review 8 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-pink-600 text-white flex items-center justify-center font-bold text-sm shrink-0">PD</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Petr Došek</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Vřele pana Marka doporučuji. Vše řádně vysvětlil a navedl jak hospodařit s penězi. Vše v optimální výši k daným potřebám a okolnostem."
+                            </p>
+                        </div>
+
+                        <!-- New Review 9 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold text-sm shrink-0">PP</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Petra Plachá</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Se službami finančního poradce pana Marka jsme velmi spokojeni. Kdykoliv je něco potřeba reaguje rychle a ochotně, vše vždy vysvětlí. Do této chvíle nemáme k jeho práci jedinou výhradu."
+                            </p>
+                        </div>
+
+                        <!-- New Review 10 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-lime-600 text-white flex items-center justify-center font-bold text-sm shrink-0">AŠ</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Alexandr Šťastný</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Se službami pana Marka jsem byl velmi spokojen. Ochotně se mi vždy věnuje a vše podrobně vysvětlí. Můžu všem doporučit kdo by chtěl využít služeb finančního poradenství."
+                            </p>
+                        </div>
+
+                        <!-- New Review 11 -->
+                        <div class="snap-center w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-sm shrink-0">VV</div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">Vaclav Valek</div>
+                                    <div class="flex text-yellow-400 text-[10px] gap-0.5">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        <span class="text-slate-400 ml-2 font-normal">před 2 lety</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">
+                                "Pana Marka mohu doporučit. Profesionální a vstřícný přístup. Vždy vše do podrobna vysvětlí, dokáže pochopit situaci a vždy najde řešení. Touto recenzí mu děkuji."
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="inline-flex flex-wrap gap-4 justify-center">
+                     <span class="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-medium text-slate-600 flex items-center gap-2 shadow-sm">
+                      <a href="https://www.google.com/search?sa=X&sca_esv=9ab8c0c46cd95f09&rlz=1C1ONGR_csCZ1103CZ1103&sxsrf=AE3TifM4CZ1ZSZ1_2N0nPk1yRvxleFRcgQ:1767632623755&q=Marek+Marek+-+Priv%C3%A1tn%C3%AD+finan%C4%8Dn%C3%AD+pl%C3%A1nov%C3%A1n%C3%AD+Recenze&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxIxNDQ0MjIzNbc0MDcwNTYyMDMzNNnAyPiK0cI3sSg1WwFC6ioEFGWWHV5Yknd4rUJaZl5i3pFeELMg5_DCvHygBIgTlJqcmleVuoiVbK0A85fF8JEAAAA&rldimm=11122657907053206614&tbm=lcl&hl=cs-CZ&ved=2ahUKEwihn4fV8PSRAxXeQvEDHTFxGt8Q9fQKegQIURAG&biw=2048&bih=983&dpr=1.25#lkt=LocalPoiReviews" target="_blank" class="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-medium text-brand-main hover:text-brand-dark hover:bg-slate-50 flex items-center gap-2 shadow-sm transition-colors cursor-pointer">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/250px-Google_Favicon_2025.svg.png" alt="G" class="w-3 h-3">
+                        Ověřit na Google
+                        <i class="fas fa-external-link-alt text-[10px] ml-1 opacity-50"></i>
+                      </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- (6) NEW CONTACT SECTION (CTA) -->
+        <section id="kontakt" class="py-24 bg-brand-light border-t border-brand-border">
+            <div class="max-w-4xl mx-auto text-center px-4">
+                <h2 class="text-3xl font-bold mb-4 text-brand-dark">Úvodní posouzení zdarma</h2>
+                <p class="text-slate-600 mb-10 max-w-2xl mx-auto">
+                    Zanechte kontakt. Ozvu se a domluvíme 15–20 minut. Probereme, zda u vás dává optimalizace smysl.
+                </p>
+                
+                <div class="bg-white p-10 rounded-2xl shadow-lg border border-brand-border max-w-2xl mx-auto">
+                    <div class="text-center space-y-6">
+                        <div class="relative inline-block">
+                            <div class="absolute inset-0 bg-brand-gold/20 rounded-full blur-xl transform translate-y-2"></div>
+                            <img src="/images/profilovaLP.png" alt="Marek Marek" class="relative w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mx-auto" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Marek+Marek&background=0B3A7A&color=fff&size=128';">
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold text-brand-dark">Kontaktujte mě.</h3>
+                        
+                        <!-- CTA Tlačítko -->
+                        <button onclick="openModal()" class="group relative w-full inline-block bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-6 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline cursor-pointer">
+                            <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                            <div class="relative flex items-center justify-center gap-3">
+                                <span class="text-lg">Chci spolupracovat</span>
+                                <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
+                            </div>
+                        </button>
+                        
+                        <div class="flex items-center justify-center gap-2 text-xs text-slate-400 mt-4">
+                            <i class="fas fa-lock"></i>
+                            <span>Respektuji vaše soukromí. Žádný spam.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- (8) DALŠÍ PŘÍNOSY (Secondary Footer/End Block) -->
+        <section class="py-12 px-6 bg-brand-dark border-t border-slate-800/50">
+            <div class="max-w-3xl mx-auto">
+                <details class="group bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-800/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-brand-gold">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-lg font-bold text-slate-200">Další věci, které podnikatelé oceňují</h3>
+                                <p class="text-sm text-slate-400">Právní ochrana, likvidace škod, flotily...</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-slate-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    
+                    <div class="p-6 pt-0 border-t border-slate-700/50 mt-4">
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex gap-3 items-start">
+                                <div class="text-brand-gold mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-slate-200 text-sm">EUCS – Plnění a likvidace</h4>
+                                    <p class="text-xs text-slate-400">Pomoc s řešením pojistných událostí.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex gap-3 items-start">
+                                 <div class="text-brand-gold mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-slate-200 text-sm">DAS – Právní ochrana</h4>
+                                    <p class="text-xs text-slate-400">Krytí právních sporů firmy.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex gap-3 items-start">
+                                 <div class="text-brand-gold mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-slate-200 text-sm">Odpovědnost + D&O</h4>
+                                    <p class="text-xs text-slate-400">Ochrana majetku jednatele.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 flex gap-3 items-start">
+                                 <div class="text-brand-gold mt-1"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2" ry="2"/><line x1="16" y1="8" x2="20" y2="8"/><line x1="16" y1="16" x2="23" y2="16"/><line x1="16" y1="12" x2="23" y2="12"/></svg></div>
+                                <div>
+                                    <h4 class="font-bold mb-1 text-slate-200 text-sm">Flotila a majetek</h4>
+                                    <p class="text-xs text-slate-400">Konsolidace pojištění pod jednu smlouvu.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA inside Accordion -->
+                        <div class="mt-8 text-center pb-4 flex flex-col items-center gap-4">
+                            <button onclick="openModal()" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-4 px-8 rounded-xl shadow-lg shadow-brand-gold/30 transition-all transform hover:scale-[1.02] overflow-hidden no-underline text-center cursor-pointer">
+                                <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
+                                <div class="relative flex items-center justify-center gap-3 text-lg">
+                                    To mě zajímá
+                                    <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-sm"></i>
+                                </div>
+                            </button>
+                            
+                            <a href="https://www.marek-marek.cz/#sluzby" class="group inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-600 text-slate-300 font-bold hover:text-white hover:border-white hover:bg-white/5 transition-all duration-300">
+                                Prohlédnout všechny moje služby
+                                <i class="fas fa-external-link-alt text-sm opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                            </a>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="/images/logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
+                        </div>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
+                        <li><a href="https://www.marek-marek.cz/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
+                        <li><a href="https://www.marek-marek.cz/financni-plan" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="https://www.marek-marek.cz/podnikatele" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.marek-marek.cz/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="https://www.marek-marek.cz/cookies/" class="hover:text-white transition">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL (Vyskakovací okno) -->
+    <div id="contactModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-brand-dark/80 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"></div>
+    
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <!-- Modal panel -->
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all w-full max-w-md scale-95 opacity-0" id="modalContent">
+              
+              <!-- Close button -->
+              <div class="absolute right-4 top-4 z-10">
+                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-brand-dark transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                  <span class="sr-only">Zavřít</span>
+                  <i class="fas fa-times text-xl"></i>
+                </button>
+              </div>
+    
+              <!-- Wrapper for content to be replaced -->
+              <div id="modalContentContainer">
+                  <div class="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
+                    <div class="sm:flex sm:items-start">
+                      <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-2xl font-bold leading-6 text-brand-dark uppercase tracking-wide" id="modal-title">Nezávazná konzultace</h3>
+                        <p class="text-sm text-slate-600 mt-2 flex items-center gap-2">
+                            <i class="fas fa-comments text-brand-gold"></i>
+                            <span>Rád s Vámi proberu Vaše možnosti</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-8">
+                      <form id="leadForm" class="space-y-5">
+                        <input type="hidden" name="_subject" value="Nová poptávka: Optimalizace s.r.o.">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="text" name="honeypot" style="display:none">
+                        
+                        <div>
+                            <label for="jmeno" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Jméno <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-user absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="text" name="jmeno" id="jmeno" required placeholder="Jan Novák" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="telefon" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-phone absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="tel" name="telefon" id="telefon" required placeholder="+420 777 ..." class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-envelope absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="email" name="email" id="email" required placeholder="vas@email.cz" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="firma" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Firma <span class="text-slate-400 font-normal normal-case">(nepovinné)</span></label>
+                            <div class="relative">
+                                <i class="fas fa-building absolute left-4 top-3.5 text-slate-400"></i>
+                                <input type="text" name="firma" id="firma" placeholder="Vaše s.r.o." class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="tema" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Co řešíte?</label>
+                            <div class="relative">
+                                <i class="fas fa-list absolute left-4 top-3.5 text-slate-400"></i>
+                                <select name="tema" id="tema" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white appearance-none">
+                                    <option value="benefity">Benefity / Optimalizace</option>
+                                    <option value="rizika">Rizika a odpovědnost</option>
+                                    <option value="financovani">Financování</option>
+                                    <option value="jine">Jiné</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-4 top-4 text-slate-400 pointer-events-none text-xs"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 mt-2 bg-brand-light/50 p-3 rounded-lg">
+                            <input type="checkbox" id="consent" required class="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer accent-brand-gold">
+                            <label for="consent" class="text-xs text-slate-600 cursor-pointer select-none">
+                                Souhlasím se zpracováním osobních údajů pro účely kontaktování.
+                            </label>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="group relative w-full bg-brand-dark hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-dark/20 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg overflow-hidden">
+                                <span>Odeslat nezávazně</span>
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Next Steps Inside Modal -->
+                        <div class="mt-5 grid grid-cols-3 gap-3 text-[11px] text-slate-500 font-medium">
+                            <div class="rounded-xl bg-slate-50 border border-slate-100 p-2.5 text-center leading-snug flex flex-col justify-center">
+                                <span class="text-brand-dark font-bold block mb-0.5 text-xs">1. Zavolám</span>
+                                <span>(cca 7 min)</span>
+                            </div>
+                            <div class="rounded-xl bg-slate-50 border border-slate-100 p-2.5 text-center leading-snug flex flex-col justify-center">
+                                <span class="text-brand-dark font-bold block mb-0.5 text-xs">2. Řeknu</span>
+                                <span>zda to má smysl</span>
+                            </div>
+                            <div class="rounded-xl bg-slate-50 border border-slate-100 p-2.5 text-center leading-snug flex flex-col justify-center">
+                                <span class="text-brand-dark font-bold block mb-0.5 text-xs">3. Shrnutí</span>
+                                <span>pošlu do mailu</span>
+                            </div>
+                        </div>
+
+                      </form>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- LOGIKA A SKRIPTY -->
+    <script>
+        // Inicializace Lucide ikon
+        window.onload = function() {
+            lucide.createIcons();
+        };
+
+        // --- Modal Functions ---
+        const modal = document.getElementById('contactModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const content = document.getElementById('modalContent');
+        const modalContainer = document.getElementById('modalContentContainer');
+
+        let originalFormHTML = '';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+             if(modalContainer) originalFormHTML = modalContainer.innerHTML;
+        });
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+            
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            backdrop.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+                
+                setTimeout(() => {
+                    if (!document.getElementById('leadForm')) {
+                         modalContainer.innerHTML = originalFormHTML;
+                         attachFormListener(); 
+                    }
+                }, 200);
+            }, 300);
+        }
+
+        window.onclick = function(event) {
+            const modalWrapper = document.querySelector('#contactModal > div.fixed.z-10');
+            if (event.target === modalWrapper || event.target === document.querySelector('#contactModal .flex')) {
+                closeModal();
+            }
+        }
+
+        function attachFormListener() {
+            const form = document.getElementById('leadForm');
+            if(!form) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitButton = this.querySelector('button[type="submit"]');
+                
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Odesílám...';
+
+                setTimeout(() => {
+                        modalContainer.innerHTML = `
+                            <div class="p-12 text-center">
+                                <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm animate-bounce">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-brand-dark mb-2">Poptávka odeslána!</h3>
+                                <p class="text-slate-600 mb-8">Děkuji za zprávu. Budu Vás brzy kontaktovat.</p>
+                                <button onclick="closeModal()" class="text-brand-gold font-bold hover:text-brand-dark transition-colors border-b-2 border-brand-gold pb-1">Zavřít okno</button>
+                            </div>
+                        `;
+                }, 1000);
+            });
+        }
+
+        attachFormListener();
+
+        // --- Calculator Logic ---
+        function showStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        function showStep2() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function showStep3() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+
+        function handleCustomInput(val) {
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
+                btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+            });
+            calculateSaving(val, false);
+        }
+
+        function calculateSaving(monthlyAmount, updateInput = true) {
+            const amount = parseInt(monthlyAmount) || 0;
+            
+            if(updateInput) {
+                document.getElementById('customAmountInput').value = amount;
+                const buttons = document.querySelectorAll('.amount-btn');
+                buttons.forEach(btn => {
+                     btn.classList.remove('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
+                     btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+                     if (parseInt(btn.innerText.replace(/\s/g, '')) === amount) {
+                         btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+                         btn.classList.add('bg-brand-gold', 'text-brand-dark', 'border-brand-gold');
+                     }
+                });
+            }
+
+            const yearlyContribution = amount * 12;
+            const limitYearly = 50000;
+            const applicableAmount = Math.min(yearlyContribution, limitYearly);
+            const saving = Math.round(applicableAmount * 0.338);
+
+            const resultBox = document.getElementById('resultBox');
+            const savingText = document.getElementById('savingAmount');
+            const deductibleText = document.getElementById('deductibleAmount');
+            
+            if (amount > 0) {
+                resultBox.classList.remove('hidden');
+                deductibleText.innerText = applicableAmount.toLocaleString('cs-CZ').replace(/\s/g, ' ');
+                
+                let start = 0;
+                const duration = 500;
+                const step = timestamp => {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    savingText.innerText = Math.floor(progress * saving).toLocaleString('cs-CZ').replace(/\s/g, ' ');
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            } else {
+                resultBox.classList.add('hidden');
+            }
+        }
+
+        // --- Reviews Slider Logic ---
+        const reviewTrack = document.getElementById('reviewsViewport');
+        const prevBtn = document.getElementById('prevReviewBtn');
+        const nextBtn = document.getElementById('nextReviewBtn');
+
+        if(reviewTrack && prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                reviewTrack.scrollBy({ left: -300, behavior: 'smooth' });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                reviewTrack.scrollBy({ left: 300, behavior: 'smooth' });
+            });
+        }
+
+        // --- Header Scroll & Mobile Menu ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbar = document.getElementById('navbar');
+            const logoIcon = document.getElementById('logo-icon');
+            const logoText = document.getElementById('logo-text');
+            const logoSubtext = document.getElementById('logo-subtext');
+            const logoImg = document.getElementById('logo-img');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const dividers = document.querySelectorAll('[id^="nav-divider"]');
+            
+            function updateHeader() {
+                if (!navbar) return;
+
+                if (window.scrollY > 20) {
+                    navbar.classList.add('glass-header-scrolled');
+                    navbar.classList.remove('glass-header-top');
+                    
+                    if(logoIcon) {
+                        logoIcon.classList.remove('bg-white', 'text-brand-dark');
+                        logoIcon.classList.add('bg-brand-dark', 'text-white');
+                    }
+                    if(logoImg) logoImg.classList.remove('invert');
+                    if(logoText) {
+                        logoText.classList.remove('text-white');
+                        logoText.classList.add('text-brand-dark');
+                    }
+                    if(logoSubtext) {
+                        logoSubtext.classList.remove('text-slate-300');
+                        logoSubtext.classList.add('text-slate-500');
+                    }
+                    navLinks.forEach(link => {
+                        link.classList.remove('text-white');
+                        link.classList.add('text-brand-main');
+                        link.classList.add('hover:bg-brand-light');
+                        link.classList.remove('hover:bg-white/10');
+                        link.classList.remove('hover:backdrop-blur-md');
+                    });
+                    dividers.forEach(div => {
+                        div.classList.remove('bg-white/20');
+                        div.classList.add('bg-brand-border');
+                    });
+                } else {
+                    navbar.classList.remove('glass-header-scrolled');
+                    navbar.classList.add('glass-header-top');
+
+                    if(logoIcon) {
+                        logoIcon.classList.add('bg-white', 'text-brand-dark');
+                        logoIcon.classList.remove('bg-brand-dark', 'text-white');
+                    }
+                    if(logoImg) logoImg.classList.add('invert');
+                    if(logoText) {
+                        logoText.classList.add('text-white');
+                        logoText.classList.remove('text-brand-dark');
+                    }
+                    if(logoSubtext) {
+                        logoSubtext.classList.add('text-slate-300');
+                        logoSubtext.classList.remove('text-slate-500');
+                    }
+                    navLinks.forEach(link => {
+                        link.classList.add('text-white');
+                        link.classList.remove('text-brand-main');
+                        link.classList.remove('hover:bg-brand-light');
+                        link.classList.add('hover:bg-white/10');
+                        link.classList.add('hover:backdrop-blur-md');
+                    });
+                    dividers.forEach(div => {
+                        div.classList.add('bg-white/20');
+                        div.classList.remove('bg-brand-border');
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', updateHeader);
+            updateHeader(); 
+
+            // MOBILE MENU
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => { 
+                    menu.classList.toggle('hidden'); 
+                });
+                
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        if(this.getAttribute('href').startsWith('#')) {
+                             e.preventDefault();
+                             menu.classList.add('hidden');
+                             const target = document.querySelector(this.getAttribute('href'));
+                             if(target) target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

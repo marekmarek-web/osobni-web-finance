@@ -1,0 +1,15 @@
+# Embedded git repos (způsobují konflikt)
+FA/m2digitalagency
+FA/osobni-web-finance-temp
+m2digitalagency
+
+# Node
+node_modules/
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
+.cursor/

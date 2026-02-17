@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marek Marek | Finanční partner</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a', // Tmavě modrá
+                        secondary: '#3b82f6', // Jasně modrá
+                        accent: '#f97316',  // Oranžová
+                        light: '#f0f9ff',   // Pozadí
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-light text-slate-800 antialiased flex flex-col min-h-screen">
+
+    <!-- NAVIGACE -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-blue-100 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <!-- Logo M -->
+                    <div class="w-10 h-10 bg-primary text-white rounded flex items-center justify-center font-bold text-xl shadow-md">M</div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-primary leading-none tracking-tight">Marek Marek<span class="text-accent">.</span></span>
+                        <span class="text-xs text-slate-500 font-medium tracking-wide uppercase">Finanční partner</span>
+                    </div>
+                </div>
+                
+                <div class="hidden xl:flex items-center space-x-6 text-sm font-semibold">
+                    <a href="#sluzby" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">Služby</a>
+                    <a href="#omne" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">O mně</a>
+                    <a href="#kariera" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">Kariéra</a>
+                    
+                    <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                    
+                    <a href="#soukromi" class="text-primary hover:text-secondary transition-colors">Soukromí klienti</a>
+                    <a href="#firmy" class="text-primary hover:text-secondary transition-colors">Podnikatelé a firmy</a>
+                    
+                    <a href="#kontakt" class="ml-4 bg-accent text-white hover:bg-orange-600 px-6 py-3 rounded-full font-bold shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5">
+                        Kontakt
+                    </a>
+                </div>
+                
+                <div class="xl:hidden flex items-center gap-4">
+                    <a href="#kontakt" class="text-xs font-bold text-white bg-accent px-3 py-2 rounded-full shadow-md">Kontakt</a>
+                    <button id="mobile-menu-btn" class="text-primary focus:outline-none p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-blue-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-4 pb-6 space-y-2">
+                <a href="#sluzby" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">Služby</a>
+                <a href="#omne" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">O mně</a>
+                <a href="#kariera" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">Kariéra</a>
+                <a href="#soukromi" class="block py-3 text-base font-bold text-primary border-b border-slate-50 mobile-link">Soukromí klienti</a>
+                <a href="#firmy" class="block py-3 text-base font-bold text-primary border-b border-slate-50 mobile-link">Podnikatelé a firmy</a>
+                <a href="#kontakt" class="block py-3 text-base font-bold text-accent mt-4 mobile-link">Kontaktovat</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SEKCE -->
+    <section class="relative pt-32 pb-16 lg:pt-48 lg:pb-24 bg-gradient-to-br from-slate-900 via-primary to-blue-900 text-white overflow-hidden">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-500/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/4"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text -->
+                <div class="text-center lg:text-left order-2 lg:order-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-800/50 text-blue-200 border border-blue-700 text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                        Středočeský a Ústecký kraj
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Váš partner pro<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">finanční zdraví.</span>
+                    </h1>
+                    <p class="text-lg text-blue-100 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
+                        Jsem Marek Marek. Pomáhám firmám i jednotlivcům nastavit finance tak, aby dávaly ekonomický i lidský smysl. Dám vašim penězům řád a plán.
+                    </p>
+                    
+                    <!-- Čísla z letáku -->
+                    <div class="grid grid-cols-3 gap-4 mb-8 border-t border-white/10 pt-6">
+                        <div>
+                            <p class="text-2xl font-bold text-white">250+</p>
+                            <p class="text-xs text-blue-300 uppercase tracking-wide">Klientů</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-white">10 let</p>
+                            <p class="text-xs text-blue-300 uppercase tracking-wide">Zkušeností</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-white">135 mil.</p>
+                            <p class="text-xs text-blue-300 uppercase tracking-wide">V portfoliích</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#kontakt" class="px-8 py-4 bg-accent hover:bg-orange-600 text-white font-bold rounded-lg transition shadow-lg shadow-orange-500/30 text-center flex items-center justify-center gap-2">
+                            Sjednat schůzku <i class="fas fa-calendar-check"></i>
+                        </a>
+                        <a href="#sluzby" class="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-lg transition backdrop-blur-sm text-center">
+                            Moje služby
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Fotka -->
+                <div class="relative order-1 lg:order-2 flex justify-center">
+                    <div class="relative z-10 w-full max-w-md mx-auto">
+                        <div class="relative aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 bg-slate-800">
+                            <!-- ZDE JE ODKAZ NA VAŠI FOTKU -->
+                            <img src="marekuvodni.png" alt="Marek Marek - Finanční poradce" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-6 left-6 text-left">
+                                <p class="text-white font-bold text-xl">Marek Marek</p>
+                                <p class="text-accent text-sm font-medium">10 let praxe v oboru</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKCE: FIRMY (Podle letáku) -->
+    <section id="firmy" class="py-20 bg-white border-b border-slate-100 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-50 -mr-20 -mt-20"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row gap-12 items-start">
+                
+                <!-- Levá část -->
+                <div class="md:w-5/12">
+                    <div class="inline-block bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold border border-primary/20 mb-6 shadow-md tracking-wide">
+                        <i class="fas fa-building mr-2 text-accent"></i> NOVÁ CESTA PRO VAŠI FIRMU
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-primary mb-6 leading-tight">
+                        Váš partner pro <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">finanční zdraví</span> firmy.
+                    </h2>
+                    <p class="text-slate-600 text-lg leading-relaxed mb-8">
+                        Většina firem má "něco sjednaného", ale 9 z 10 to má nastavené neefektivně. Pomáhám firmám a jednatelům nastavit benefity a zajištění tak, aby to dávalo smysl.
+                    </p>
+                    
+                    <!-- Reference -->
+                    <p class="text-sm text-slate-400 font-bold uppercase mb-3">Spolupracuji například s:</p>
+                    <div class="flex flex-wrap gap-4 opacity-70">
+                        <span class="px-3 py-1 border rounded text-slate-600 font-bold text-xs">DŘEVOVKUS</span>
+                        <span class="px-3 py-1 border rounded text-slate-600 font-bold text-xs">REXPOINT</span>
+                        <span class="px-3 py-1 border rounded text-slate-600 font-bold text-xs">STŘECHY ŘEZNÍČEK</span>
+                        <span class="px-3 py-1 border rounded text-slate-600 font-bold text-xs">MARCO LUCKA</span>
+                    </div>
+                </div>
+
+                <!-- Pravá část: Benefity -->
+                <div class="md:w-7/12 grid grid-cols-1 gap-6">
+                    <!-- Karta 1 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-shadow flex gap-4 items-start group">
+                        <div class="w-12 h-12 bg-blue-50 text-secondary rounded-xl flex items-center justify-center text-2xl group-hover:bg-secondary group-hover:text-white transition-colors shrink-0">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary mb-2">Zaměstnanecké benefity</h3>
+                            <p class="text-slate-600 text-sm mb-2">Využití 100 % toho, co nabízí stát. Nebudete platit odvody a daně tam, kde to není potřeba.</p>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">DIP</span>
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">DPS</span>
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">Životní pojištění</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Karta 2 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-shadow flex gap-4 items-start group">
+                        <div class="w-12 h-12 bg-blue-50 text-secondary rounded-xl flex items-center justify-center text-2xl group-hover:bg-secondary group-hover:text-white transition-colors shrink-0">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary mb-2">Odpovědnost za firmu</h3>
+                            <p class="text-slate-600 text-sm">Každá firma má pojištění, ne každá firma ho má však nastavenou řádně. Máte ji nastavenou řádně vy?</p>
+                        </div>
+                    </div>
+
+                    <!-- Karta 3 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-shadow flex gap-4 items-start group">
+                        <div class="w-12 h-12 bg-blue-50 text-secondary rounded-xl flex items-center justify-center text-2xl group-hover:bg-secondary group-hover:text-white transition-colors shrink-0">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary mb-2">Plánování rozvoje</h3>
+                            <p class="text-slate-600 text-sm">Vše začalo nápadem, který přešel v plán. Bez dobrého finančního plánu se to neobejde.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PATIČKA -->
+    <footer id="kontakt" class="mt-auto py-12 bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Marek Marek</h3>
+                    <p class="mb-4">Váš partner pro finanční zdraví.</p>
+                    <div class="flex items-center gap-3">
+                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Kontakt</h3>
+                    <p class="mb-2"><i class="fas fa-map-marker-alt mr-2 text-accent"></i> Jana z Dražic 99, Roudnice n. L.</p>
+                    <p class="mb-2"><a href="mailto:kontakt@marek-marek.cz" class="hover:text-white"><i class="fas fa-envelope mr-2 text-accent"></i> kontakt@marek-marek.cz</a></p>
+                    <p class="mb-2"><a href="tel:+420778511166" class="hover:text-white"><i class="fas fa-phone mr-2 text-accent"></i> +420 778 511 166</a></p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Rychlé odkazy</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#sluzby" class="hover:text-accent">Služby</a></li>
+                        <li><a href="#firmy" class="hover:text-accent">Pro firmy</a></li>
+                        <li><a href="#soukromi" class="hover:text-accent">Soukromí klienti</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-8 pt-8 text-center text-xs">
+                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const links = document.querySelectorAll('.mobile-link');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
