@@ -2817,7 +2817,7 @@
                 html += '<p style="margin: 0 0 6px 0;">Potřebný kapitál k zajištění budoucí renty (předpoklad 6% výnosu):</p>';
                 html += '<p style="margin: 0 0 8px 0; font-family: monospace; font-size: 10pt;"><strong>Potřebný kapitál = (budoucí renta × 12) / 0,06</strong></p>';
                 rentaGoals.forEach((g, idx) => {
-                    const P = Number(g.amount) || 0;
+                    const P = Number(g.targetMonthlyIncome) || Number(g.amount) || 0;
                     const n = Number(g.years) || Number(g.horizon) || 0;
                     const FV = P * Math.pow(1 + i, n);
                     const capital = (FV * 12) / 0.06;
