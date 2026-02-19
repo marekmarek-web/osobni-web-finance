@@ -474,7 +474,7 @@
                 background: white !important;
             }
             
-            header, main, nav, footer, #navbar {
+            header, main, nav, footer, #navbar, body > section {
                 display: none !important;
             }
             
@@ -1597,7 +1597,11 @@
                     </div>
                 </div>
 
-                <div class="flex justify-center gap-4">
+                <div class="flex flex-col items-center gap-4 max-w-md mx-auto">
+                    <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100 w-full cursor-pointer hover:bg-slate-100/80 transition-colors">
+                        <input type="checkbox" id="insurance-invalidity50plus" class="w-4 h-4 rounded border-slate-300 text-brand-main focus:ring-brand-orange">
+                        <span class="text-sm text-slate-700">Pro osoby 50+ použít 50&nbsp;% částky na invaliditu</span>
+                    </label>
                     <button id="btn-export-pdf-main" class="btn-primary px-8 py-4 rounded-xl flex items-center gap-3 shadow-lg hover:scale-105 transition-transform">
                         <i class="fas fa-file-pdf text-xl"></i>
                         <div class="text-left leading-tight">
@@ -1883,7 +1887,8 @@
                     newCreditWishList: [], // {id, product, subType, purpose, selectedBankId, amount, ownResources, ltvPercent, akoPercent, extraAmount, termYears, fixYears, estimatedRate, estimatedMonthly, estimatedTotal}
                     // Strategy Data Model - Updated for Step 5
                     strategy: { profile: 'balanced', conservativeMode: false },
-                    investments: [] 
+                    investments: [],
+                    insurance: { riskJob: 'low', invalidity50Plus: false }
                 };
 
                 this.init();
@@ -2019,6 +2024,10 @@
                             if(Array.isArray(parsed.data.investments)) {
                                 this.data.investments = parsed.data.investments;
                             }
+                            // Insurance Merge
+                            if(parsed.data.insurance) {
+                                this.data.insurance = { ...(this.data.insurance || {}), ...parsed.data.insurance };
+                            }
                         }
                     } catch (e) { 
                         console.error("Load Error (Legacy Data?)", e); 
@@ -2049,7 +2058,8 @@
                 const filename = `financni-plan-${safeName}-${date}.json`;
                 
                 const formState = {
-                    goalType: document.getElementById('goal-type')?.value || 'renta'
+                    goalType: document.getElementById('goal-type')?.value || 'renta',
+                    invalidity50Plus: this.data.insurance?.invalidity50Plus || false
                 };
                 const exportData = {
                     version: '1.0',
@@ -2098,6 +2108,10 @@
                         }
                         if(importData.formState?.goalType) {
                             sessionStorage.setItem('restore_goal_type', importData.formState.goalType);
+                        }
+                        if(importData.formState?.invalidity50Plus !== undefined) {
+                            if(!this.data.insurance) this.data.insurance = {};
+                            this.data.insurance.invalidity50Plus = importData.formState.invalidity50Plus;
                         }
                         this.saveState();
                         
@@ -2835,7 +2849,7 @@
             }
 
             renderRentaFormula(goals) {
-                const rentaGoals = (goals || []).filter(g => g.type === 'renta' && (g.amount || g.computed?.fvTarget));
+                const rentaGoals = (goals || []).filter(g => g.type === 'renta' && ((Number(g.amount) || 0) > 0 || (g.computed?.fvTarget || 0) > 0));
                 if (rentaGoals.length === 0) return '';
                 const i = 0.03;
                 let html = '<div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 10pt; color: #334155;">';
@@ -2847,7 +2861,8 @@
                 html += '<p style="margin: 0 0 8px 0; font-family: monospace; font-size: 10pt;"><strong>Potřebný kapitál = (budoucí renta × 12) / 0,06</strong></p>';
                 rentaGoals.forEach((g, idx) => {
                     const P = Number(g.amount) || 0;
-                    const n = Number(g.years) || Number(g.horizon) || 0;
+                    const n = Math.max(1, Number(g.years) || Number(g.horizon) || 1);
+                    if (P <= 0) return; // Nepřeskočit prázdné příklady
                     const FV = P * Math.pow(1 + i, n);
                     const capital = (FV * 12) / 0.06;
                     html += '<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0;">';
@@ -2932,6 +2947,7 @@
                     <div style="margin-top:5px; font-weight:bold; color:${color};">
                         ${status}: ${Math.abs(Math.round(diff)).toLocaleString('cs-CZ')} Kč (${coverage.toFixed(0)} %)
                     </div>
+                    <div style="margin-top:6px; font-size:9pt; color:#64748b;">Pro finanční nezávislost se počítá pouze finanční majetek (hotovost, akcie, fondy, penzijní) – bez nemovitostí.</div>
                 `;
             }
 
@@ -2960,6 +2976,7 @@
                 const liquidInvestments = data.assets?.investments || 0;
                 const hasPartner = data.client?.hasPartner || false;
                 const riskJob = data.insurance?.riskJob || 'low';
+                const invalidity50Plus = data.insurance?.invalidity50Plus || false;
                 const clientAge = parseInt(data.client?.age) || 35;
                 const incomeType = data.cashflow?.incomeType || 'zamestnanec';
                 const isOSVC = incomeType === 'osvc';
@@ -3006,8 +3023,11 @@
                 const statePensionD3 = estimateInvalidityPension(netIncome, isOSVC);
                 const ownAssetRentaMonthly = Math.round((totalLiquidAssets * RENT_RATE) / 12);
                 const invalidityGapMonthly = Math.max(0, invalidityNeedMonthly - statePensionD3 - ownAssetRentaMonthly);
-                const invalidityCapitalRaw = invalidityGapMonthly * RENT_MULTIPLIER;
-                const invalidityCapital = Math.ceil(invalidityCapitalRaw / 100000) * 100000;
+                let invalidityCapitalRaw = invalidityGapMonthly * RENT_MULTIPLIER;
+                let invalidityCapital = Math.ceil(invalidityCapitalRaw / 100000) * 100000;
+                if (invalidity50Plus && clientAge >= 50) {
+                    invalidityCapital = Math.ceil((invalidityCapital * 0.5) / 100000) * 100000;
+                }
                 const invalidityRentaFromInsurance = Math.round(invalidityCapital / RENT_MULTIPLIER);
                 
                 // ========== 2) PRACOVNÍ NESCHOPNOST ==========
@@ -3151,7 +3171,12 @@
                     const partnerInvalidityNeed = Math.round(partnerIncome * INVALIDITY_COST_INCREASE);
                     const partnerStatePension = estimateInvalidityPension(partnerIncome, false);
                     const partnerInvalidityGap = Math.max(0, partnerInvalidityNeed - partnerStatePension);
-                    const partnerInvalidityCapital = Math.ceil((partnerInvalidityGap * RENT_MULTIPLIER) / 100000) * 100000;
+                    let partnerInvalidityCapital = Math.ceil((partnerInvalidityGap * RENT_MULTIPLIER) / 100000) * 100000;
+                    const partnerBirthYear = data.partner?.birthDate?.match(/(\d{4})/);
+                    const partnerAge = partnerBirthYear ? (new Date().getFullYear() - parseInt(partnerBirthYear[1])) : 35;
+                    if (invalidity50Plus && partnerAge >= 50) {
+                        partnerInvalidityCapital = Math.ceil((partnerInvalidityCapital * 0.5) / 100000) * 100000;
+                    }
                     
                     // TN partnera
                     let partnerTnBase = 1000000;
@@ -3305,6 +3330,7 @@
                                     - z pojištění: <strong>${fmt(ins.invalidity.rentaFromInsurance)} Kč</strong><br>
                                     - státní důchod: <strong>${fmt(ins.invalidity.statePension)} Kč</strong>${ins.isOSVC ? ' (OSVČ nižší)' : ''}<br>
                                     - vlastní majetek: <strong>${fmt(ins.invalidity.ownAssetRenta)} Kč</strong>
+                                    ${(data.insurance?.invalidity50Plus && (parseInt(data.client?.age) || 35) >= 50) ? '<br><span style="font-size: 7pt; color: #64748b;">Pro osoby 50+ použita 50% částka na invaliditu.</span>' : ''}
                                 </div>
                             </div>
                             
@@ -3408,6 +3434,7 @@
                                     Potřeba: ${fmt(p.invalidity.needMonthly)} Kč/měs<br>
                                     Státní důchod: ${fmt(p.invalidity.statePension)} Kč<br>
                                     <strong>Pojistit: ${fmt(p.invalidity.capital)} Kč</strong>
+                                    ${(data.insurance?.invalidity50Plus && (() => { const m = data.partner?.birthDate?.match(/(\d{4})/); return m ? (new Date().getFullYear() - parseInt(m[1])) >= 50 : false; })()) ? '<br><span style="font-size: 7pt; color: #64748b;">Pro osoby 50+ použita 50% částka.</span>' : ''}
                                 </div>
                             </div>
                             <div style="background: #f8fafc; padding: 4mm; border-radius: 2mm; border-left: 3px solid #0B3A7A;">
@@ -3822,16 +3849,32 @@
             }
 
             renderPdfCharts(data) {
-                // Growth Chart
+                // Growth Chart – použití skutečných výnosů z každého fondu
                 const ctxGrowth = document.getElementById('pdf-chart-growth');
                 if (ctxGrowth) {
                     const labels = Array.from({length: 31}, (_, i) => i);
-                    const totalLump = (data.investments || []).filter(i => i.type === 'lump').reduce((a,b)=>a+(b.amount||0), 0);
-                    const totalMonthly = (data.investments || []).filter(i => i.type !== 'lump').reduce((a,b)=>a+(b.amount||0), 0);
-                    const r = 0.07;
+                    const investments = (data.investments || []).filter(i => (i.amount||0) > 0);
                     
+                    const conservative = data.strategy?.conservativeMode || false;
                     const growthData = labels.map((year) => {
-                        return totalLump * Math.pow(1+r, year) + totalMonthly * 12 * ((Math.pow(1+r, year) - 1) / r);
+                        let total = 0;
+                        investments.forEach(inv => {
+                            const amt = inv.amount || 0;
+                            let r = inv.annualRate || 0.07;
+                            if (conservative) r = Math.max(0, r - 0.02);
+                            const maxYears = inv.years || 10;
+                            const n = Math.min(year, maxYears);
+                            if (inv.type === 'lump') {
+                                total += amt * Math.pow(1 + r, n);
+                            } else {
+                                // měsíční / penzijní – budoucí hodnota měsíční anuity (stejný vzorec jako recalcStrategy)
+                                if (n > 0) {
+                                    const rMonthly = r / 12;
+                                    total += r > 0 ? amt * ((Math.pow(1 + rMonthly, 12 * n) - 1) / rMonthly) : amt * 12 * n;
+                                }
+                            }
+                        });
+                        return total;
                     });
 
                     new Chart(ctxGrowth, {
@@ -3893,15 +3936,23 @@
                     });
                 }
 
-                // Allocation Chart
+                // Allocation Chart – skutečné rozložení z dat (jen finanční majetek: hotovost, investice, penzijní)
                 const ctxAlloc = document.getElementById('pdf-chart-allocation');
                 if (ctxAlloc) {
+                    const assets = data.assets || {};
+                    const cash = assets.cash || 0;
+                    const inv = assets.investments || 0;
+                    const pension = assets.pension || 0;
+                    const total = cash + inv + pension;
+                    const allocData = total > 0 ? [inv, pension, cash] : [100];
+                    const allocLabels = total > 0 ? ['Investice (akcie, fondy)', 'Penzijní', 'Hotovost'] : ['Žádný finanční majetek'];
+                    
                     new Chart(ctxAlloc, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Akcie', 'Nemovitosti', 'Dluhopisy/Hotovost'],
+                            labels: allocLabels,
                             datasets: [{
-                                data: [60, 30, 10],
+                                data: allocData,
                                 backgroundColor: ['#0B3A7A', '#ffcc00', '#64748b'],
                                 borderWidth: 0,
                                 hoverOffset: 4
@@ -4050,6 +4101,16 @@
                 const btnExport = document.getElementById('btn-export-pdf-main');
                 if(btnExport) {
                     btnExport.addEventListener('click', () => this.reporter.generate());
+                }
+
+                // Toggle: 50% invalidita pro osoby 50+
+                const inv50Check = document.getElementById('insurance-invalidity50plus');
+                if(inv50Check) {
+                    inv50Check.addEventListener('change', (e) => {
+                        if(!this.app.data.insurance) this.app.data.insurance = {};
+                        this.app.data.insurance.invalidity50Plus = e.target.checked;
+                        this.app.saveState();
+                    });
                 }
 
                 // Krok 1 Inputs
@@ -5488,7 +5549,10 @@
                     }
                     const summaryName = document.getElementById('summary-client-name');
                     if(summaryName) summaryName.innerText = this.app.data.client.name || 'Nevyplněno';
-                    
+
+                    const inv50Check = document.getElementById('insurance-invalidity50plus');
+                    if(inv50Check) inv50Check.checked = this.app.data.insurance?.invalidity50Plus || false;
+
                     this.recalcSums();
                     
                     const sumNW = document.getElementById('summary-net-worth');
