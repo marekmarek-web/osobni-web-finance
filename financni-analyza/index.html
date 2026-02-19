@@ -2947,7 +2947,7 @@
                     <div style="margin-top:5px; font-weight:bold; color:${color};">
                         ${status}: ${Math.abs(Math.round(diff)).toLocaleString('cs-CZ')} Kč (${coverage.toFixed(0)} %)
                     </div>
-                    <div style="margin-top:6px; font-size:9pt; color:#64748b;">Pro finanční nezávislost se počítá pouze finanční majetek (hotovost, akcie, fondy, penzijní) – bez nemovitostí.</div>
+                    <div style="margin-top:6px; font-size:9pt; color:#dc2626; font-weight:600;">NEMOVITOSTI SE DO FINANČNÍCH CÍLŮ NEPOČÍTAJÍ – nelze je prodat a žít z toho. Pouze hotovost, akcie, fondy, penzijní.</div>
                 `;
             }
 
@@ -3849,11 +3849,14 @@
             }
 
             renderPdfCharts(data) {
-                // Growth Chart – použití skutečných výnosů z každého fondu
+                // Growth Chart – skutečné výnosy, dynamický horizont dle cílů a investic (ne fixních 30 let!)
                 const ctxGrowth = document.getElementById('pdf-chart-growth');
                 if (ctxGrowth) {
-                    const labels = Array.from({length: 31}, (_, i) => i);
                     const investments = (data.investments || []).filter(i => (i.amount||0) > 0);
+                    const maxFromInvestments = investments.length > 0 ? Math.max(...investments.map(i => i.years || 10)) : 0;
+                    const maxFromGoals = (data.goals || []).reduce((m, g) => Math.max(m, g.years || g.horizon || 0), 0);
+                    const maxYears = Math.min(30, Math.max(5, maxFromInvestments, maxFromGoals) || 15);
+                    const labels = Array.from({length: maxYears + 1}, (_, i) => i);
                     
                     const conservative = data.strategy?.conservativeMode || false;
                     const growthData = labels.map((year) => {
@@ -3936,24 +3939,27 @@
                     });
                 }
 
-                // Allocation Chart – skutečné rozložení z dat (jen finanční majetek: hotovost, investice, penzijní)
+                // Allocation Chart – JEN z kroku 6 Strategie (data.investments), NE z majetku!
                 const ctxAlloc = document.getElementById('pdf-chart-allocation');
                 if (ctxAlloc) {
-                    const assets = data.assets || {};
-                    const cash = assets.cash || 0;
-                    const inv = assets.investments || 0;
-                    const pension = assets.pension || 0;
-                    const total = cash + inv + pension;
-                    const allocData = total > 0 ? [inv, pension, cash] : [100];
-                    const allocLabels = total > 0 ? ['Investice (akcie, fondy)', 'Penzijní', 'Hotovost'] : ['Žádný finanční majetek'];
+                    const strategyInvs = (data.investments || []).filter(i => (i.amount||0) > 0);
+                    const byProduct = {};
+                    strategyInvs.forEach(inv => {
+                        const val = inv.type === 'lump' ? (inv.amount||0) : (inv.amount||0) * 12 * (inv.years||10);
+                        byProduct[inv.productKey] = (byProduct[inv.productKey] || 0) + val;
+                    });
+                    const allocLabels = Object.keys(byProduct).map(k => this.getProductName(k));
+                    const allocData = Object.values(byProduct);
+                    const total = allocData.reduce((a,b)=>a+b,0);
                     
+                    const colors = ['#0B3A7A', '#ffcc00', '#64748b', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
                     new Chart(ctxAlloc, {
                         type: 'doughnut',
                         data: {
-                            labels: allocLabels,
+                            labels: total > 0 ? allocLabels : ['Žádné produkty v strategii'],
                             datasets: [{
-                                data: allocData,
-                                backgroundColor: ['#0B3A7A', '#ffcc00', '#64748b'],
+                                data: total > 0 ? allocData : [100],
+                                backgroundColor: allocLabels.map((_, i) => colors[i % colors.length]),
                                 borderWidth: 0,
                                 hoverOffset: 4
                             }]
