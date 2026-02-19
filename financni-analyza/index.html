@@ -3590,10 +3590,15 @@
                         currency: 'USD',
                         liquidity: 'Denní',
                         morningstar: 4,
-                        description: 'iShares MSCI World ETF je pasivně řízený fond kopírující index MSCI World — investuje do 1 320 společností z 23 rozvinutých zemí a pokrývá 85 % tržní kapitalizace vyspělého světa.',
-                        strategy: 'Index je vážený tržní kapitalizací. Největší zastoupení mají USA (72 %), Japonsko (5,4 %), Velká Británie (3,7 %) a Kanada (2,9 %). Největší sektory: technologie (28 %), finance (14 %), spotřební zboží (10 %) a průmysl (10 %). Top 10 holdings tvoří 28 % portfolia.',
+                        description: 'iShares MSCI World ETF je pasivně řízený fond kopírující index MSCI World — investuje do cca 1 320 společností z 23 rozvinutých zemí a pokrývá 85 % tržní kapitalizace vyspělého světa.',
+                        strategy: 'Index je vážený tržní kapitalizací. USA cca 69 %, Japonsko 5,4 %, VB 3,7 %, Kanada 2,9 %. Sektory: technologie (28 %), finance (14 %), spotřební zboží (10 %), průmysl (10 %). Top 10 titulů tvoří cca 24 % portfolia.',
                         benefits: ['Diverzifikace do 1 320 firem', 'Morningstar Bronze medaile', 'Vysoká likvidita', 'Transparentní složení'],
-                        representation: 'NVIDIA, Apple, Microsoft, Amazon, Alphabet, Broadcom, Meta, Tesla'
+                        representation: 'NVIDIA, Apple, Microsoft, Amazon, Alphabet, Broadcom, Meta, Tesla',
+                        topHoldings: [
+                            { name: 'NVIDIA', pct: 4.9 }, { name: 'Apple', pct: 4.06 }, { name: 'Microsoft', pct: 3.21 },
+                            { name: 'Amazon', pct: 2.42 }, { name: 'Alphabet (A+C)', pct: 3.82 }, { name: 'Meta Platforms', pct: 1.64 },
+                            { name: 'Broadcom', pct: 1.57 }, { name: 'Tesla', pct: 1.28 }, { name: 'JPMorgan Chase', pct: 0.89 }
+                        ]
                     },
                     {
                         key: 'fidelity2040',
@@ -3707,7 +3712,15 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            
+                            ${fund.topHoldings && fund.topHoldings.length ? `
+                            <div class="h2">Rozložení – Top tituly v indexu (váha v %)</div>
+                            <table class="table" style="margin-bottom: 5mm; font-size: 9pt;">
+                                <thead><tr><th style="text-align:left">Společnost</th><th style="text-align:right">Podíl</th></tr></thead>
+                                <tbody>
+                                    ${fund.topHoldings.map(h => `<tr><td>${h.name}</td><td style="text-align:right; font-weight:600">${h.pct} %</td></tr>`).join('')}
+                                </tbody>
+                            </table>
+                            ` : ''}
                             <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 4mm; border-radius: 3mm; border: 1px solid #bae6fd;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
