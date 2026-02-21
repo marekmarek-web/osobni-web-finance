@@ -6,13 +6,24 @@
     <title>Životní pojištění Kalkulačka | Marek Marek - Finanční partner</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tailwind Config -->
+    <!-- Google Fonts – stejné jako index.html pro 1:1 vzhled -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind Config – fontFamily aby footer a celá stránka odpovídaly index.html -->
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
                         brand: {
                             dark: '#0a0f29',    /* Midnight Blue */
                             gold: '#fbbf24',    /* ZLATÁ (Amber 500) - nahrazuje orange */
@@ -44,13 +55,13 @@
         }
 
         .glass-header-top {
-            background-color: #0a0f29; 
+            background-color: rgba(10, 15, 41, 0.1);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .glass-header-scrolled {
-            background-color: rgba(255, 255, 255, 0.85); 
+            background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid rgba(11, 58, 122, 0.1);
@@ -65,6 +76,31 @@
             border-radius: 9999px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
+        }
+        /* Dropdown Nástroje – otevření při najetí */
+        .nav-dropdown-panel {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: visibility 0.2s, opacity 0.2s, transform 0.2s;
+        }
+        .nav-dropdown-group:hover .nav-dropdown-panel {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .nav-dropdown-group:hover .nav-dropdown-trigger {
+            background: rgba(255,255,255,0.1);
+        }
+        .glass-header-scrolled .nav-dropdown-group:hover .nav-dropdown-trigger {
+            background: rgba(11, 58, 122, 0.08);
+        }
+        /* Dropdown trigger ve světlém headeru (po scrollu) */
+        .glass-header-scrolled .nav-dropdown-trigger {
+            color: #0B3A7A;
+        }
+        .glass-header-scrolled .nav-dropdown-trigger svg {
+            color: #64748b;
         }
         
         input[type=range] {
@@ -163,20 +199,20 @@
         }
       </style>
 </head>
-<body class="min-h-screen bg-brand-light font-sans text-slate-800 relative pt-20">
+<body class="min-h-screen bg-brand-light font-sans text-slate-800 antialiased relative pt-20">
 
     <!-- Kontejner pro modální okno -->
     <div id="modal-root"></div>
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top top-0 left-0" id="navbar">
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
                 
                 <!-- Logo -->
                 <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
                     <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
-                        <img id="logo-img" src="logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
+                        <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
                     </div>
                     <div class="flex flex-col leading-tight">
                         <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
@@ -208,22 +244,22 @@
                 <div>
                     <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
                     <div class="space-y-1">
-                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Služby</a>
-                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Rodiny a jednotlivci</a>
-                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Podnikatelé a firmy</a>
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
                     </div>
                 </div>
                 
                 <div>
                     <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
                     <div class="space-y-2">
-                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50 mobile-nav-link">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
                             <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
                         </a>
-                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
                             <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
                         </a>
-                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
                             <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
                         </a>
                         <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
@@ -233,7 +269,7 @@
                 </div>
                 
                 <div class="pt-8 px-4">
-                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20 mobile-nav-link">Kontaktovat</a>
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
                 </div>
             </div>
         </div>
@@ -554,7 +590,7 @@
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
-                            <img src="logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
+                            <img src="../logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
                         </div>
                         <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
@@ -613,6 +649,69 @@
         </div>
     </footer>
 
+    <script>
+(function() {
+    var byId = function(id) { return document.getElementById(id); };
+    var $$ = function(sel) { return document.querySelectorAll(sel); };
+
+    function updateHeader() {
+        var navbar = byId('navbar');
+        if (!navbar) return;
+
+        var logoIcon = byId('logo-icon');
+        var logoImg = byId('logo-img');
+        var logoText = byId('logo-text');
+        var logoSubtext = byId('logo-subtext');
+        var navLinks = $$('.nav-link');
+        var dividers = $$('[id^="nav-divider"]');
+
+        if (window.scrollY > 20) {
+            navbar.classList.add('glass-header-scrolled');
+            navbar.classList.remove('glass-header-top');
+            if (logoIcon) { logoIcon.classList.remove('bg-white', 'text-brand-dark'); logoIcon.classList.add('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.remove('invert');
+            if (logoText) { logoText.classList.remove('text-white'); logoText.classList.add('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.remove('text-slate-300'); logoSubtext.classList.add('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.remove('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.add('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.remove('bg-white/20');
+                div.classList.add('bg-brand-border');
+            });
+        } else {
+            navbar.classList.remove('glass-header-scrolled');
+            navbar.classList.add('glass-header-top');
+            if (logoIcon) { logoIcon.classList.add('bg-white', 'text-brand-dark'); logoIcon.classList.remove('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.add('invert');
+            if (logoText) { logoText.classList.add('text-white'); logoText.classList.remove('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.add('text-slate-300'); logoSubtext.classList.remove('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.add('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.remove('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.add('bg-white/20');
+                div.classList.remove('bg-brand-border');
+            });
+        }
+    }
+
+    window.addEventListener('scroll', updateHeader);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateHeader();
+        var btn = byId('mobile-menu-btn');
+        var menu = byId('mobile-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function() { menu.classList.toggle('hidden'); });
+            $$('#mobile-menu a[href^="/"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function() { menu.classList.add('hidden'); });
+            });
+        }
+    });
+})();
+    </script>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
@@ -624,7 +723,6 @@
         let reserves = 100000; 
         let children = 2;
         let hasSpouse = true;
-        let isMobileMenuOpen = false;
         let isScrolled = false;
         let fileName = null; // Přidáno globálně pro opravu chyby
         // NOVÉ: Globální objekt pro uložení výsledků výpočtu (pro odeslání emailem)
@@ -1000,10 +1098,8 @@
             runCalculations();
         };
 
-        // NEW: Function to open modal via mobile menu
         const openModal = () => {
             handleOpenModal('general');
-            toggleMobileMenu(); // Close mobile menu when opening modal
         };
 
         const handleOpenModal = (type) => {
@@ -1223,8 +1319,6 @@
             const logoSubtext = $('#logo-subtext');
             const navLinks = $$('.nav-link');
             const dividers = $$('[id^="nav-divider"]');
-            const mobileMenuBtn = $('#mobile-menu-btn');
-
 
             if (currentScroll > 20 && isScrolled === false) { // Používáme false pro initial state check
                 isScrolled = true;
@@ -1250,8 +1344,6 @@
                     link.classList.remove('text-white', 'hover:bg-white/10');
                     link.classList.add('text-brand-main', 'hover:bg-brand-light');
                 });
-
-                mobileMenuBtn.className = 'hover:text-brand-gold focus:outline-none p-2 rounded-full transition-colors text-brand-gold hover:bg-slate-100';
                 
             } else if (currentScroll <= 20 && isScrolled === true) { // Používáme true pro initial state check
                 isScrolled = false;
@@ -1277,20 +1369,6 @@
                     link.classList.add('text-white', 'hover:bg-white/10');
                     link.classList.remove('text-brand-main', 'hover:bg-brand-light');
                 });
-                 mobileMenuBtn.className = 'hover:text-brand-gold focus:outline-none p-2 rounded-full transition-colors text-brand-gold hover:bg-white/10';
-            }
-        };
-
-        const toggleMobileMenu = () => {
-            isMobileMenuOpen = !isMobileMenuOpen;
-            const menu = $('#mobile-menu');
-            // Nové tlačítko nemá měnící se ikony, takže jen toggle viditelnosti menu
-            if (menu) {
-                if (isMobileMenuOpen) {
-                    menu.classList.remove('hidden');
-                } else {
-                    menu.classList.add('hidden');
-                }
             }
         };
         
@@ -1375,15 +1453,6 @@
             initInputs();
             renderFaq();
             window.addEventListener('scroll', handleScroll);
-            $('#mobile-menu-btn').addEventListener('click', toggleMobileMenu);
-            // Přidána logika pro zavření mobilního menu po kliknutí na odkaz
-            $$('.mobile-nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (isMobileMenuOpen) {
-                        toggleMobileMenu();
-                    }
-                });
-            });
             // Inicializovat ikony po načtení stránky
             lucide.createIcons();
             runCalculations();

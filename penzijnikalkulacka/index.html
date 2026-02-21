@@ -11,8 +11,8 @@
     <!-- STYLY A KNIHOVNY -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
     <!-- Tailwind Config -->
     <script>
@@ -57,15 +57,12 @@
         :root { font-family: 'Inter', sans-serif; }
         body { overflow-x: hidden; }
 
-        /* HORNÍ HEADER */
         .glass-header-top {
-            background-color: #0a0f29;
+            background-color: rgba(10, 15, 41, 0.1);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        /* SCROLLED HEADER */
         .glass-header-scrolled {
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px) saturate(180%);
@@ -157,78 +154,73 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- --- HEADER (NOVÝ Z SOUBORU) --- -->
-    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-500 glass-header-top">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
                 
                 <!-- Logo -->
-                <a href="/" class="flex items-center gap-3 cursor-pointer shrink-0">
-                    <!-- LOGO IMAGE CONTAINER -->
-                    <div id="logo-icon" class="font-bold w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 shadow-sm overflow-hidden bg-white">
-                        <!-- Logo obrázek s inverzní logikou (na začátku invertovaný = černý v bílém kruhu) -->
-                        <img src="logo_M_white.png" id="logo-image" alt="Logo" class="w-full h-full object-contain p-1.5 transition-all duration-300 invert">
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
                     </div>
                     <div class="flex flex-col leading-tight">
-                        <span id="logo-text" class="text-lg font-bold transition-colors duration-300 text-white">Marek Marek<span class="text-[#ea8d00]">.</span></span>
-                        <span id="logo-subtext" class="text-[0.6rem] font-bold tracking-widest uppercase transition-colors duration-300 text-slate-300">Finanční partner</span>
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
-                </a>
+                </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center justify-center flex-1 gap-6">
-                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10">Služby</a>
-                    <div id="nav-divider" class="h-4 w-px mx-2 transition-colors duration-300 bg-white/20"></div>
-                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10">Rodiny a jednotlivci</a>
-                    <div id="nav-divider-2" class="h-4 w-px mx-2 transition-colors duration-300 bg-white/20"></div>
-                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10">Podnikatelé a firmy</a>
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
                 </div>
 
-                <!-- Hamburger (Zobrazuje se VŠUDE) -->
+                <!-- Hamburger -->
                 <div class="flex items-center">
-                    <button id="mobile-menu-btn" class="hover:text-[#fbbf24] focus:outline-none p-2 rounded-full transition-colors text-[#ea8d00]">
-                        <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
-                        <i data-lucide="x" id="close-icon" class="w-6 h-6 hidden"></i>
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-slate-100 shadow-xl py-6 px-4 flex-col gap-4 z-40 hidden"> 
-            
-            <!-- Hlavní nabídka -->
-            <div>
-                <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
-                <div class="space-y-1">
-                    <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Služby</a>
-                    <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Rodiny a jednotlivci</a>
-                    <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50 mobile-nav-link">Podnikatelé a firmy</a>
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Nástroje -->
-            <div class="pt-4">
-                <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
-                <div class="space-y-2">
-                    <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-[#EAF3FF]/50 rounded-xl border border-[#D6E6FF]/50 hover:bg-[#EAF3FF] mobile-nav-link">
-                        <i data-lucide="landmark" class="w-5 h-5 text-[#ea8d00] mr-3"></i> Hypoteční kalkulačka
-                    </a>
-                    <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-[#0B3A7A] mr-3"></i> Investiční kalkulačka
-                    </a>
-                    <a href="https://www.marek-marek.cz/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="piggy-bank" class="w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
-                    </a>
-                    <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                        <i data-lucide="heart-pulse" class="w-5 h-5 text-red-500 mr-3"></i> Kalkulačka životního pojištění
-                    </a>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- CTA - Kontakt -->
-            <div class="pt-8 px-4">
-                <a href="/#kontakt" class="block w-full py-4 bg-[#0a0f29] text-white text-center rounded-xl font-bold shadow-lg shadow-[#0a0f29]/20 mobile-nav-link">KONTAKT</a>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -604,15 +596,14 @@
         </div>
     </div>
 
-    <!-- --- FOOTER (NOVÝ Z SOUBORU) --- -->
-    <footer class="bg-[#0a0f29] text-slate-400 py-16 border-t border-white/10" id="kontakt">
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10" id="kontakt">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <!-- PŘIDÁNO: Logo místo M, invertované aby bylo černé na bílém podkladu čtverečku -->
-                        <div class="bg-white w-8 h-8 flex items-center justify-center rounded">
-                             <img src="logo_M_white.png" alt="M" class="w-6 h-6 object-contain invert">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="../logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
                         </div>
                         <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
@@ -651,7 +642,7 @@
                         </li>
                         <li class="flex items-center">
                             <i class="fas fa-envelope mr-3 text-brand-gold"></i>
-                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-white transition">kontakt@marek-marek.cz</a>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
                         </li>
                     </ul>
                 </div>
@@ -670,6 +661,73 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        function openModal() { var el = document.getElementById('kontakt'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
+    </script>
+    <script>
+(function() {
+    var byId = function(id) { return document.getElementById(id); };
+    var $$ = function(sel) { return document.querySelectorAll(sel); };
+
+    function updateHeader() {
+        var navbar = byId('navbar');
+        if (!navbar) return;
+
+        var logoIcon = byId('logo-icon');
+        var logoImg = byId('logo-img');
+        var logoText = byId('logo-text');
+        var logoSubtext = byId('logo-subtext');
+        var navLinks = $$('.nav-link');
+        var dividers = $$('[id^="nav-divider"]');
+
+        if (window.scrollY > 20) {
+            navbar.classList.add('glass-header-scrolled');
+            navbar.classList.remove('glass-header-top');
+            if (logoIcon) { logoIcon.classList.remove('bg-white', 'text-brand-dark'); logoIcon.classList.add('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.remove('invert');
+            if (logoText) { logoText.classList.remove('text-white'); logoText.classList.add('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.remove('text-slate-300'); logoSubtext.classList.add('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.remove('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.add('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.remove('bg-white/20');
+                div.classList.add('bg-brand-border');
+            });
+        } else {
+            navbar.classList.remove('glass-header-scrolled');
+            navbar.classList.add('glass-header-top');
+            if (logoIcon) { logoIcon.classList.add('bg-white', 'text-brand-dark'); logoIcon.classList.remove('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.add('invert');
+            if (logoText) { logoText.classList.add('text-white'); logoText.classList.remove('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.add('text-slate-300'); logoSubtext.classList.remove('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.add('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.remove('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.add('bg-white/20');
+                div.classList.remove('bg-brand-border');
+            });
+        }
+    }
+
+    window.addEventListener('scroll', updateHeader);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateHeader();
+        var btn = byId('mobile-menu-btn');
+        var menu = byId('mobile-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function() { menu.classList.toggle('hidden'); });
+            $$('#mobile-menu a[href^="/"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function() { menu.classList.add('hidden'); });
+            });
+        }
+    });
+})();
+    </script>
 
     <!-- LOGIKA (Kalkulačka + Scroll Header + Mobile Menu) -->
     <script>

@@ -59,15 +59,12 @@
         /* Zabránění horizontálnímu posuvu */
         body { overflow-x: hidden; }
     
-        /* Horní header (tmavý na začátku) */
         .glass-header-top {
-            background-color: #0a0f29;
+            background-color: rgba(10, 15, 41, 0.1);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-    
-        /* Scrolled header (světlý při posunu) */
         .glass-header-scrolled {
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px) saturate(180%);
@@ -127,20 +124,20 @@
 </head>
 <body class="bg-white font-sans text-slate-800">
 
-<!-- --- HEADER (sjednoceno z main index) --- -->
+    <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
                 <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
-                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden relative">
-                        <img id="logo-img" src="/images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
-                        <span id="logo-fallback" class="hidden absolute inset-0 flex items-center justify-center text-lg font-bold text-brand-dark">M</span>
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
                     </div>
                     <div class="flex flex-col leading-tight">
                         <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
                         <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
                 </div>
+                <!-- Center Menu -->
                 <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
                     <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
                     <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
@@ -148,14 +145,15 @@
                     <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
                     <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
                 </div>
+                <!-- Hamburger -->
                 <div class="flex items-center">
-                    <a href="/#kontakt" class="inline-flex items-center justify-center rounded-full bg-brand-gold text-brand-dark px-5 py-2.5 text-sm font-bold hover:bg-brand-lightgold transition-colors shadow-sm">Kontakt</a>
-                    <button id="mobile-menu-btn" class="hidden text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10" aria-label="Menu">
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
+        <!-- Mobile/Drawer Menu Panel -->
         <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
             <div class="px-4 pt-6 space-y-4">
                 <div>
@@ -178,18 +176,17 @@
                         <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
                             <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
                         </a>
-                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
-                            <i class="fas fa-piggy-bank w-5 h-5 text-brand-main mr-3"></i> Penzijní kalkulačka
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
                         </a>
                     </div>
                 </div>
                 <div class="pt-8 px-4">
-                    <a href="/#kontakt" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
                 </div>
             </div>
         </div>
     </nav>
-<!-- --- HEADER (KONEC) --- -->
 
     <!-- Hlavní obsah (sekce kalkulačky) -->
     <main>
@@ -554,14 +551,14 @@
         </section>
     </main>
 
-    <!-- --- FOOTER (sjednoceno z main index) --- -->
+    <!-- FOOTER -->
     <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded overflow-hidden">
-                            <img src="/images/logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="../logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
                         </div>
                         <span class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>
@@ -619,7 +616,6 @@
             </div>
         </div>
     </footer>
-    <!-- --- FOOTER (KONEC) --- -->
 
     <!-- KONTAKTNÍ MODAL -->
     <div id="contactModal" class="fixed inset-0 z-50 hidden">
@@ -1398,6 +1394,69 @@
         }
 
         document.addEventListener('DOMContentLoaded', init);
+    </script>
+    <script>
+(function() {
+    var byId = function(id) { return document.getElementById(id); };
+    var $$ = function(sel) { return document.querySelectorAll(sel); };
+
+    function updateHeader() {
+        var navbar = byId('navbar');
+        if (!navbar) return;
+
+        var logoIcon = byId('logo-icon');
+        var logoImg = byId('logo-img');
+        var logoText = byId('logo-text');
+        var logoSubtext = byId('logo-subtext');
+        var navLinks = $$('.nav-link');
+        var dividers = $$('[id^="nav-divider"]');
+
+        if (window.scrollY > 20) {
+            navbar.classList.add('glass-header-scrolled');
+            navbar.classList.remove('glass-header-top');
+            if (logoIcon) { logoIcon.classList.remove('bg-white', 'text-brand-dark'); logoIcon.classList.add('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.remove('invert');
+            if (logoText) { logoText.classList.remove('text-white'); logoText.classList.add('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.remove('text-slate-300'); logoSubtext.classList.add('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.remove('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.add('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.remove('bg-white/20');
+                div.classList.add('bg-brand-border');
+            });
+        } else {
+            navbar.classList.remove('glass-header-scrolled');
+            navbar.classList.add('glass-header-top');
+            if (logoIcon) { logoIcon.classList.add('bg-white', 'text-brand-dark'); logoIcon.classList.remove('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.add('invert');
+            if (logoText) { logoText.classList.add('text-white'); logoText.classList.remove('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.add('text-slate-300'); logoSubtext.classList.remove('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.add('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.remove('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.add('bg-white/20');
+                div.classList.remove('bg-brand-border');
+            });
+        }
+    }
+
+    window.addEventListener('scroll', updateHeader);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateHeader();
+        var btn = byId('mobile-menu-btn');
+        var menu = byId('mobile-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function() { menu.classList.toggle('hidden'); });
+            $$('#mobile-menu a[href^="/"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function() { menu.classList.add('hidden'); });
+            });
+        }
+    });
+})();
     </script>
 </body>
 </html>

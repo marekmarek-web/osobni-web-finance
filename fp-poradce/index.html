@@ -75,18 +75,18 @@
             cursor: default;
         }
 
-        /* Glass Header classes */
         .glass-header-top {
-            background-color: #0a0f29;
+            background-color: rgba(10, 15, 41, 0.1);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: white;
         }
         .glass-header-scrolled {
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid rgba(11, 58, 122, 0.1);
-            color: #0a0f29;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
         .nav-link { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; padding: 0.6rem 1rem; border-radius: 9999px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
         .glass-header-scrolled #logo-text,
@@ -538,7 +538,7 @@
                 <!-- Logo -->
                 <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
                     <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden relative">
-                        <img id="logo-img" src="images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('flex');">
+                        <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('flex');">
                         <span id="logo-fallback" class="hidden absolute inset-0 flex items-center justify-center text-lg font-bold text-brand-dark">M</span>
                     </div>
                     <div class="flex flex-col leading-tight">
@@ -1595,8 +1595,7 @@
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded overflow-hidden relative shrink-0">
-                            <img src="images/logo_M_white.png" alt="M" class="w-5 h-5 object-contain invert" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                            <span class="hidden text-lg font-bold absolute inset-0 flex items-center justify-center">M</span>
+                            <img src="../logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
                         </div>
                         <span id="footer-display-name" class="text-xl font-bold text-white">Marek Marek.</span>
                     </div>

@@ -19,10 +19,18 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0f172a', // Tmavě modrá
-                        secondary: '#3b82f6', // Jasně modrá
-                        accent: '#f97316',  // Oranžová
-                        light: '#f0f9ff',   // Pozadí
+                        primary: '#0f172a',
+                        secondary: '#3b82f6',
+                        accent: '#f97316',
+                        light: '#f0f9ff',
+                        brand: {
+                            dark: '#0a0f29',
+                            gold: '#fbbf24',
+                            lightgold: '#fde047',
+                            main: '#0B3A7A',
+                            light: '#EAF3FF',
+                            border: '#D6E6FF',
+                        },
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -33,57 +41,102 @@
     </script>
     <style>
         body { overflow-x: hidden; }
+        .glass-header-top {
+            background-color: rgba(10, 15, 41, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-header-scrolled {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        }
+        .nav-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
         @media (max-width: 767px) { main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; } }
         @supports (padding: env(safe-area-inset-bottom)) { #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); } }
     </style>
 </head>
 <body class="bg-light text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- NAVIGACE -->
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-blue-100 shadow-sm transition-all duration-300">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-24">
-                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <!-- Logo M -->
-                    <div class="w-10 h-10 bg-primary text-white rounded flex items-center justify-center font-bold text-xl shadow-md">M</div>
-                    <div class="flex flex-col">
-                        <span class="text-xl font-bold text-primary leading-none tracking-tight">Marek Marek<span class="text-accent">.</span></span>
-                        <span class="text-xs text-slate-500 font-medium tracking-wide uppercase">Finanční partner</span>
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
                 </div>
                 
-                <div class="hidden xl:flex items-center space-x-6 text-sm font-semibold">
-                    <a href="#sluzby" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">Služby</a>
-                    <a href="#omne" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">O mně</a>
-                    <a href="#kariera" class="text-slate-600 hover:text-primary transition-colors uppercase tracking-wide">Kariéra</a>
-                    
-                    <div class="h-4 w-px bg-slate-300 mx-2"></div>
-                    
-                    <a href="#soukromi" class="text-primary hover:text-secondary transition-colors">Soukromí klienti</a>
-                    <a href="#firmy" class="text-primary hover:text-secondary transition-colors">Podnikatelé a firmy</a>
-                    
-                    <a href="#kontakt" class="ml-4 bg-accent text-white hover:bg-orange-600 px-6 py-3 rounded-full font-bold shadow-lg shadow-orange-500/20 transition-all transform hover:-translate-y-0.5">
-                        Kontakt
-                    </a>
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
                 </div>
-                
-                <div class="xl:hidden flex items-center gap-4">
-                    <a href="#kontakt" class="text-xs font-bold text-white bg-accent px-3 py-2 rounded-full shadow-md">Kontakt</a>
-                    <button id="mobile-menu-btn" class="text-primary focus:outline-none p-2">
+
+                <!-- Hamburger -->
+                <div class="flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
-        
-        <div id="mobile-menu" class="hidden xl:hidden bg-white border-t border-blue-100 absolute w-full shadow-xl">
-            <div class="px-4 pt-4 pb-6 space-y-2">
-                <a href="#sluzby" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">Služby</a>
-                <a href="#omne" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">O mně</a>
-                <a href="#kariera" class="block py-3 text-base font-medium border-b border-slate-50 text-slate-700 hover:text-primary mobile-link">Kariéra</a>
-                <a href="#soukromi" class="block py-3 text-base font-bold text-primary border-b border-slate-50 mobile-link">Soukromí klienti</a>
-                <a href="#firmy" class="block py-3 text-base font-bold text-primary border-b border-slate-50 mobile-link">Podnikatelé a firmy</a>
-                <a href="#kontakt" class="block py-3 text-base font-bold text-accent mt-4 mobile-link">Kontaktovat</a>
+
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -226,54 +279,137 @@
         </div>
     </section>
 
-    <!-- PATIČKA -->
-    <footer id="kontakt" class="mt-auto py-12 bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
+    <!-- FOOTER -->
+    <footer id="kontakt" class="bg-brand-dark text-slate-400 py-16 border-t border-white/10 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Marek Marek</h3>
-                    <p class="mb-4">Váš partner pro finanční zdraví.</p>
-                    <div class="flex items-center gap-3">
-                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-facebook fa-lg"></i></a>
-                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="text-slate-400 hover:text-white"><i class="fab fa-instagram fa-lg"></i></a>
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
+                            <img src="../logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
+                        </div>
+                        <span class="text-xl font-bold text-white">Marek Marek.</span>
+                    </div>
+                    <p class="text-sm text-slate-400 mb-4">
+                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
                     </div>
                 </div>
+
                 <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Kontakt</h3>
-                    <p class="mb-2"><i class="fas fa-map-marker-alt mr-2 text-accent"></i> Jana z Dražic 99, Roudnice n. L.</p>
-                    <p class="mb-2"><a href="mailto:kontakt@marek-marek.cz" class="hover:text-white"><i class="fas fa-envelope mr-2 text-accent"></i> kontakt@marek-marek.cz</a></p>
-                    <p class="mb-2"><a href="tel:+420778511166" class="hover:text-white"><i class="fas fa-phone mr-2 text-accent"></i> +420 778 511 166</a></p>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
+                        <li><a href="/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
+                        <li><a href="/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
+                        <li><a href="/financni-plan/" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
+                        <li><a href="/podnikatele/" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
+                    </ul>
                 </div>
+
                 <div>
-                    <h3 class="text-white font-bold text-lg mb-4">Rychlé odkazy</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#sluzby" class="hover:text-accent">Služby</a></li>
-                        <li><a href="#firmy" class="hover:text-accent">Pro firmy</a></li>
-                        <li><a href="#soukromi" class="hover:text-accent">Soukromí klienti</a></li>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
+                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
+                            <span>+420 778 511 166</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
+                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
+                        <li><a href="/cookies/" class="hover:text-white transition">Cookies</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-slate-800 mt-8 pt-8 text-center text-xs">
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
                 <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-        const links = document.querySelectorAll('.mobile-link');
+        function openModal() { document.getElementById('kontakt')?.scrollIntoView({ behavior: 'smooth' }); }
+    </script>
+    <script>
+(function() {
+    var byId = function(id) { return document.getElementById(id); };
+    var $$ = function(sel) { return document.querySelectorAll(sel); };
 
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
+    function updateHeader() {
+        var navbar = byId('navbar');
+        if (!navbar) return;
 
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
+        var logoIcon = byId('logo-icon');
+        var logoImg = byId('logo-img');
+        var logoText = byId('logo-text');
+        var logoSubtext = byId('logo-subtext');
+        var navLinks = $$('.nav-link');
+        var dividers = $$('[id^="nav-divider"]');
+
+        if (window.scrollY > 20) {
+            navbar.classList.add('glass-header-scrolled');
+            navbar.classList.remove('glass-header-top');
+            if (logoIcon) { logoIcon.classList.remove('bg-white', 'text-brand-dark'); logoIcon.classList.add('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.remove('invert');
+            if (logoText) { logoText.classList.remove('text-white'); logoText.classList.add('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.remove('text-slate-300'); logoSubtext.classList.add('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.remove('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.add('text-brand-main', 'hover:bg-brand-light');
             });
-        });
+            dividers.forEach(function(div) {
+                div.classList.remove('bg-white/20');
+                div.classList.add('bg-brand-border');
+            });
+        } else {
+            navbar.classList.remove('glass-header-scrolled');
+            navbar.classList.add('glass-header-top');
+            if (logoIcon) { logoIcon.classList.add('bg-white', 'text-brand-dark'); logoIcon.classList.remove('bg-brand-dark', 'text-white'); }
+            if (logoImg) logoImg.classList.add('invert');
+            if (logoText) { logoText.classList.add('text-white'); logoText.classList.remove('text-brand-dark'); }
+            if (logoSubtext) { logoSubtext.classList.add('text-slate-300'); logoSubtext.classList.remove('text-slate-500'); }
+            navLinks.forEach(function(link) {
+                link.classList.add('text-white', 'hover:bg-white/10', 'hover:backdrop-blur-md');
+                link.classList.remove('text-brand-main', 'hover:bg-brand-light');
+            });
+            dividers.forEach(function(div) {
+                div.classList.add('bg-white/20');
+                div.classList.remove('bg-brand-border');
+            });
+        }
+    }
+
+    window.addEventListener('scroll', updateHeader);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateHeader();
+        var btn = byId('mobile-menu-btn');
+        var menu = byId('mobile-menu');
+        if (btn && menu) {
+            btn.addEventListener('click', function() { menu.classList.toggle('hidden'); });
+            $$('#mobile-menu a[href^="/"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function() { menu.classList.add('hidden'); });
+            });
+        }
+    });
+})();
     </script>
 </body>
 </html>
