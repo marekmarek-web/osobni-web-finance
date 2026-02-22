@@ -1,0 +1,172 @@
+/* Neumorphic / soft UI styly – tile, button, round (převzato a převedeno z SCSS) */
+@import url("https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe&display=swap");
+
+@media screen and (max-width: 600px) {
+  html.neumorphic-root {
+    font-size: 12px;
+  }
+}
+
+:root {
+  --height: 1;
+}
+
+/* Použití: přidej třídu .neumorphic-wrap na kontejner, kde chceš tyto styly */
+.neumorphic-wrap {
+  --neumorphic-light: rgba(255, 255, 255, 0.5);
+  --neumorphic-shadow: rgba(0, 0, 0, 0.5);
+}
+
+.neumorphic-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+  background-color: #ddd;
+  overflow: hidden;
+  padding: 1rem;
+  font-size: 1.5rem;
+  color: #333;
+  line-height: 0.9;
+  font-family: "Alumni Sans Pinstripe", sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.neumorphic-wrap .tile {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 1rem;
+}
+
+.neumorphic-wrap .tile::before,
+.neumorphic-wrap .tile::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+}
+
+.neumorphic-wrap .tile--circle {
+  border-radius: 50%;
+}
+
+.neumorphic-wrap .tile--circle::before {
+  border-radius: 50%;
+}
+
+.neumorphic-wrap .padded {
+  padding: 0.1rem;
+}
+
+.neumorphic-wrap .up {
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) calc(0.33rem * var(--height)) calc(0.33rem * var(--height)) 0.6rem;
+}
+
+.neumorphic-wrap .up::before {
+  box-shadow: var(--neumorphic-light, rgba(255, 255, 255, 0.5)) calc(-0.33rem * var(--height)) calc(-0.33rem * var(--height)) 0.6rem;
+}
+
+.neumorphic-wrap .down {
+  box-shadow: inset var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) calc(0.25rem * var(--height)) calc(0.25rem * var(--height)) 0.6rem;
+}
+
+.neumorphic-wrap .down::before {
+  box-shadow: inset var(--neumorphic-light, rgba(255, 255, 255, 0.5)) calc(-0.25rem * var(--height)) calc(-0.25rem * var(--height)) 0.6rem;
+}
+
+.neumorphic-wrap .button {
+  cursor: pointer;
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) calc(0.33rem * var(--height)) calc(0.33rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-in;
+}
+
+.neumorphic-wrap .button::before {
+  box-shadow: var(--neumorphic-light, rgba(255, 255, 255, 0.5)) calc(-0.33rem * var(--height)) calc(-0.33rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-in;
+}
+
+.neumorphic-wrap .button span {
+  transition: transform 0.3s ease-in-out;
+}
+
+.neumorphic-wrap .button > div {
+  box-shadow: inset var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) 0 0 0;
+  transition: box-shadow 0.15s ease-in;
+}
+
+.neumorphic-wrap .button > div::before {
+  box-shadow: inset var(--neumorphic-light, rgba(255, 255, 255, 0.5)) 0 0 0;
+  transition: box-shadow 0.15s ease-in;
+}
+
+.neumorphic-wrap .button:hover {
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) 0 0 0;
+  transition: box-shadow 0.15s ease-out;
+}
+
+.neumorphic-wrap .button:hover::before {
+  box-shadow: var(--neumorphic-light, rgba(255, 255, 255, 0.5)) 0 0 0;
+  transition: box-shadow 0.15s ease-out;
+}
+
+.neumorphic-wrap .button:hover > div {
+  box-shadow: inset rgba(0, 0, 0, 0.5) calc(0.25rem * var(--height)) calc(0.25rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-out;
+}
+
+.neumorphic-wrap .button:hover > div::before {
+  box-shadow: inset var(--neumorphic-light, rgba(255, 255, 255, 0.5)) calc(-0.25rem * var(--height)) calc(-0.25rem * var(--height)) 0.6rem;
+  transition: box-shadow 0.15s 0.15s ease-out;
+}
+
+.neumorphic-wrap .button:hover span {
+  transform: translateY(0.1516rem);
+}
+
+.neumorphic-wrap .round {
+  background: radial-gradient(circle at 40% 40%, var(--neumorphic-light, rgba(255, 255, 255, 0.5)), transparent, var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)));
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) 0.33rem 0.33rem 0.6rem;
+}
+
+.neumorphic-wrap .round-down {
+  background: radial-gradient(circle at 75% 75%, var(--neumorphic-light, rgba(255, 255, 255, 0.5)), transparent, var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)));
+}
+
+.neumorphic-wrap .round-button {
+  cursor: pointer;
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--neumorphic-light, rgba(255, 255, 255, 0.5)) 15%,
+    transparent 30%,
+    var(--neumorphic-shadow, rgba(0, 0, 0, 0.5))
+  );
+  background-position: -4rem -4rem;
+  background-size: 200% 200%;
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) 0.33rem 0.33rem 0.6rem;
+  transition: background 0.3s ease-in-out, box-shadow 0.15s 0.15s ease-in-out;
+}
+
+.neumorphic-wrap .round-button span {
+  transition: transform 0.3s ease-in-out;
+}
+
+.neumorphic-wrap .round-button:hover {
+  background-position: -2rem -2rem;
+  box-shadow: var(--neumorphic-shadow, rgba(0, 0, 0, 0.5)) 0 0 0;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.neumorphic-wrap .round-button:hover span {
+  transform: translateY(0.1516rem);
+}

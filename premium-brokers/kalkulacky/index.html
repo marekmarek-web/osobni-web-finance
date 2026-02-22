@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulačky | Premium Brokers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { navy: '#1D2354', cyan: '#4FC6F2', background: '#F8FAFC', text: '#0F172A', muted: '#475569', border: '#E2E8F0' }
+          },
+          maxWidth: { content: '1120px' }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="bg-brand-background text-brand-text antialiased">
+  <header class="fixed top-4 left-0 right-0 z-50" role="banner">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="rounded-full border border-slate-200/60 bg-white/70 backdrop-blur-xl shadow-sm px-3 py-2 flex justify-between items-center gap-3">
+      <a href="https://www.marekpribramsky.cz/" class="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1" aria-label="Marek Příbramský – úvodní stránka">
+        <span class="w-2 h-2 rounded-full bg-[#4FC6F2]" aria-hidden="true"></span>
+        <span>Marek Příbramský</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-1" aria-label="Hlavní navigace">
+        <a href="https://www.marekpribramsky.cz/#sluzby" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Služby</a>
+        <a href="https://www.marekpribramsky.cz/#spoluprace" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Spolupráce</a>
+        <a href="https://www.marekpribramsky.cz/blog" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Blog</a>
+        <div class="relative group" aria-haspopup="true" aria-expanded="false">
+          <button type="button" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">
+            Nástroje
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 rounded-2xl border border-slate-200/70 bg-white/90 backdrop-blur-xl shadow-lg p-2 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50">
+            <a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Hypoteční kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Měsíční splátka a náklady</span></a>
+            <a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Investiční kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Projekce zhodnocení</span></a>
+            <a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Kalkulačka životního pojištění</span><span class="block text-xs text-slate-500 mt-0.5">Potřebné krytí</span></a>
+            <a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Penzijní kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Státní příspěvky</span></a>
+            <div class="border-t border-slate-100 mt-2 pt-2"><a href="https://www.marekpribramsky.cz/kalkulacky" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition font-semibold text-[#1D2354]">Všechny kalkulačky →</a></div>
+          </div>
+        </div>
+        <a href="https://www.marekpribramsky.cz/#lead-form" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Kontakt</a>
+      </nav>
+      <a href="https://www.marekpribramsky.cz/kontakt" class="flex items-center gap-2 rounded-full bg-[#1D2354] text-white px-4 py-2 text-sm font-semibold hover:opacity-95 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1 shrink-0">
+        <span>Ozvat se</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+  <main class="pt-24 pb-20 lg:pb-28">
+    <div class="max-w-content mx-auto px-4 sm:px-6">
+      <div class="text-center mb-16">
+        <h1 class="section-title font-bold text-brand-text mb-4">Kalkulačky</h1>
+        <p class="text-brand-muted max-w-2xl mx-auto text-lg">Pomůcky pro orientaci v investicích, hypotékách, pojištění a penzi.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="block bg-white rounded-2xl border border-brand-border p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-14 h-14 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6">
+            <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          </div>
+          <h2 class="text-xl font-bold text-brand-text mb-2">Hypoteční kalkulačka</h2>
+          <p class="text-brand-muted text-sm">Spočítejte si měsíční splátku a celkové náklady hypotéky.</p>
+        </a>
+        <a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="block bg-white rounded-2xl border border-brand-border p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-14 h-14 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6">
+            <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+          </div>
+          <h2 class="text-xl font-bold text-brand-text mb-2">Investiční kalkulačka</h2>
+          <p class="text-brand-muted text-sm">Projekce zhodnocení kapitálu v čase.</p>
+        </a>
+        <a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="block bg-white rounded-2xl border border-brand-border p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-14 h-14 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6">
+            <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          </div>
+          <h2 class="text-xl font-bold text-brand-text mb-2">Kalkulačka životního pojištění</h2>
+          <p class="text-brand-muted text-sm">Odhad potřebného krytí pro rodinu.</p>
+        </a>
+        <a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="block bg-white rounded-2xl border border-brand-border p-8 shadow-sm hover:shadow-md transition-shadow">
+          <div class="w-14 h-14 rounded-xl bg-brand-cyan/10 flex items-center justify-center mb-6">
+            <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h2 class="text-xl font-bold text-brand-text mb-2">Penzijní kalkulačka</h2>
+          <p class="text-brand-muted text-sm">Výpočet doplňkového penzijního spoření a státních příspěvků.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-brand-navy text-white py-16" role="contentinfo">
+  <div class="footer-inner mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-12 mb-12">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2 mb-4">
+          <a href="https://www.marekpribramsky.cz/" class="shrink-0"><img src="../assets/img/logos/pb-logo-no-bg.png" alt="Premium Brokers" class="h-10 w-auto" /></a>
+          <span class="font-bold text-xl">Marek Příbramský</span>
+        </div>
+        <p class="text-slate-300 text-sm max-w-sm">Privátní finanční plánování pro lidi, kteří chtějí mít klid. Pomáhám rodinám a podnikatelům sestavit strategie, které dávají smysl.</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Rychlé odkazy</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://www.marekpribramsky.cz/#sluzby" class="text-slate-300 hover:text-white">Služby</a></li>
+          <li><a href="https://www.marekpribramsky.cz/blog" class="text-slate-300 hover:text-white">Blog</a></li>
+          <li><a href="https://www.marekpribramsky.cz/spoluprace" class="text-slate-300 hover:text-white">Spolupráce</a></li>
+          <li><a href="https://www.marekpribramsky.cz/kontakt" class="text-slate-300 hover:text-white">Kontakt</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Nástroje</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://www.marekpribramsky.cz/kalkulacky" class="text-slate-300 hover:text-white">Kalkulačky</a></li>
+          <li><a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="text-slate-300 hover:text-white">Hypoteční kalkulačka</a></li>
+          <li><a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="text-slate-300 hover:text-white">Investiční kalkulačka</a></li>
+          <li><a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="text-slate-300 hover:text-white">Životní pojištění</a></li>
+          <li><a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="text-slate-300 hover:text-white">Penzijní kalkulačka</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Kontakt</h4>
+        <ul class="space-y-3 text-sm text-slate-300">
+          <li><a href="tel:+420778511166" class="hover:text-white">+420 778 511 166</a></li>
+          <li><a href="mailto:info@premiumbrokers.cz" class="hover:text-white">info@premiumbrokers.cz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+      <p>&copy; 2025 Marek Příbramský. Všechna práva vyhrazena.</p>
+      <div class="flex gap-6">
+        <a href="https://www.marekpribramsky.cz/gdpr" class="hover:text-white">Ochrana osobních údajů</a>
+        <a href="https://www.marekpribramsky.cz/cookies" class="hover:text-white">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/anim.js"></script>
+</body>
+</html>

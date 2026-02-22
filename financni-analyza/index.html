@@ -76,10 +76,10 @@
         html, body { overflow-x: hidden; }
 
         .glass-header-top {
-            background-color: rgba(10, 15, 41, 0.1);
+            background-color: #0a0f29;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-header-scrolled {
             background-color: rgba(255, 255, 255, 0.85);
@@ -89,6 +89,14 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
         .nav-link { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; padding: 0.6rem 1rem; border-radius: 9999px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
+        .nav-dropdown-panel { visibility: hidden; opacity: 0; transform: translateY(-4px); transition: visibility 0.2s, opacity 0.2s, transform 0.2s; }
+        .nav-dropdown-group:hover .nav-dropdown-panel { visibility: visible; opacity: 1; transform: translateY(0); }
+        .nav-dropdown-group:hover .nav-dropdown-trigger { background: rgba(255,255,255,0.1); }
+        .glass-header-scrolled .nav-dropdown-group:hover .nav-dropdown-trigger { background: rgba(11, 58, 122, 0.08); }
+        .glass-header-scrolled .nav-dropdown-trigger { color: #0B3A7A; }
+        .glass-header-scrolled .nav-dropdown-trigger svg { color: #64748b; }
+        .nav-inner { padding-top: env(safe-area-inset-top, 0px); }
+        body.header-offset { padding-top: calc(5rem + env(safe-area-inset-top, 0px)); }
         .glass-header-scrolled #logo-text,
         .glass-header-scrolled #logo-subtext { color: #0a0f29 !important; }
         .glass-header-scrolled .nav-link { color: #0a0f29 !important; }
@@ -541,14 +549,12 @@
     </style>
     <!-- END: STYLES -->
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col header-offset">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="nav-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center gap-4">
-                
-                <!-- Logo -->
                 <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
                     <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
                         <img id="logo-img" src="../logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
@@ -558,57 +564,44 @@
                         <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
                     </div>
                 </div>
-                
-                <!-- Center Menu -->
                 <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
                     <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
                     <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
                     <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
                     <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
                     <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
-                </div>
-
-                <!-- Hamburger -->
-                <div class="flex items-center">
-                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile/Drawer Menu Panel -->
-        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
-            <div class="px-4 pt-6 space-y-4">
-                <div>
-                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
-                    <div class="space-y-1">
-                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
-                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
-                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    <div id="nav-divider-3" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <div class="nav-dropdown-group relative" aria-haspopup="true">
+                        <span class="nav-dropdown-trigger nav-link text-white hover:bg-white/10 cursor-pointer flex items-center gap-1 rounded-full px-4 py-2.5 transition-colors">
+                            Nástroje
+                            <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </span>
+                        <div class="nav-dropdown-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 rounded-2xl border border-slate-200/70 bg-white/95 backdrop-blur-xl shadow-lg p-2 z-50 pointer-events-auto">
+                            <a href="/financni-analyza/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
+                                <span class="font-medium text-slate-800">Finanční analýza</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">AI nástroj – majetek, cíle, portfolio</span>
+                            </a>
+                            <a href="/hypotecnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
+                                <span class="font-medium text-slate-800">Hypoteční kalkulačka</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Měsíční splátka a náklady</span>
+                            </a>
+                            <a href="/investicnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
+                                <span class="font-medium text-slate-800">Investiční kalkulačka</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Projekce zhodnocení</span>
+                            </a>
+                            <a href="/zivotnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
+                                <span class="font-medium text-slate-800">Kalkulačka životního pojištění</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Potřebné krytí</span>
+                            </a>
+                            <a href="/penzijnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
+                                <span class="font-medium text-slate-800">Penzijní kalkulačka</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Státní příspěvky</span>
+                            </a>
+                            <div class="border-t border-slate-100 mt-2 pt-2">
+                                <a href="/#sluzby" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition font-semibold text-brand-main">Všechny kalkulačky →</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <div>
-                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
-                    <div class="space-y-2">
-                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
-                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
-                        </a>
-                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
-                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
-                        </a>
-                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
-                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
-                        </a>
-                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-[#0a0f29] font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50 mobile-nav-link">
-                            <i class="fas fa-piggy-bank w-5 h-5 text-[#0B3A7A] mr-3"></i> Penzijní kalkulačka
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="pt-8 px-4">
-                    <a href="javascript:void(0)" onclick="openModal()" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
                 </div>
             </div>
         </div>
@@ -1757,14 +1750,6 @@
     window.addEventListener('scroll', updateHeader);
     document.addEventListener('DOMContentLoaded', function() {
         updateHeader();
-        var btn = byId('mobile-menu-btn');
-        var menu = byId('mobile-menu');
-        if (btn && menu) {
-            btn.addEventListener('click', function() { menu.classList.toggle('hidden'); });
-            $$('#mobile-menu a[href^="/"]').forEach(function(anchor) {
-                anchor.addEventListener('click', function() { menu.classList.add('hidden'); });
-            });
-        }
     });
 })();
     </script>

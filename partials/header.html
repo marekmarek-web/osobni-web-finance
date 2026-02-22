@@ -1,0 +1,71 @@
+    <!-- Navigation (sjednoceno z main index) -->
+    <nav class="fixed w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
+                        <img id="logo-img" src="/images/logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
+                        <span id="logo-fallback" class="hidden absolute inset-0 flex items-center justify-center text-lg font-bold text-brand-dark">M</span>
+                    </div>
+                    <div class="flex flex-col leading-tight">
+                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
+                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
+                    </div>
+                </div>
+                
+                <!-- Center Menu -->
+                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
+                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
+                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
+                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
+                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
+                </div>
+
+                <!-- Hamburger -->
+                <div class="flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-gold hover:text-brand-lightgold focus:outline-none p-2 transition-colors rounded-full hover:bg-white/10">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile/Drawer Menu Panel -->
+        <div id="mobile-menu" class="hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full shadow-2xl h-screen overflow-y-auto pb-20 z-40 top-[80px]">
+            <div class="px-4 pt-6 space-y-4">
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Hlavní nabídka</p>
+                    <div class="space-y-1">
+                        <a href="/#sluzby" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Služby</a>
+                        <a href="/financni-plan/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Rodiny a jednotlivci</a>
+                        <a href="/podnikatele/" class="block px-4 py-3 text-lg font-bold text-slate-800 rounded-xl hover:bg-slate-50">Podnikatelé a firmy</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Nástroje</p>
+                    <div class="space-y-2">
+                        <a href="/hypotecnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-brand-light/50 rounded-xl border border-brand-border/50">
+                            <i class="fas fa-calculator text-brand-gold mr-3"></i> Hypoteční kalkulačka
+                        </a>
+                        <a href="/investicnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-chart-line text-brand-main mr-3"></i> Investiční kalkulačka
+                        </a>
+                        <a href="/zivotnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-heart-pulse text-red-500 mr-3"></i> Kalkulačka životního pojištění
+                        </a>
+                        <a href="/penzijnikalkulacka/" class="flex items-center px-4 py-3 text-brand-dark font-bold bg-white border border-slate-100 rounded-xl hover:bg-slate-50">
+                            <i class="fas fa-piggy-bank w-5 h-5 text-brand-main mr-3"></i> Penzijní kalkulačka
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="pt-8 px-4">
+                    <a href="/#kontakt" class="block w-full py-4 bg-brand-dark text-white text-center rounded-xl font-bold shadow-lg shadow-brand-dark/20">Kontaktovat</a>
+                </div>
+            </div>
+        </div>
+    </nav>

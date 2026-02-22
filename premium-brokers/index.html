@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Marek Příbramský – Privátní finanční plánování</title>
+  <meta name="description" content="Marek Příbramský – finanční poradce. Pomáhám rodinám a podnikatelům sestavit strategie, které dávají smysl. Investice, hypotéky, pojištění.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        screens: {
+          'xs': '375px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          spacing: {
+            'section': 'clamp(3rem, 6vw, 7rem)',
+            'section-sm': 'clamp(2.5rem, 5vw, 5rem)',
+          },
+          colors: {
+            brand: {
+              navy: '#1D2354',
+              navyLight: '#2a3366',
+              dark: '#0a0f29',
+              cyan: '#4FC6F2',
+              gold: '#fbbf24',
+              background: '#F8FAFC',
+              white: '#FFFFFF',
+              text: '#0F172A',
+              muted: '#475569',
+              border: '#E2E8F0',
+            }
+          },
+          maxWidth: { content: '1120px' },
+          animation: { shimmer: 'shimmer 2.5s infinite' },
+          keyframes: { shimmer: { '0%': { transform: 'translateX(-150%) skewX(-20deg)' }, '100%': { transform: 'translateX(150%) skewX(-20deg)' } } }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* CTA – zelený gradient jako na kalkulačkách + neuromorphic stín */
+    .lead-cta-btn {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border: 1px solid rgba(22, 163, 74, 0.45);
+      box-shadow: 0 10px 24px rgba(22, 163, 74, 0.28), inset 0 1px 0 rgba(255,255,255,0.28);
+      transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .lead-cta-btn:hover:not(:disabled) {
+      filter: brightness(1.04);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(22, 163, 74, 0.35), inset 0 1px 0 rgba(255,255,255,0.28);
+    }
+    .lead-cta-btn:disabled { opacity: 0.75; cursor: not-allowed; }
+  </style>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Kolik stojí úvodní konzultace?", "acceptedAnswer": { "@type": "Answer", "text": "Úvodní konzultace je nezávazná a bez poplatku. Na konci si řekneme, zda dává spolupráce smysl a jaký bude další postup." } },
+      { "@type": "Question", "name": "Platí se finanční plán jednorázově, nebo průběžně?", "acceptedAnswer": { "@type": "Answer", "text": "Záleží na rozsahu spolupráce. Někdy stačí jednorázová analýza + nastavení, jindy dává smysl dlouhodobý servis (pravidelná kontrola, úpravy, změny smluv)." } },
+      { "@type": "Question", "name": "Jak poznám, že se mi to vyplatí?", "acceptedAnswer": { "@type": "Answer", "text": "V praxi nejčastěji ušetříme na zbytečných/poplatkově drahých produktech, nastavíme rizika (pojistky) a cíleně srovnáme investice a hypotéku. Výsledky ukazujeme na konkrétních číslech." } },
+      { "@type": "Question", "name": "Co si mám připravit na první schůzku?", "acceptedAnswer": { "@type": "Answer", "text": "Stačí stručně: příjmy/výdaje, cíle (např. bydlení, rezerva, důchod) a jaké máte smlouvy (investice, pojistky, hypotéka). Když něco nemáte, dořešíme to spolu." } },
+      { "@type": "Question", "name": "Za jak dlouho mám hotový finanční plán?", "acceptedAnswer": { "@type": "Answer", "text": "Typicky v řádu dnů až jednotek týdnů podle složitosti. Vždy nejdřív uděláme rychlou orientaci a priority, a teprve pak detail." } },
+      { "@type": "Question", "name": "Musím něco podepisovat hned na první schůzce?", "acceptedAnswer": { "@type": "Answer", "text": "Ne. První konzultace je nezávazná. Pokud se rozhodnete pokračovat, vysvětlíme si konkrétní kroky a co který podpis znamená." } },
+      { "@type": "Question", "name": "Jak funguje online podpis a ověření?", "acceptedAnswer": { "@type": "Answer", "text": "Většinu věcí lze řešit online. Vysvětlím postup, pošlu podklady a vy podepíšete bezpečně přes ověřený proces dané instituce." } },
+      { "@type": "Question", "name": "Má smysl řešit finance, když už mám investice/pojistky/hypotéku?", "acceptedAnswer": { "@type": "Answer", "text": "Ano — často se dá zlepšit nákladovost, krytí rizik a nastavení strategie. Někdy stačí drobné úpravy, jindy dává smysl změna struktury." } },
+      { "@type": "Question", "name": "Budete mi hned rušit stávající smlouvy?", "acceptedAnswer": { "@type": "Answer", "text": "Ne. Nejdřív audit, pak doporučení s důvody a dopady. Rozhodnutí je vždy na vás." } },
+      { "@type": "Question", "name": "Jak často děláte revizi finančního plánu?", "acceptedAnswer": { "@type": "Answer", "text": "Standardně 1× ročně nebo při změně situace (dítě, bydlení, podnikání, vyšší příjem, změna hypotéky)." } },
+      { "@type": "Question", "name": "Co přesně se při revizi kontroluje?", "acceptedAnswer": { "@type": "Answer", "text": "Rezerva, cashflow, pojistná rizika, investiční strategie, hypotéka a cíle. Cílem je, aby plán odpovídal realitě a byl dlouhodobě funkční." } }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-white text-brand-text antialiased page-loaded">
+
+  <header id="main-header" class="header-entry fixed top-0 left-0 right-0 z-50 transform -translate-y-full transition-transform duration-500 ease-out" role="banner">
+  <div class="header-inner max-w-6xl mx-auto px-4 pt-4 pb-2">
+    <div class="bg-white rounded-full border border-slate-200 shadow-sm px-3 py-2 flex justify-between items-center gap-3">
+      <a href="https://www.marekpribramsky.cz/" class="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1 shrink-0" aria-label="Úvodní stránka">
+        <img src="assets/img/logos/pb-logo-no-bg.png" alt="Premium Brokers" class="h-8 w-auto" />
+      </a>
+      <button id="mobile-menu-btn" type="button" class="hamburger-btn md:hidden flex items-center justify-center w-11 h-11 rounded-full text-slate-700 hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40" aria-label="Otevřít menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav id="mobile-menu" class="mobile-nav-drawer fixed inset-0 z-40 md:hidden" aria-label="Mobilní navigace" aria-hidden="true">
+        <div class="mobile-nav-backdrop absolute inset-0 bg-black/40 backdrop-blur-sm" data-close-menu aria-hidden="true"></div>
+        <div class="mobile-nav-panel absolute top-0 right-0 w-full max-w-sm h-full bg-white shadow-2xl flex flex-col pt-20 px-6 pb-8">
+          <a href="https://www.marekpribramsky.cz/#proc-ja" class="mobile-nav-link py-3 text-lg font-medium text-slate-800 border-b border-slate-100">O mně</a>
+          <a href="https://www.marekpribramsky.cz/#sluzby" class="mobile-nav-link py-3 text-lg font-medium text-slate-800 border-b border-slate-100">Služby</a>
+          <a href="https://www.marekpribramsky.cz/#spoluprace" class="mobile-nav-link py-3 text-lg font-medium text-slate-800 border-b border-slate-100">Spolupráce</a>
+          <a href="https://www.marekpribramsky.cz/kalkulacky" class="mobile-nav-link py-3 text-lg font-medium text-slate-800 border-b border-slate-100">Kalkulačky</a>
+          <a href="https://www.marekpribramsky.cz/blog" class="mobile-nav-link py-3 text-lg font-medium text-slate-800 border-b border-slate-100">Blog</a>
+          <a href="https://www.marekpribramsky.cz/kontakt" class="mobile-nav-link lead-cta-btn mt-4 py-4 rounded-xl text-white font-semibold text-center no-underline">Kontaktujte mě</a>
+        </div>
+      </nav>
+      <nav class="hidden md:flex items-center gap-1" aria-label="Hlavní navigace">
+        <a href="https://www.marekpribramsky.cz/#proc-ja" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">O mně</a>
+        <a href="https://www.marekpribramsky.cz/#sluzby" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Služby</a>
+        <a href="https://www.marekpribramsky.cz/#spoluprace" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Spolupráce</a>
+        <!-- Nástroje dropdown -->
+        <div class="relative group" aria-haspopup="true">
+          <button type="button" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">
+            Nástroje
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 rounded-2xl border border-slate-200/70 bg-white/90 backdrop-blur-xl shadow-lg p-2 invisible opacity-0 translate-y-1 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50">
+            <a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Hypoteční kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Měsíční splátka a náklady</span></a>
+            <a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Investiční kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Projekce zhodnocení</span></a>
+            <a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Kalkulačka životního pojištění</span><span class="block text-xs text-slate-500 mt-0.5">Potřebné krytí</span></a>
+            <a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition"><span class="font-medium text-slate-800">Penzijní kalkulačka</span><span class="block text-xs text-slate-500 mt-0.5">Státní příspěvky</span></a>
+            <div class="border-t border-slate-100 mt-2 pt-2"><a href="https://www.marekpribramsky.cz/kalkulacky" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition font-semibold text-[#1D2354]">Všechny kalkulačky →</a></div>
+          </div>
+        </div>
+        <a href="https://www.marekpribramsky.cz/blog" class="rounded-full px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white/60 hover:text-slate-900 transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1">Blog</a>
+      </nav>
+      <a href="https://www.marekpribramsky.cz/kontakt" class="header-cta lead-cta-btn flex items-center justify-center gap-2 rounded-full text-white px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#4FC6F2]/40 focus:ring-offset-1 shrink-0 no-underline">
+        <span>Kontaktujte mě</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+  <main class="main-with-header">
+    <!-- HERO – jen fotka, bez textu -->
+    <section id="hero" class="relative overflow-hidden rounded-b-[28px] bg-white min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-screen pt-10 md:pt-20">
+      <!-- Background image – celá fotka -->
+      <div class="absolute inset-0 z-0 flex items-center justify-center">
+        <div class="hero-photo-wrapper relative w-full h-full flex items-center justify-center">
+          <img src="assets/img/hero/sitting2.png" alt="Marek Příbramský" class="max-h-full max-w-full w-auto h-auto object-contain object-center">
+        </div>
+      </div>
+      <!-- Wipe animace -->
+      <div id="page-wipe" aria-hidden="true">
+        <div class="wipe-logo" aria-hidden="true">
+          <img src="assets/img/logos/pb-logo-no-bg.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- HERO TEXT POD FOTKOU -->
+    <section class="py-12 sm:py-16 md:py-20 lg:py-24 bg-white text-center relative">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] tracking-tight text-brand-text mb-5 sm:mb-6">
+          Jsem <span class="text-gradient-shimmer">Marek Příbramský</span>
+        </h1>
+        <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-brand-muted font-medium mb-6 sm:mb-8">Pomůžu Vám splnit Vaše cíle.</p>
+        <!-- Signature efekt -->
+        <div class="signature-line"></div>
+      </div>
+      <a href="#muj-postup" class="absolute bottom-8 left-1/2 -translate-x-1/2 inline-flex text-brand-navy/60 hover:text-brand-navy transition-colors" aria-label="Posunout dolů">
+        <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+      </a>
+    </section>
+
+    <!-- MŮJ POSTUP -->
+    <section id="muj-postup" class="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-white relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10 sm:mb-14 lg:mb-20 animate-fade-in-up">
+          <h2 class="section-title font-bold text-brand-text mb-4">Můj postup</h2>
+          <p class="text-brand-muted section-desc mx-auto text-lg leading-relaxed">Jasný proces od analýzy až po dlouhodobý servis.</p>
+        </div>
+        <div id="postup-bento" class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-14 lg:mb-20">
+          <!-- Karta 1 -->
+          <div class="animate-fade-in-up postup-item group relative rounded-2xl bg-gradient-to-br from-brand-background to-white border border-brand-border p-6 sm:p-8 lg:p-14 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden" data-delay="0">
+            <span class="postup-number" aria-hidden="true">1</span>
+            <div class="relative z-10">
+              <!-- Icon a Nadpis vedle sebe -->
+              <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-brand-text">Audit majetku a portfolia</h3>
+              </div>
+              <!-- Podnadpis -->
+              <p class="text-brand-muted leading-relaxed">Projdeme vaše smlouvy, fondy a cíle. Zaměřím se na skryté poplatky a neefektivní alokaci kapitálu, která zpomaluje váš růst.</p>
+            </div>
+          </div>
+          <!-- Karta 2 -->
+          <div class="animate-fade-in-up postup-item group relative rounded-2xl bg-gradient-to-br from-brand-background to-white border border-brand-border p-6 sm:p-8 lg:p-14 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden" data-delay="1">
+            <span class="postup-number" aria-hidden="true">2</span>
+            <div class="relative z-10">
+              <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-brand-text">Strategie a diverzifikace</h3>
+              </div>
+              <p class="text-brand-muted leading-relaxed">Společně nastavíme váš investiční profil (Mírný, Vyvážený, Dynamický) a navrhnu řešení s ověřenými nástroji jako Atris, CREIF nebo MSCI World ETF.</p>
+            </div>
+          </div>
+          <!-- Karta 3 -->
+          <div class="animate-fade-in-up postup-item group relative rounded-2xl bg-gradient-to-br from-brand-background to-white border border-brand-border p-6 sm:p-8 lg:p-14 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden" data-delay="2">
+            <span class="postup-number" aria-hidden="true">3</span>
+            <div class="relative z-10">
+              <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-brand-cyan/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <svg class="w-6 h-6 sm:w-7 sm:h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-brand-text">Spuštění a dlouhodobý růst</h3>
+              </div>
+              <p class="text-brand-muted leading-relaxed">Pomohu s hladkou implementací zvolené strategie. Zajistím pravidelné kontroly a úpravy, aby váš majetek rostl efektivně i za 5, 10 či 15 let.</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <a href="https://www.marekpribramsky.cz/kontakt" class="lead-cta-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-white font-bold transition-all duration-300 no-underline">
+            Domluvit úvodní konzultaci
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Investiční filozofie (bez Chart.js, s card tilt) -->
+    <section id="investicni-projekce" class="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 bg-gradient-to-br from-brand-navy/95 via-brand-navy/85 to-brand-cyan/50 relative overflow-hidden">
+      <div class="absolute bottom-0 right-0 w-[500px] h-[300px] bg-brand-cyan/20 rounded-full blur-[100px] pointer-events-none"></div>
+      <div class="max-w-content mx-auto px-4 sm:px-6 relative z-10">
+        <div class="lg:flex lg:items-center lg:gap-16">
+          <div class="lg:w-1/2 mb-10 lg:mb-0">
+            <span class="text-brand-cyan font-bold tracking-widest uppercase text-xs">Investiční filozofie</span>
+            <h2 class="section-title font-bold text-white mt-2 mb-6">Jak to dělají nejbohatší fondy světa?</h2>
+            <p class="text-white/80 mb-6 text-lg leading-relaxed">Inspiruji se strategií jako je <a href="https://www.nbim.no/" target="_blank" rel="noopener noreferrer" class="text-brand-cyan hover:text-brand-cyan/80 font-bold underline decoration-brand-cyan/30">Norský ropný fond</a>. Diverzifikace, nízké náklady a dlouhodobý horizont.</p>
+            <ul class="space-y-4 mb-8">
+              <li class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-cyan/20 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-brand-cyan" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span><span class="text-white">Investice do globálních ETF fondů</span></li>
+              <li class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-cyan/20 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-brand-cyan" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span><span class="text-white">Složené úročení pracující pro vás</span></li>
+              <li class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-cyan/20 flex items-center justify-center shrink-0 mt-0.5"><svg class="w-3.5 h-3.5 text-brand-cyan" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span><span class="text-white">Okamžitá dostupnost peněz (likvidita)</span></li>
+            </ul>
+            <a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="lead-cta-btn inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-white font-bold transition-all duration-300 no-underline">
+              Spočítat vlastní výnosy
+              <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+          <div class="lg:w-1/2 chart-card-container">
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-6 shadow-xl">
+              <div class="chart-glow" aria-hidden="true"></div>
+              <div class="relative z-10">
+                <div class="mb-6 border-b border-white/25 pb-4">
+                  <h3 class="text-lg font-bold text-white">Projekce majetku (10 let)</h3>
+                  <p class="text-xs text-white/70">Reálný dopad složeného úročení</p>
+                </div>
+                <div class="relative h-64 w-full">
+                  <canvas id="wealthChart"></canvas>
+                </div>
+                <div class="mt-4 flex flex-wrap justify-between gap-2 text-xs font-bold">
+                  <div class="text-red-400 flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-400"></span> Běžný účet</div>
+                  <div class="text-[#1D2354] flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#1D2354]"></span> Strategie fondů</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROČ JÁ – 1. osoba, prodejnější -->
+    <section id="proc-ja" class="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 bg-white relative overflow-hidden">
+      <div class="proc-ja-logo-deco absolute -bottom-24 -right-24 w-[60%] max-w-[520px] h-[60%] min-h-[400px] max-h-[500px] pointer-events-none select-none" aria-hidden="true">
+        <img src="assets/img/logos/pb-logo-grey.png" alt="" class="w-full h-full object-contain object-right-bottom opacity-50" onerror="this.style.display='none'">
+      </div>
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-14">
+          <h2 class="section-title font-bold text-brand-text mb-4">Proč já</h2>
+          <p class="text-brand-muted section-desc mx-auto text-lg leading-relaxed">Jsem Marek Příbramský a věřím, že rodinné i firemní finance si zaslouží osobní přístup.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="scroll-reveal proc-ja-card rounded-2xl border border-brand-border bg-brand-background p-6 lg:p-8 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-brand-text mb-2">Řeším to s vámi osobně</h3>
+            <p class="text-brand-muted text-sm leading-relaxed">Neřídím se šablonami. Každý klient má jinou situaci – jiné cíle, rodinné finance i firemní finance. Přizpůsobím se vám.</p>
+          </div>
+          <div class="scroll-reveal proc-ja-card rounded-2xl border border-brand-border bg-brand-background p-6 lg:p-8 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-brand-text mb-2">Transparentnost a výsledky</h3>
+            <p class="text-brand-muted text-sm leading-relaxed">Vysvětlím vám každý krok. Žádné skryté poplatky. U investic, hypoték i pojištění rizik pracuju s ověřenými partnery.</p>
+          </div>
+          <div class="scroll-reveal proc-ja-card rounded-2xl border border-brand-border bg-brand-background p-6 lg:p-8 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-cyan/10 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            </div>
+            <h3 class="text-lg font-bold text-brand-text mb-2">Blízko vás – Roudnice, Praha, Litoměřice</h3>
+            <p class="text-brand-muted text-sm leading-relaxed">Jsem finanční poradce Roudnice nad Labem a okolí. Pobočky mám i v Praze, Litoměřicích a Štětí. Schůzky i online.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLUŽBY – iOS Glass Morphism Style -->
+    <section id="sluzby" class="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 relative overflow-visible sluzby-section-bg">
+      <!-- Background overlay – 45%, aby byl graph vidět ale zatmavený -->
+      <div class="absolute inset-0 bg-black/45 z-[1]"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16 lg:mb-20 animate-fade-in-up">
+          <span class="inline-block px-4 py-1.5 rounded-full bg-white/50 backdrop-blur-md border border-white/70 text-white font-bold text-xs tracking-widest uppercase mb-4 shadow-sm">PORTFOLIO</span>
+          <h2 class="section-title font-bold text-white mb-4 drop-shadow-md">Moje služby</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <!-- Investiční plánování -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="0">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Investiční plánování</h3>
+                  <p class="text-brand-muted text-sm">Ochrana a zhodnocení kapitálu</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Vytvořím pro vás portfolio na míru, které odolá inflaci a zajistí vám rentu. Využívám nízkonákladové ETF fondy.</p>
+              <a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+                Spočítejte si investice
+              </a>
+            </div>
+          </div>
+
+          <!-- Hypoteční úvěr -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="1">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Hypoteční úvěr</h3>
+                  <p class="text-brand-muted text-sm">Financování bydlení chytře</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Pomohu vám nastavit hypotéku tak, aby vás nezatížila, a poradím, jak na refinancování nebo čerpání úvěru pro vaše bydlení.</p>
+              <a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                Hypoteční kalkulačka
+              </a>
+            </div>
+          </div>
+
+          <!-- Zabezpečení rizik -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="2">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Zabezpečení rizik</h3>
+                  <p class="text-brand-muted text-sm">Životní i majetkové pojištění</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Provedu audit vašich smluv, odstraním duplicity a nastavím krytí tak, aby vás skutečně chránilo v kritických situacích.</p>
+              <a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                Nastavení pojištění
+              </a>
+            </div>
+          </div>
+
+          <!-- Úvěry a konsolidace -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="3">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Úvěry a konsolidace</h3>
+                  <p class="text-brand-muted text-sm">Optimalizace dluhů</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Máte více půjček? Pomohu vám je sloučit do jedné, snížit měsíční splátku a zcelkově ušetřit na nákladech.</p>
+              <a href="https://www.marekpribramsky.cz/kontakt" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Spočítat úsporu
+              </a>
+            </div>
+          </div>
+
+          <!-- Doplňkové penzijní spoření -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="4">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V5.25a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 5.25v13.5m18-9V5.25a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 5.25v13.5m0 0h18"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Doplňkové penzijní spoření</h3>
+                  <p class="text-brand-muted text-sm">Státní příspěvky</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Získejte ze státu maximum. Pomohu vám nastavit penzijní spoření tak, abyste využili všechny státní příspěvky a daňové úlevy napíno.</p>
+              <a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+                Optimální nastavení penze
+              </a>
+            </div>
+          </div>
+
+          <!-- Realitní služby -->
+          <div class="animate-fade-in-up sluzby-card-glass group" data-delay="5">
+            <div class="sluzby-glass-inner">
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md border border-white/40 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-white/50 transition-all duration-300 sluzby-icon-glass">
+                  <svg class="w-7 h-7 text-brand-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-brand-text mb-1">Realitní služby</h3>
+                  <p class="text-brand-muted text-sm">Prodej, nákup a pronájem</p>
+                </div>
+              </div>
+              <p class="text-brand-muted text-sm leading-relaxed mb-6">Komplexní servis při prodeji či nákupu nemovitosti. Zajistím tržní odhad, profesionální prezentaci, právní servis a bezpečný převod.</p>
+              <a href="https://www.marekpribramsky.cz/kontakt" class="sluzby-cta-glass">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                Konzultace realit
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- MOJE CESTA – sticky stacking karty jako složky -->
+    <section id="moje-cesta" class="py-12 sm:py-14 md:py-16 lg:py-20 xl:py-24 bg-brand-background" aria-label="Moje cesta">
+      <div class="moje-cesta-wrapper">
+        <div class="text-center mb-8 sm:mb-10 lg:mb-14">
+          <h2 class="section-title font-bold text-brand-text mb-3">Moje cesta</h2>
+          <p class="text-brand-muted section-desc mx-auto text-base leading-relaxed">Klíčové milníky v kariéře finančního poradce.</p>
+        </div>
+
+        <ul id="cards" aria-label="Timeline">
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2013</span>
+              <h2>První kroky v OVB</h2>
+              <p>Během studia 5. ročníku na ekonomické VŠ jsem začal pracovat v OVB Allfinanz a.s.</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2015</span>
+              <h2>Přestup do FINGO</h2>
+              <p>Pochopení, že existují lepší možnosti – přestup do F&P Consulting s.r.o. (dnešní FINGO)</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2016</span>
+              <h2>Fulltime v Broker Trust</h2>
+              <p>Ukončení zaměstnání a přechod na fulltime režim do financí v Broker Trust a.s.</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2019</span>
+              <h2>Založení Premium Brokers</h2>
+              <p>Založení vlastní firmy Premium Brokers s.r.o. pod záštitou Beplan finanční plánování s.r.o.</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2021</span>
+              <h2>Nové pobočky</h2>
+              <p>Otevření nových poboček v Litoměřicích, Štětí a Praze k současné Roudnické</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2024</span>
+              <h2>Premium Brokers Reality</h2>
+              <p>Založení realitní kanceláře Premium Brokers Reality s.r.o.</p>
+            </div>
+          </li>
+          <li class="card">
+            <div class="card__content">
+              <span class="number">2026</span>
+              <h2>Lovosice a tým</h2>
+              <p>Otevření pobočky v Lovosicích, velké posílení týmu ve financích i realitách</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Pobočky – bento grid s fotkami, overlay fade na hover -->
+    <section id="pobocky" class="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 bg-white">
+      <div class="max-w-content mx-auto px-4 sm:px-6">
+        <div class="text-center mb-14 lg:mb-16 animate-fade-in-up">
+          <h2 class="section-title font-bold text-brand-text mb-4">Kde nás najdete</h2>
+          <p class="text-brand-muted section-desc mx-auto text-lg leading-relaxed">Naše pobočky v Roudnici, Praze a okolí.</p>
+        </div>
+        <div class="bento-grid">
+          <a href="https://www.google.com/maps/search/?api=1&query=N%C3%A1m.+Jana+z+Dra%C5%BEic+99,+Roudnice+nad+Labem" target="_blank" rel="noopener noreferrer" class="bento-card bento-card--large">
+            <div class="bento-card-img">
+              <img src="assets/img/rce.jpg" alt="Roudnice nad Labem – náměstí">
+              <div class="bento-card-overlay"></div>
+            </div>
+            <div class="bento-card-content">
+              <span class="bento-badge">Sídlo společnosti</span>
+              <h3 class="bento-city">Roudnice nad Labem</h3>
+              <address class="bento-address">Nám. Jana z Dražic 99<br>413 01 Roudnice nad Labem</address>
+            </div>
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=%C5%BDateck%C3%A1+55%2F14,+Praha" target="_blank" rel="noopener noreferrer" class="bento-card">
+            <div class="bento-card-img">
+              <img src="assets/img/praha.jpg" alt="Praha – panorama od Petřína">
+              <div class="bento-card-overlay"></div>
+            </div>
+            <div class="bento-card-content">
+              <h3 class="bento-city">Praha</h3>
+              <address class="bento-address">Žatecká 55/14<br>110 00 Praha</address>
+            </div>
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=5.+kv%C4%9Btna+10,+Litom%C4%9B%C5%99ice" target="_blank" rel="noopener noreferrer" class="bento-card">
+            <div class="bento-card-img">
+              <img src="assets/img/lito.png" alt="Litoměřice – Mírové náměstí">
+              <div class="bento-card-overlay"></div>
+            </div>
+            <div class="bento-card-content">
+              <h3 class="bento-city">Litoměřice</h3>
+              <address class="bento-address">5. května 10<br>412 01 Litoměřice</address>
+            </div>
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=U+Tr%C5%BEnice+701,+%C5%A0t%C4%9Bt%C3%AD" target="_blank" rel="noopener noreferrer" class="bento-card">
+            <div class="bento-card-img">
+              <img src="assets/img/steti.jpg" alt="Štětí – region Litoměřicko">
+              <div class="bento-card-overlay"></div>
+            </div>
+            <div class="bento-card-content">
+              <h3 class="bento-city">Štětí</h3>
+              <address class="bento-address">U Tržnice 701<br>411 08 Štětí</address>
+            </div>
+          </a>
+          <div class="bento-card bento-card-coming">
+            <div class="bento-card-img">
+              <img src="assets/img/lovo.jpg" alt="Lovosice – Lovoš a okolí">
+              <div class="bento-card-overlay"></div>
+            </div>
+            <div class="bento-card-content">
+              <h3 class="bento-city">Lovosice</h3>
+              <p class="bento-coming">Brzy otevíráme</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFERENCE – grab & scroll s blur na krajích -->
+    <section id="reference" class="py-16 lg:py-24 reference-section relative overflow-hidden">
+      <div class="reference-container relative z-10">
+        <div class="text-center mb-10 lg:mb-12 animate-fade-in-up">
+          <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-white text-xs font-semibold mb-3">Google Recenze</span>
+          <h2 class="section-title font-bold text-white mb-3">Reference</h2>
+          <p class="text-white/80 text-base lg:text-lg max-w-xl mx-auto">Co říkají klienti o spolupráci se mnou.</p>
+        </div>
+
+        <div class="reviews-scroll-wrap">
+          <div id="reviews-scroll" class="reviews-scroll">
+            <!-- Karty se renderují JS -->
+          </div>
+          <div class="reviews-scroll-fade reviews-scroll-fade--left"></div>
+          <div class="reviews-scroll-fade reviews-scroll-fade--right"></div>
+        </div>
+
+        <div class="reviews-arrows flex justify-center items-center gap-4 mt-6">
+          <button type="button" id="reviews-prev" class="reviews-arrow-btn rounded-full w-12 h-12 flex items-center justify-center text-white border-2 border-white/40 hover:border-white hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#1D2354]" aria-label="Předchozí reference">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button type="button" id="reviews-next" class="reviews-arrow-btn rounded-full w-12 h-12 flex items-center justify-center text-white border-2 border-white/40 hover:border-white hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#1D2354]" aria-label="Další reference">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="text-center mt-8">
+          <a href="https://www.google.com/search?q=Premium+Brokers+s.r.o.+Recenze&hl=cs-CZ#lkt=LocalPoiReviews" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-navy text-white font-semibold text-sm hover:bg-brand-navy/90 transition">Zobrazit všechny recenze na Google</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog" class="py-20 lg:py-28 bg-white">
+      <div class="max-w-content mx-auto px-4 sm:px-6">
+        <div class="text-center mb-16 animate-fade-in-up">
+          <h2 class="section-title font-bold text-brand-text mb-4">Blog</h2>
+          <p class="text-brand-muted max-w-2xl mx-auto text-lg">Články o financích, investicích a plánování.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <article class="animate-fade-in-up group">
+            <a href="https://www.marekpribramsky.cz/blog/jak-zacit-investovat" class="block rounded-2xl overflow-hidden border border-brand-border bg-brand-background">
+              <div class="relative aspect-[16/10] overflow-hidden bg-brand-border/50">
+                <img src="assets/img/blog/blog-1.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 blog-img">
+                <div class="blog-hover absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent opacity-0 transition-opacity duration-500 flex items-end p-6 pointer-events-none">
+                  <span class="text-white font-semibold">Číst článek</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-brand-cyan font-semibold uppercase">Investice</span>
+                <h3 class="text-lg font-bold text-brand-text mt-1 mb-2">Jak začít investovat v roce 2025</h3>
+                <time class="text-sm text-brand-muted">12. 1. 2025</time>
+              </div>
+            </a>
+          </article>
+          <article class="animate-fade-in-up group">
+            <a href="https://www.marekpribramsky.cz/blog/hypoteka-tipy" class="block rounded-2xl overflow-hidden border border-brand-border bg-brand-background">
+              <div class="relative aspect-[16/10] overflow-hidden bg-brand-border/50">
+                <img src="assets/img/blog/blog-2.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 blog-img">
+                <div class="blog-hover absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent opacity-0 transition-opacity duration-500 flex items-end p-6 pointer-events-none">
+                  <span class="text-white font-semibold">Číst článek</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-brand-cyan font-semibold uppercase">Hypotéky</span>
+                <h3 class="text-lg font-bold text-brand-text mt-1 mb-2">Hypotéka: na co si dát pozor</h3>
+                <time class="text-sm text-brand-muted">5. 1. 2025</time>
+              </div>
+            </a>
+          </article>
+          <article class="animate-fade-in-up group">
+            <a href="https://www.marekpribramsky.cz/blog/firemni-benefity" class="block rounded-2xl overflow-hidden border border-brand-border bg-brand-background">
+              <div class="relative aspect-[16/10] overflow-hidden bg-brand-border/50">
+                <img src="assets/img/blog/blog-3.jpg" alt="" class="w-full h-full object-cover transition-transform duration-500 blog-img">
+                <div class="blog-hover absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/30 to-transparent opacity-0 transition-opacity duration-500 flex items-end p-6 pointer-events-none">
+                  <span class="text-white font-semibold">Číst článek</span>
+                </div>
+              </div>
+              <div class="p-6">
+                <span class="text-xs text-brand-cyan font-semibold uppercase">Firmy</span>
+                <h3 class="text-lg font-bold text-brand-text mt-1 mb-2">Firemní benefity, které dávají smysl</h3>
+                <time class="text-sm text-brand-muted">28. 12. 2024</time>
+              </div>
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ – iOS contained switcher + accordion -->
+    <section id="faq" class="faq-section" aria-labelledby="faq-title">
+      <div class="faq-head">
+        <h2 id="faq-title" class="section-title font-bold text-brand-text">Časté dotazy o finančním plánování</h2>
+        <p class="faq-sub">
+          Odpovědi na nejčastější otázky před prvním setkáním – investice, hypotéka,
+          životní pojištění i firemní finance.
+        </p>
+      </div>
+
+      <div class="faq-switcher" data-tabs role="tablist" aria-label="Kategorie dotazů">
+        <span class="faq-bubble" aria-hidden="true"></span>
+        <button class="faq-tab active" role="tab" data-tab="price">Kolik to stojí?</button>
+        <button class="faq-tab" role="tab" data-tab="plan">První plán</button>
+        <button class="faq-tab" role="tab" data-tab="sign">Podpisy</button>
+        <button class="faq-tab" role="tab" data-tab="existing">Stávající smlouvy</button>
+        <button class="faq-tab" role="tab" data-tab="review">Revize</button>
+      </div>
+
+      <div class="faq-panels">
+        <div class="faq-panel active" data-panel="price">
+          <div class="faq-grid">
+            <div class="faq-questions" role="list">
+              <button class="faq-q active" data-answer="price-a1">Kolik stojí úvodní konzultace?</button>
+              <button class="faq-q" data-answer="price-a2">Platí se finanční plán jednorázově, nebo průběžně?</button>
+              <button class="faq-q" data-answer="price-a3">Jak poznám, že se mi to „vyplatí“?</button>
+            </div>
+            <div class="faq-answer" aria-live="polite">
+              <div class="faq-a active" id="price-a1">Úvodní konzultace je nezávazná a bez poplatku. Na konci si řekneme, zda dává spolupráce smysl a jaký bude další postup.</div>
+              <div class="faq-a" id="price-a2">Záleží na rozsahu spolupráce. Někdy stačí jednorázová analýza + nastavení, jindy dává smysl dlouhodobý servis (pravidelná kontrola, úpravy, změny smluv).</div>
+              <div class="faq-a" id="price-a3">V praxi nejčastěji ušetříme na zbytečných/poplatkově drahých produktech, nastavíme rizika (pojistky) a cíleně srovnáme investice a hypotéku. Výsledky ukazujeme na konkrétních číslech.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-panel" data-panel="plan">
+          <div class="faq-grid">
+            <div class="faq-questions" role="list">
+              <button class="faq-q active" data-answer="plan-a1">Co si mám připravit na první schůzku?</button>
+              <button class="faq-q" data-answer="plan-a2">Za jak dlouho mám hotový finanční plán?</button>
+              <button class="faq-q" data-answer="plan-a3">Jak probíhá tvorba plánu krok za krokem?</button>
+            </div>
+            <div class="faq-answer" aria-live="polite">
+              <div class="faq-a active" id="plan-a1">Stačí stručně: příjmy/výdaje, cíle (např. bydlení, rezerva, důchod) a jaké máte smlouvy (investice, pojistky, hypotéka). Když něco nemáte, dořešíme to spolu.</div>
+              <div class="faq-a" id="plan-a2">Typicky v řádu dnů až jednotek týdnů podle složitosti. Vždy nejdřív uděláme rychlou orientaci a priority, a teprve pak detail.</div>
+              <div class="faq-a" id="plan-a3">Nejdřív rychlá orientace a priority, pak detailní návrh. Projdeme vaši situaci, cíle a možnosti, a teprve pak sestavíme konkrétní doporučení.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-panel" data-panel="sign">
+          <div class="faq-grid">
+            <div class="faq-questions" role="list">
+              <button class="faq-q active" data-answer="sign-a1">Musím něco podepisovat hned na první schůzce?</button>
+              <button class="faq-q" data-answer="sign-a2">Jak funguje online podpis a ověření?</button>
+            </div>
+            <div class="faq-answer" aria-live="polite">
+              <div class="faq-a active" id="sign-a1">Ne. První konzultace je nezávazná. Pokud se rozhodnete pokračovat, vysvětlíme si konkrétní kroky a co který podpis znamená.</div>
+              <div class="faq-a" id="sign-a2">Většinu věcí lze řešit online. Vysvětlím postup, pošlu podklady a vy podepíšete bezpečně přes ověřený proces dané instituce.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-panel" data-panel="existing">
+          <div class="faq-grid">
+            <div class="faq-questions" role="list">
+              <button class="faq-q active" data-answer="existing-a1">Má smysl řešit finance, když už mám investice/pojistky/hypotéku?</button>
+              <button class="faq-q" data-answer="existing-a2">Budete mi hned rušit stávající smlouvy?</button>
+            </div>
+            <div class="faq-answer" aria-live="polite">
+              <div class="faq-a active" id="existing-a1">Ano — často se dá zlepšit nákladovost, krytí rizik a nastavení strategie. Někdy stačí drobné úpravy, jindy dává smysl změna struktury.</div>
+              <div class="faq-a" id="existing-a2">Ne. Nejdřív audit, pak doporučení s důvody a dopady. Rozhodnutí je vždy na vás.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-panel" data-panel="review">
+          <div class="faq-grid">
+            <div class="faq-questions" role="list">
+              <button class="faq-q active" data-answer="review-a1">Jak často děláte revizi finančního plánu?</button>
+              <button class="faq-q" data-answer="review-a2">Co přesně se při revizi kontroluje?</button>
+            </div>
+            <div class="faq-answer" aria-live="polite">
+              <div class="faq-a active" id="review-a1">Standardně 1× ročně nebo při změně situace (dítě, bydlení, podnikání, vyšší příjem, změna hypotéky).</div>
+              <div class="faq-a" id="review-a2">Rezerva, cashflow, pojistná rizika, investiční strategie, hypotéka a cíle. Cílem je, aby plán odpovídal realitě a byl dlouhodobě funkční.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA + FORMULÁŘ – Chcete to probrat? (bez glass, bílá karta + zelené CTA) -->
+    <section id="kontakt" class="lead-form-section py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 relative overflow-hidden min-h-[520px] sm:min-h-[560px] lg:min-h-[640px] flex items-center">
+      <div class="lead-form-bg" aria-hidden="true"></div>
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 relative z-10 w-full">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="p-8 lg:p-12 flex flex-col justify-center">
+              <div class="mb-8">
+                <h2 class="section-title font-bold text-brand-navy mb-4">Chcete to probrat?</h2>
+                <p class="text-brand-muted leading-relaxed mb-5">Napište mi a domluvíme termín nezávazné konzultace.</p>
+                <ul class="space-y-2 text-brand-muted text-sm">
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-cyan shrink-0"></span>Kompletní analýza vaší situace zdarma</li>
+                  <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand-cyan shrink-0"></span>Bez závazků – spolupracujeme, až když vám to sedne</li>
+                </ul>
+              </div>
+              <form id="lead-form-el" class="space-y-4 text-left">
+                <div>
+                  <label for="lead-name" class="block text-sm font-semibold text-brand-navy mb-1">Jméno</label>
+                  <input type="text" id="lead-name" name="name" required placeholder="Jan Novák" class="lead-input-mini w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/80 text-brand-text placeholder-slate-400 focus:ring-2 focus:ring-brand-cyan/40 focus:border-brand-cyan">
+                </div>
+                <div>
+                  <label for="lead-contact" class="block text-sm font-semibold text-brand-navy mb-1">Kontakt (e-mail nebo telefon)</label>
+                  <input type="text" id="lead-contact" name="contact" required placeholder="jan@email.cz / +420 123 456 789" class="lead-input-mini w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/80 text-brand-text placeholder-slate-400 focus:ring-2 focus:ring-brand-cyan/40 focus:border-brand-cyan">
+                </div>
+                <div>
+                  <label for="lead-topic" class="block text-sm font-semibold text-brand-navy mb-1">O co máte zájem?</label>
+                  <select id="lead-topic" name="topic" class="lead-input-mini lead-select w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/80 text-brand-text focus:ring-2 focus:ring-brand-cyan/40 focus:border-brand-cyan">
+                    <option value="">Vyberte téma</option>
+                    <option value="investice">Investice</option>
+                    <option value="hypoteka">Hypotéka</option>
+                    <option value="pojisteni">Pojištění</option>
+                    <option value="firemni">Firemní benefity</option>
+                    <option value="jine">Jiné</option>
+                  </select>
+                </div>
+                <div class="flex items-start gap-3">
+                  <input type="checkbox" id="lead-consent" name="consent" required class="mt-1 w-4 h-4 rounded border-slate-300 text-brand-navy focus:ring-brand-cyan">
+                  <label for="lead-consent" class="text-sm text-brand-muted">Souhlasím se <a href="https://www.marekpribramsky.cz/gdpr" class="text-brand-cyan hover:underline">zpracováním osobních údajů</a>.</label>
+                </div>
+                <div id="lead-error" class="hidden text-red-600 text-sm"></div>
+                <button type="submit" class="lead-cta-btn w-full py-4 px-6 rounded-xl text-white font-bold transition">
+                  Nezávazná konzultace
+                </button>
+                <p class="text-center text-xs text-brand-muted">Ozvu se do 24 hodin.</p>
+              </form>
+              <div id="lead-success" class="hidden text-center py-8">
+                <div class="w-16 h-16 rounded-full bg-brand-cyan/20 flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-brand-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-brand-navy mb-2">Zpráva odeslána</h3>
+                <p class="text-brand-muted">Ozveme se vám co nejdříve.</p>
+              </div>
+            </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-brand-navy text-white py-10 sm:py-12 lg:py-16" role="contentinfo">
+  <div class="footer-inner mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10 lg:gap-12 mb-8 sm:mb-10 lg:mb-12">
+      <div class="md:col-span-2 lg:col-span-2">
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2 mb-2">
+            <a href="/" class="shrink-0">
+              <img src="assets/img/logos/pb-logo-no-bg-grey.png" alt="Premium Brokers" class="h-10 w-auto" />
+            </a>
+            <span class="font-bold text-xl">Marek Příbramský</span>
+          </div>
+          <p class="text-slate-300 text-sm max-w-sm mb-4">Privátní finanční plánování pro lidi, kteří chtějí mít klid. Pomáhám rodinám a podnikatelům sestavit strategie, které dávají smysl.</p>
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Sledujte mě</span>
+          <div class="flex flex-wrap gap-3 social-icons-row">
+            <a href="https://www.facebook.com/PremiumBrokersRCE" target="_blank" rel="noopener noreferrer" class="social-fa social-fa--fb social-icon-link" aria-label="Facebook">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/premiumbrokers.cz/" target="_blank" rel="noopener noreferrer" class="social-fa social-fa--ig social-icon-link" aria-label="Instagram">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/marek-pribramsky/" target="_blank" rel="noopener noreferrer" class="social-fa social-fa--li social-icon-link" aria-label="LinkedIn">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Rychlé odkazy</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://www.marekpribramsky.cz/#sluzby" class="text-slate-300 hover:text-white">Služby</a></li>
+          <li><a href="https://www.marekpribramsky.cz/#pobocky" class="text-slate-300 hover:text-white">Pobočky</a></li>
+          <li><a href="https://www.marekpribramsky.cz/blog" class="text-slate-300 hover:text-white">Blog</a></li>
+          <li><a href="https://www.marekpribramsky.cz/spoluprace" class="text-slate-300 hover:text-white">Spolupráce</a></li>
+          <li><a href="https://www.marekpribramsky.cz/kontakt" class="text-slate-300 hover:text-white">Kontakt</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Nástroje</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="https://www.marekpribramsky.cz/kalkulacky" class="text-slate-300 hover:text-white">Kalkulačky</a></li>
+          <li><a href="https://www.marekpribramsky.cz/hypotecnikalkulacka" class="text-slate-300 hover:text-white">Hypoteční kalkulačka</a></li>
+          <li><a href="https://www.marekpribramsky.cz/investicnikalkulacka" class="text-slate-300 hover:text-white">Investiční kalkulačka</a></li>
+          <li><a href="https://www.marekpribramsky.cz/zivotnikalkulacka" class="text-slate-300 hover:text-white">Životní pojištění</a></li>
+          <li><a href="https://www.marekpribramsky.cz/penzijnikalkulacka" class="text-slate-300 hover:text-white">Penzijní kalkulačka</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Pobočky</h4>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li><strong class="text-white">Roudnice nad Labem</strong><br>Nám. Jana z Dražic 99, 413 01</li>
+          <li><strong class="text-white">Štětí</strong><br>U Tržnice 701, 411 08</li>
+          <li><strong class="text-white">Litoměřice</strong><br>5. května 10, 412 01</li>
+          <li><strong class="text-white">Praha</strong><br>Žatecká 55/14, 110 00</li>
+          <li><strong class="text-white">Lovosice</strong><br><span class="text-slate-400">Brzy otevíráme</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-sm uppercase tracking-wider mb-4">Kontakt</h4>
+        <ul class="space-y-3 text-sm text-slate-300">
+          <li><a href="tel:+420728480423" class="hover:text-white">+420 728 480 423</a></li>
+          <li><a href="mailto:pribramsky@premiumbrokers.cz" class="hover:text-white">pribramsky@premiumbrokers.cz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-8 space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+        <p>&copy; 2025 Marek Příbramský. Všechna práva vyhrazena.</p>
+        <div class="flex gap-6">
+          <a href="https://www.beplan.cz/ochrana-osobnich-udaju/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Ochrana osobních údajů</a>
+          <a href="https://www.marekpribramsky.cz/cookies" class="hover:text-white">Cookies</a>
+        </div>
+      </div>
+      <p class="text-[10px] text-slate-500 leading-relaxed max-w-3xl">
+        Ing. Marek Příbramský, IČO: 02024870 je vázaným zástupcem samostatného zprostředkovatele BEplan finanční plánování s.r.o., IČO: 05779944. Služby jsou poskytovány v rámci následujících registrací. Pojištění: vázaný zástupce podle zákona č. 170/2018 Sb., o distribuci pojištění a zajištění. Spotřebitelské úvěry: vázaný zástupce podle zákona č. 257/2016 Sb., o spotřebitelském úvěru. Investiční služby a produkty: vázaný zástupce podle zákona č. 256/2004 Sb., o podnikání na kapitálovém trhu. Doplňkové penzijní spoření: vázaný zástupce podle zákona č. 427/2011 Sb., o doplňkovém penzijním spoření.
+      </p>
+      <p class="text-sm text-slate-400">
+        Vytvořil <a href="https://www.m2digitalagency.cz/" target="_blank" rel="noopener noreferrer" class="hover:text-white font-medium">M2DigitalAgency</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+  <script type="application/json" id="reviews-data">[
+    {"author":"Markéta Patrasová","initials":"MP","rating":5,"date_relative":"před rokem","text":"Mohu jen vřele doporučit... Za nás 100%"},
+    {"author":"Jaroslava Semerdzievova","initials":"JS","rating":5,"date_relative":"před rokem","text":"Premium Brokers nám opravdu pomohli... pan Marek Příbramský nejlepší."},
+    {"author":"Petra Brichová","initials":"PB","rating":5,"date_relative":"před rokem","text":"Skvělá spolupráce. Řešila jsem životní pojištění..."},
+    {"author":"Gábina Malečková","initials":"GM","rating":5,"date_relative":"před rokem","text":"Spolupracovala jsem... Děkuji 😊"},
+    {"author":"Karolina Kracikova","initials":"KK","rating":5,"date_relative":"před rokem","text":"Pan Příbramský mi pomohl s pronájmem bytu..."},
+    {"author":"Roman Matejka","initials":"RM","rating":5,"date_relative":"před 2 lety","text":"Řešil jsem hypotéku... Vřele doporučuji..."},
+    {"author":"Kristýna Vacková","initials":"KV","rating":5,"date_relative":"před 2 lety","text":"Jsem velice spokojená..."},
+    {"author":"Petra Beran Setlikova","initials":"PBS","rating":5,"date_relative":"před 3 lety","text":"Spokojenost maximální... Ještě jednou DĚKUJI..."},
+    {"author":"Budyšin1","initials":"B","rating":5,"date_relative":"před 2 lety","text":"Jsme jako rodina moc spokojení..."},
+    {"author":"Iveta Machulková","initials":"IM","rating":5,"date_relative":"před 2 lety","text":"Se službami pana Ing. Marka Příbramského..."},
+    {"author":"Petr Vacek","initials":"PV","rating":5,"date_relative":"před 4 lety","text":"Byl jsem velmi spokojený..."},
+    {"author":"Adam Jahoda","initials":"AJ","rating":5,"date_relative":"před 2 lety","text":"Skvělá spolupráce..."},
+    {"author":"Petra Madde","initials":"PM","rating":5,"date_relative":"před rokem","text":"Pan Příbramský je mým partnerem pro finance již léta..."},
+    {"author":"Josef Sloup","initials":"JS","rating":5,"date_relative":"před 4 lety","text":"Dobrý den, několikrát jsem jednal..."},
+    {"author":"Monika Dvohomiljová","initials":"MD","rating":5,"date_relative":"před 2 lety","text":"Velká spokojenost..."},
+    {"author":"Jirka Machala","initials":"JM","rating":5,"date_relative":"před rokem","text":"Naprostá spokojenost..."}
+  ]</script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/anim.js"></script>
+  <script>
+    // Counter animace
+    document.addEventListener('DOMContentLoaded', function() {
+      var counters = document.querySelectorAll('.counter-value');
+      var statsSection = document.getElementById('stats-section');
+      if (counters.length && statsSection) {
+        var animated = false;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting && !animated) {
+              animated = true;
+              var duration = 2000;
+              counters.forEach(function(counter) {
+                var target = +counter.getAttribute('data-target');
+                var startTime = performance.now();
+                function update(t) {
+                  var elapsed = t - startTime;
+                  var progress = Math.min(elapsed / duration, 1);
+                  var easeOut = 1 - Math.pow(1 - progress, 3);
+                  var val = Math.floor(easeOut * target);
+                  counter.innerText = target === 250 ? (val + (progress === 1 ? '+' : '')) : val;
+                  if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
+              });
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(statsSection);
+      }
+    });
+    </script>
+</body>
+</html>
