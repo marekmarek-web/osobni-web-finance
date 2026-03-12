@@ -2,7 +2,6 @@
 
 Pro správné zobrazení log v PDF vložte do této složky soubory s přesným názvem:
 
-- AlgoImperial.png
 - Creif.png
 - ATRIS.png
 - Fidelity.png
@@ -10,5 +9,5 @@ Pro správné zobrazení log v PDF vložte do této složky soubory s přesným 
 - PENTA.png
 - Conseq.png
 
-Můžete použít stávající obrázky z kořene FA (algoimperial.png → AlgoImperial.png atd.).
+Můžete použít stávající obrázky z kořene FA (přejmenovat podle výše).
 Na Windows může stačit zkopírovat a přejmenovat.
