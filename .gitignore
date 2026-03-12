@@ -1,7 +1,0 @@
-.vercel
-.env*.local
-.cursor/
-
-# Druhý projekt – vlastní repo na GitHubu
-marek-pribramsky/
-premium-brokers/
