@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
+    <script src="../js/form-spam-guard.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -1202,7 +1203,7 @@
                     </p>
                 </div>
                 <div class="p-8">
-                    <form id="leadForm" onsubmit="submitForm(event)" method="POST" action="https://formsubmit.co/ajax/kontakt@marek-marek.cz">
+                    <form id="leadForm" onsubmit="submitForm(event)" method="POST" novalidate>
                         <input type="hidden" name="banka" value="${bankName || 'Obecná poptávka'}">
                         <input type="hidden" name="typ_produktu" value="${state.product === 'mortgage' ? 'Hypotéka' : 'Úvěr'}">
                         <input type="hidden" name="typ_detail" value="${state.product === 'mortgage' ? state.mortgageType : state.loanType}">
@@ -1270,7 +1271,30 @@
                 els.modalBackdrop.classList.remove('opacity-0');
                 els.modalContentContainer.classList.remove('opacity-0', 'scale-95');
                 els.modalContentContainer.classList.add('scale-100');
+                const leadForm = document.getElementById('leadForm');
+                if (leadForm && window.FormSpamGuard) FormSpamGuard.injectHoneypots(leadForm);
             }, 10);
+        }
+
+        function fillLeadHiddenFields(form, bankName) {
+            const set = (name, value) => {
+                let el = form.querySelector(`[name="${name}"]`);
+                if (!el) {
+                    el = document.createElement('input');
+                    el.type = 'hidden';
+                    el.name = name;
+                    form.appendChild(el);
+                }
+                el.value = String(value ?? '');
+            };
+            set('banka', bankName || 'Obecná poptávka');
+            set('typ_produktu', state.product === 'mortgage' ? 'Hypotéka' : 'Úvěr');
+            set('typ_detail', state.product === 'mortgage' ? state.mortgageType : state.loanType);
+            set('vyse_uveru', state.loan);
+            set('vlastni_zdroje', state.own);
+            set('doba_splaceni', state.term);
+            set('fixace', state.fix);
+            set('ltv_akontace', getCalculatedLtv());
         }
 
         function closeModal() {
@@ -1290,16 +1314,14 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Odesílám...';
             btn.disabled = true;
 
+            const bankHidden = form.querySelector('[name="banka"]');
+            fillLeadHiddenFields(form, bankHidden?.value || null);
+
             const formData = new FormData(form);
 
             try {
-                const response = await fetch("https://formsubmit.co/ajax/kontakt@marek-marek.cz", {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
+                if (!window.FormSpamGuard) throw new Error('SPAM_GUARD_MISSING');
+                const response = await FormSpamGuard.submit(formData, { formEl: form });
 
                 if (response.ok) {
                      document.getElementById('modalContentContainer').innerHTML = `
@@ -1315,7 +1337,11 @@
             } catch (error) {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                alert("Omlouváme se, došlo k chybě při odesílání formuláře. Zkuste to prosím později.");
+                const msg =
+                    error?.code && window.FormSpamGuard
+                        ? FormSpamGuard.userMessage(error.code)
+                        : 'Omlouváme se, došlo k chybě při odesílání formuláře. Zkuste to prosím později.';
+                alert(msg);
                 console.error(error);
             }
         }
