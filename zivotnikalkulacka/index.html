@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind Config – fontFamily aby footer a celá stránka odpovídaly index.html -->
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
+    <script src="../js/form-spam-guard.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -1111,10 +1112,8 @@
                         </div>
 
                         <div class="p-6">
-                            <form id="contact-form" action="https://formsubmit.co/ajax/kontakt@marek-marek.cz" method="POST" enctype="multipart/form-data" onsubmit="handleFormSubmit(event)">
-                                <!-- Hidden inputs for Formspree -->
+                            <form id="contact-form" method="POST" enctype="multipart/form-data" onsubmit="handleFormSubmit(event)">
                                 <input type="hidden" name="_subject" value="Nový lead: ${title}">
-                                <input type="hidden" name="_captcha" value="false">
                                 
                                 <!-- Hidden inputs with calculator values (INPUTY) -->
                                 <input type="hidden" name="Vstup_Vek" value="${age}">
@@ -1194,6 +1193,9 @@
             // Znovu inicializovat Lucide ikony po vložení HTML
             lucide.createIcons();
 
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm && window.FormSpamGuard) FormSpamGuard.injectHoneypots(contactForm);
+
             // Uložit název souboru, pokud byl dříve nahrán
             if (fileName && type === 'check') {
                 document.getElementById('file-name-display').textContent = fileName;
@@ -1235,13 +1237,11 @@
             // KLÍČOVÁ ZMĚNA: Použití FormData pro správné odeslání souborů
             const data = new FormData(form);
 
-            fetch("https://formsubmit.co/ajax/kontakt@marek-marek.cz", {
-                method: "POST",
-                body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
+            const sendPromise = window.FormSpamGuard
+                ? FormSpamGuard.submit(data, { formEl: form })
+                : Promise.reject(new Error('SPAM_GUARD_MISSING'));
+
+            sendPromise.then(response => {
                 if (response.ok) {
                     // UPRAVENO: Zobrazení nového vzhledu úspěšného odeslání
                     const container = document.getElementById('modalContentContainer');
@@ -1269,7 +1269,11 @@
                     })
                 }
             }).catch(error => {
-                alert("Oops! Nastal problém s odesláním formuláře.");
+                const msg =
+                    error?.code && window.FormSpamGuard
+                        ? FormSpamGuard.userMessage(error.code)
+                        : 'Oops! Nastal problém s odesláním formuláře.';
+                alert(msg);
                 if (submitButton) {
                     submitButton.textContent = 'Zkusit znovu';
                     submitButton.disabled = false;
