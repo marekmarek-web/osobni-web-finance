@@ -1,3 +1,5 @@
+import { isCalculatorPreviewMode } from "@/lib/site-mode";
+
 export function CalculatorPreviewBanner({
   staticPath,
   label,
@@ -5,13 +7,15 @@ export function CalculatorPreviewBanner({
   staticPath: string;
   label: string;
 }) {
+  if (!isCalculatorPreviewMode()) return null;
+
   return (
     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-      <strong>Next.js náhled (Aidvisor kalkulačky).</strong> Produkční {label} zůstává na{' '}
+      <strong>Next.js náhled.</strong> Produkční {label} je také na{" "}
       <a href={staticPath} className="font-semibold underline">
         {staticPath}
-      </a>{' '}
-      — statické HTML se nemění, dokud Next verze neprojde schválením.
+      </a>
+      .
     </div>
   );
 }

@@ -48,7 +48,7 @@ Zdroj: repozitář `marekmarek-web/temp-marek` (balíček `premium-brokers`). Ka
 - `/investicnikalkulacka` – investiční portál (projekce, backtest, alokace)
 - `/penzijnikalkulacka` – penzijní portál
 
-Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční statické HTML.
+Každá stránka může zobrazit `CalculatorPreviewBanner` (jen když `NEXT_PUBLIC_CALCULATOR_PREVIEW=true`).
 
 ### Úpravy logiky oproti Aidvisoru
 
@@ -65,16 +65,34 @@ Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční st
 
 - PDF export z calculators-core
 - Unit testy z calculators-core (`__tests__/`)
-- Header/footer celého webu (až fáze 4)
 
-**Produkční statické HTML (`hypotecnikalkulacka/`, `zivotnikalkulacka/`, …) se neměnilo.**
+**Produkční statické HTML (`hypotecnikalkulacka/`, `zivotnikalkulacka/`, …) v kořeni repa zůstává jako záloha — po cutoveru na Vercelu je obsluhuje Next.js.**
 
-## Stav fáze 4 (hotovo – pouze next-app, HTML beze změny)
+## Stav fáze 5 (hotovo – deploy a routing)
+
+- [x] `scripts/sync-public-assets.mjs` – sync statických stránek do `next-app/public/` (bez kalkulaček)
+- [x] `scripts/vercel-build.mjs` – sync + build + smoke testy
+- [x] Kořenový `vercel.json` + `next-app/vercel.json` – build a rewrites
+- [x] Legacy API (`send-report`, `create-checkout`, `stripe-webhook`) → Next Route Handlers
+- [x] `next.config.ts` – redirecty z `/kalkulacka/index.html`, rewrites pro statické stránky
+- [x] Produkční režim: banner jen když `NEXT_PUBLIC_CALCULATOR_PREVIEW=true`
+- [x] Homepage `/` → `/index.html` (vypnout: `NEXT_PUBLIC_USE_STATIC_HOME=false`)
+- [x] CI: `.github/workflows/ci.yml`
+- [x] Dokumentace: `docs/DEPLOY-VERCEL.md`
+
+### Po nasazení na Vercel
+
+1. Nastavit **Root Directory** = `next-app` (doporučeno) nebo nechat kořen s `vercel.json`
+2. Zkopírovat env proměnné (Resend, Stripe, Supabase)
+3. **Ne** nastavovat `NEXT_PUBLIC_CALCULATOR_PREVIEW` v produkci
+4. Ověřit kalkulačky a `/api/send-report`
+
+## Stav fáze 4 (hotovo – sdílený layout)
 
 - [x] React `SiteHeader` + `SiteFooter` podle `partials/header.html` a `partials/footer.html`
 - [x] Scroll header (tmavý → skleněný bílý), dropdown Nástroje, mobilní menu
 - [x] Font Inter + Font Awesome (už v layoutu od fáze 2)
-- **Produkční statické HTML se neměnilo**
+- [x] Integrace v `app/layout.tsx`
 
 ## Princip migrace
 
@@ -92,8 +110,6 @@ Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční st
 - [x] Import `lib/mortgage-engine.ts`
 - [x] Parita s `hypotecnikalkulacka/index.html` (labely, LTV, bankovní nabídky)
 - [x] Formulář leadů – stejné hidden fieldy jako ve statickém HTML
-- [ ] Vizuální parita header/footer (až fáze 4)
-- [ ] Přepnutí produkční URL (až fáze 5)
 
 ### Fáze 3 – Port Aidvisor kalkulaček ✅
 
@@ -111,28 +127,35 @@ Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční st
 - [x] CSS parita: `.glass-header-top`, `.glass-header-scrolled`, `.nav-link`, `.nav-dropdown-*`
 - [x] Integrace v `app/layout.tsx` (header + footer na všech stránkách)
 - [x] `NEXT_PUBLIC_STATIC_SITE_ORIGIN` pro odkazy na statický web mimo Next trasy
-- [ ] Přepnutí produkční URL (až fáze 5)
 
-### Fáze 5 – Deploy a routing
+### Fáze 5 – Deploy a routing ✅
 
-- [ ] Vercel: monorepo nebo samostatný projekt `next-app/`
-- [ ] Rewrites: vybrané cesty → Next, zbytek → statické soubory (nebo postupné nahrazení)
-- [ ] E2E smoke testy hlavních URL
+- [x] Vercel build skripty a `vercel.json`
+- [x] Sync statických stránek do `next-app/public/`
+- [x] Rewrites/redirects pro kalkulačky a legacy stránky
+- [x] Legacy API route handlery
+- [x] CI workflow + smoke testy (hypotéka + životní)
+- [x] `docs/DEPLOY-VERCEL.md`
 
 ## Build a vývoj
 
 ```bash
+# Plný produkční build (sync + build + testy)
+npm run vercel-build
+
+# Pouze Next
 cd next-app
 pnpm install
-pnpm dev    # lokální vývoj
-pnpm build  # produkční build (povinný v CI)
+pnpm dev
+pnpm build
+pnpm test:calc
 ```
 
-## Co záměrně není v scope fáze 1–3
+## Co záměrně není v scope (budoucí práce)
 
-- Přesun celého `index.html`, `financni-plan/`
-- Změna Vercel routingu produkce
-- Odstranění statických HTML souborů
+- Přesun celého `index.html` hero/landing do React komponent (zatím sync statického HTML)
+- Odstranění statických kalkulaček z kořene repa (až po ověření produkce)
+- PDF export z calculators-core
 
 ## Acceptance checklist (kalkulačky)
 
@@ -144,3 +167,6 @@ pnpm build  # produkční build (povinný v CI)
 | TN pásma | 1M / 1,5M / 2M / 3M, progrese 8× |
 | PN | RH 1633 / 2449 / 4897 |
 | `pnpm build` v `next-app/` | Úspěšný build |
+| `pnpm test:calc` | Hypotéka LTV + životní FP model |
+| `npm run vercel-build` | Sync + build + testy |
+| CI GitHub Actions | Prochází |
