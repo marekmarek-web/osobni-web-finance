@@ -11,6 +11,7 @@
     <!-- Tailwind Config – fontFamily aby footer a celá stránka odpovídaly index.html -->
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
     <script src="../js/form-spam-guard.js"></script>
+    <script src="../calculations/insurance-computation.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -733,124 +734,28 @@
             }).format(val).replace(/\,/g, ' '); 
         };
 
-        const roundTo10k = (val) => {
-            return Math.round(val / 10000) * 10000;
-        };
-
-        const calculateSicknessBenefit = (grossIncome) => {
-            const rh1 = 1466; 
-            const rh2 = 2199;
-            const rh3 = 4397;
-            const dailyGross = (grossIncome * 12) / 365;
-            
-            let reducedDaily = 0;
-            if (dailyGross <= rh1) reducedDaily = dailyGross * 0.9;
-            else if (dailyGross <= rh2) reducedDaily = (rh1 * 0.9) + ((dailyGross - rh1) * 0.6);
-            else if (dailyGross <= rh3) reducedDaily = (rh1 * 0.9) + ((rh2 - rh1) * 0.6) + ((dailyGross - rh2) * 0.3);
-            else reducedDaily = (rh1 * 0.9) + ((rh2 - rh1) * 0.6) + ((rh3 - rh2) * 0.3);
-
-            const dailyBenefit = reducedDaily * 0.66; 
-            return Math.round(dailyBenefit * 30);
-        };
-
-        const calculateCapitalNeeded = (monthlyGap, yearsToCover) => {
-            if (monthlyGap <= 0) return 0;
-            if (yearsToCover <= 0) return 0;
-            const rate = 0.06; 
-            const annualGap = monthlyGap * 12;
-            const pv = annualGap * ((1 - Math.pow(1 + rate, -yearsToCover)) / rate);
-            return Math.round(pv);
-        };
-        
-        // --- LOGIKA VÝPOČTU ---
+        // --- LOGIKA VÝPOČTU (FP model via insurance-computation.js) ---
 
         const runCalculations = () => {
-            const estimatedGrossIncome = Math.round(netIncome / 0.74);
-            const yearsToRetirement = Math.max(0, 65 - age);
-            const targetMonthlyIncome = Math.max(expenses, netIncome);
+            const results = INSURANCE_COMPUTATION.computeInsurance({
+                age,
+                netIncome,
+                expenses,
+                liabilities,
+                reserves,
+                children,
+                hasSpouse,
+            });
 
-            // 1. PN (Pracovní neschopnost)
-            const stateSicknessMonthly = calculateSicknessBenefit(estimatedGrossIncome);
-            const pnGapMonthly = Math.max(0, netIncome - stateSicknessMonthly);
-            const pnDailyNeed = Math.ceil((pnGapMonthly / 30) / 100) * 100;
-
-            // 2. Invalidita (D3)
-            let pensionD3 = 0;
-            if (netIncome < 20000) pensionD3 = netIncome * 0.85;
-            else if (netIncome < 40000) pensionD3 = netIncome * 0.55;
-            else if (netIncome < 80000) pensionD3 = 22000 + (netIncome - 40000) * 0.15;
-            else pensionD3 = 25000 + (netIncome - 100000) * 0.1; 
-            
-            const gapD3 = Math.max(0, targetMonthlyIncome - pensionD3);
-            const capitalD3Raw = Math.max(0, calculateCapitalNeeded(gapD3, yearsToRetirement) - reserves);
-            const capitalD3 = roundTo10k(capitalD3Raw);
-
-            // 3. Smrt
-            const survivorStateSupport = (hasSpouse || children > 0) ? 10000 : 0; 
-            
-            // Výpočet kapitálu na dorovnání příjmu (pouze pokud má rodinu)
-            let capitalDeathIncome = 0;
-            if (hasSpouse || children > 0) {
-                const deathGapMonthly = Math.max(0, targetMonthlyIncome - survivorStateSupport);
-                capitalDeathIncome = calculateCapitalNeeded(deathGapMonthly, yearsToRetirement);
-            }
-            
-            let spouseLumpSum = 0;
-            if (hasSpouse) {
-                if (age < 40) spouseLumpSum = 4000000;
-                else if (age < 50) spouseLumpSum = 2000000;
-                else spouseLumpSum = 1000000;
-            }
-
-            let childrenLumpSum = 0;
-            if (children > 0) {
-                let perChild = 0;
-                if (age < 50) perChild = 1000000;
-                else if (age < 60) perChild = 500000;
-                else perChild = 0;
-                childrenLumpSum = children * perChild;
-            }
-
-            const familyProtection = Math.max(capitalDeathIncome, spouseLumpSum + childrenLumpSum);
-            
-            // Výpočet hrubého krytí smrti
-            // Pokud není rodina (děti=0, manželka=false), familyProtection je 0.
-            // Výpočet je pak čistě: Závazky - Rezervy.
-            let deathCoverageRaw = Math.max(0, liabilities + familyProtection - reserves);
-
-            // ÚPRAVA: Pokud klient nemá děti, manželku/manžela ani závazky, pojistné riziko smrti je 0
-            if (children === 0 && !hasSpouse && liabilities === 0) {
-                deathCoverageRaw = 0;
-            }
-
-            const deathCoverage = roundTo10k(deathCoverageRaw);
-
-            // 4. Trvalé následky (TN)
-            let tnBase = 1000000;
-            if (netIncome > 100000) tnBase = 3000000;
-            else if (netIncome > 30000) tnBase = 2000000;
-
-            // Uložení výsledků do globální proměnné pro použití ve formuláři
             currentResults = {
-                deathCoverage,
-                capitalD3,
-                pnDailyNeed,
-                tnBase,
-                tnProgression: tnBase * 10
+                deathCoverage: results.deathCoverage,
+                capitalD3: results.capitalD3,
+                pnDailyNeed: results.pnDailyNeed,
+                tnBase: results.tnBase,
+                tnProgression: results.tnProgression,
             };
 
-            renderResults({
-                deathCoverage,
-                capitalD3,
-                pnDailyNeed,
-                tnBase,
-                tnProgression: tnBase * 10,
-                // Data pro graf (recharts není v čistém HTML, vykreslíme jednoduchou vizualizaci nebo jen text)
-                chartData: [
-                    { label: 'PN (měs.)', prijem: netIncome, stat: stateSicknessMonthly, chybi: pnGapMonthly },
-                    { label: 'Invalidita (měs.)', prijem: netIncome, stat: pensionD3, chybi: gapD3 },
-                ]
-            });
+            renderResults(results);
         };
 
         // --- RENDERING FUNKCE ---
@@ -914,7 +819,7 @@
                     label: "Invalidita III. + II. st.", 
                     value: results.capitalD3, 
                     icon: 'activity', 
-                    subtext: `Krytí renty ${formatCurrency(Math.max(0, netIncome - results.chartData[1].stat))} Kč/měs`,
+                    subtext: `Krytí renty ${formatCurrency(results.gapD3Renta)} Kč/měs`,
                     highlight: true
                 },
                 { 
@@ -965,7 +870,7 @@
                     <div class="flex justify-between items-center pl-11">
                         <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Lineární plnění</span>
                         <span class="text-[10px] text-brand-gold font-bold bg-brand-gold/10 px-2 py-0.5 rounded">
-                            Až 10násobná progrese (${formatCurrency(results.tnProgression)})
+                            Až 8násobná progrese (${formatCurrency(results.tnProgression)})
                         </span>
                     </div>
                 </div>

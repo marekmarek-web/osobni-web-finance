@@ -1,6 +1,8 @@
 .vercel
 .env*.local
 .cursor/
+node_modules/
+.next/
 
 # Druhý projekt – vlastní repo na GitHubu
 marek-pribramsky/

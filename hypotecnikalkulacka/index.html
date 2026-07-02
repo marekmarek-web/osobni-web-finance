@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/images/logo_M_white.png">
     <script src="../js/form-spam-guard.js"></script>
+    <script src="../calculations/mortgage-engine.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -304,13 +305,13 @@
                                 </div>
                             </div>
 
-                            <!-- Půjčka / Dluh (Základní Input) -->
+                            <!-- Hodnota nemovitosti -->
                             <div class="mb-10">
                                 <div class="flex justify-between items-end mb-4">
-                                    <label id="loanLabel" class="text-sm font-bold text-slate-600 tracking-wide uppercase">Kolik si chcete půjčit <span class="text-slate-400 font-normal normal-case">(v Kč)</span></label>
-                                    <input type="text" id="loanInputDisplay" class="text-right font-extrabold text-3xl text-brand-dark border-b-2 border-slate-200 focus:border-brand-gold outline-none w-56 bg-transparent transition-colors p-1" value="6 000 000">
+                                    <label id="loanLabel" class="text-sm font-bold text-slate-600 tracking-wide uppercase">Hodnota nemovitosti <span class="text-slate-400 font-normal normal-case">(v Kč)</span></label>
+                                    <input type="text" id="loanInputDisplay" class="text-right font-extrabold text-3xl text-brand-dark border-b-2 border-slate-200 focus:border-brand-gold outline-none w-56 bg-transparent transition-colors p-1" value="5 000 000">
                                 </div>
-                                <input type="range" id="loanRange" min="500000" max="30000000" step="100000" value="6000000" class="w-full">
+                                <input type="range" id="loanRange" min="500000" max="30000000" step="100000" value="5000000" class="w-full">
                                 <div class="flex justify-between text-xs font-medium text-slate-400 mt-3">
                                     <span id="loanMinLabel">500 tis.</span>
                                     <span id="loanMaxLabel">30 mil.</span>
@@ -342,10 +343,10 @@
                                 </div>
 
                                 <div class="flex justify-end mb-2">
-                                    <input type="text" id="ownInputDisplay" class="text-right font-extrabold text-3xl text-brand-dark border-b-2 border-slate-200 focus:border-brand-gold outline-none w-56 bg-transparent transition-colors p-1" value="600 000">
+                                    <input type="text" id="ownInputDisplay" class="text-right font-extrabold text-3xl text-brand-dark border-b-2 border-slate-200 focus:border-brand-gold outline-none w-56 bg-transparent transition-colors p-1" value="500 000">
                                 </div>
                                 
-                                <input type="range" id="ownRange" min="0" max="15000000" step="10000" value="600 000" class="w-full">
+                                <input type="range" id="ownRange" min="0" max="15000000" step="10000" value="500000" class="w-full">
                                 <div class="flex justify-between text-xs font-medium text-slate-400 mt-3">
                                     <span>0 Kč</span>
                                     <span>15 mil.</span>
@@ -358,12 +359,21 @@
                             </div>
 
                             <!-- Info box nemovitost / auto -->
-                            <div id="propertyInfoBlock" class="bg-blue-50/50 rounded-xl p-4 mb-8 flex justify-between items-center border border-blue-100/50 transition-all duration-300">
-                                <div class="text-sm text-slate-500 font-medium">
-                                    <i class="fas fa-home mr-2 text-brand-main" id="propertyIcon"></i>
-                                    <span id="propertyLabel">Hodnota nemovitosti:</span>
+                            <div id="propertyInfoBlock" class="bg-blue-50/50 rounded-xl p-4 mb-8 border border-blue-100/50 transition-all duration-300 space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-slate-500 font-medium">
+                                        <i class="fas fa-home mr-2 text-brand-main" id="propertyIcon"></i>
+                                        <span id="propertyLabel">Hodnota nemovitosti:</span>
+                                    </div>
+                                    <div class="font-bold text-brand-dark text-lg" id="propertyValueDisplay">5 000 000 Kč</div>
                                 </div>
-                                <div class="font-bold text-brand-dark text-lg" id="propertyValueDisplay">6 600 000 Kč</div>
+                                <div id="borrowingAmountRow" class="flex justify-between items-center border-t border-blue-100/80 pt-2">
+                                    <div class="text-sm text-slate-500 font-medium">
+                                        <i class="fas fa-hand-holding-usd mr-2 text-brand-main"></i>
+                                        <span id="borrowingLabel">Výše úvěru:</span>
+                                    </div>
+                                    <div class="font-bold text-brand-dark text-lg" id="borrowingAmountDisplay">4 500 000 Kč</div>
+                                </div>
                             </div>
 
                             <!-- Parametry Grid -->
@@ -659,8 +669,8 @@
             product: 'mortgage', 
             mortgageType: 'standard', 
             loanType: 'consumer', 
-            loan: 6000000,
-            own: 600000, 
+            loan: 5000000,
+            own: 500000, 
             extra: 0, 
             term: 30,
             fix: 5,
@@ -669,7 +679,7 @@
         };
 
         const limits = {
-            mortgage: { min: 500000, max: 30000000, step: 100000, default: 6000000 },
+            mortgage: { min: 500000, max: 30000000, step: 100000, default: 5000000 },
             loan: { min: 20000, max: 2500000, step: 5000, default: 200000 }
         };
 
@@ -687,6 +697,9 @@
                 
                 // Displays
                 propertyValueDisplay: document.getElementById('propertyValueDisplay'),
+                borrowingAmountDisplay: document.getElementById('borrowingAmountDisplay'),
+                borrowingAmountRow: document.getElementById('borrowingAmountRow'),
+                borrowingLabel: document.getElementById('borrowingLabel'),
                 termDisplay: document.getElementById('termDisplay'),
                 monthly: document.getElementById('monthlyPayment'),
                 rate: document.getElementById('rateResult'),
@@ -835,10 +848,7 @@
                 state.mortgageType = 'standard';
                 state.loan = limits.mortgage.default;
                 state.ltvLock = 90;
-                
-                // FINANČNÍ MATEMATIKA: Simplified per user request
-                // Own = 10% of Loan Amount for 90% LTV
-                state.own = state.loan * 0.1;
+                syncOwnFromLtvLock();
 
                 els.loanInput.value = formatCurrency(state.loan);
                 els.loanRange.value = state.loan;
@@ -908,10 +918,12 @@
                 els.ltvResultRow.classList.remove('hidden');
                 els.extraMoneyBlock.classList.add('hidden');
                 els.ltvWarning.classList.remove('hidden');
-                els.loanLabel.innerHTML = '<span class="uppercase">Kolik si chcete půjčit</span> <span class="text-slate-400 font-normal normal-case">(v Kč)</span>';
+                els.loanLabel.innerHTML = '<span class="uppercase">Hodnota nemovitosti</span> <span class="text-slate-400 font-normal normal-case">(v Kč)</span>';
                 els.propertyLabel.innerText = "Hodnota nemovitosti:";
                 els.propertyIcon.className = "fas fa-home mr-2 text-brand-main";
                 els.ltvLabel.innerText = "LTV";
+                if (els.borrowingAmountRow) els.borrowingAmountRow.classList.remove('hidden');
+                if (els.borrowingLabel) els.borrowingLabel.innerText = "Výše úvěru:";
                 
                 if(state.mortgageType === 'investment' || state.mortgageType === 'american') {
                     els.investInfo.classList.remove('hidden');
@@ -945,10 +957,12 @@
                     els.loanLabel.innerHTML = '<span class="uppercase">Cena vozu</span> <span class="text-slate-400 font-normal normal-case">(v Kč)</span>';
                     els.ownResourcesBlock.classList.remove('hidden'); 
                     els.propertyInfoBlock.classList.remove('hidden'); 
-                    els.propertyLabel.innerText = "Výše úvěru:";
+                    els.propertyLabel.innerText = "Hodnota vozu:";
                     els.propertyIcon.className = "fas fa-car mr-2 text-brand-main";
                     els.ltvResultRow.classList.remove('hidden');
                     els.ltvLabel.innerText = "Akontace";
+                    if (els.borrowingAmountRow) els.borrowingAmountRow.classList.remove('hidden');
+                    if (els.borrowingLabel) els.borrowingLabel.innerText = "Výše úvěru:";
                     els.extraMoneyBlock.classList.add('hidden');
                 } 
                 else { 
@@ -962,21 +976,17 @@
             els.termDisplay.innerText = state.term;
         }
 
-        // --- HELPER FOR LTV CALCULATION ---
+        // --- HELPER FOR LTV CALCULATION (via mortgage-engine) ---
         function getCalculatedLtv() {
-            if (state.product === 'mortgage') {
-                const propertyValue = state.loan + state.own;
-                if (propertyValue > 0) {
-                    return Math.round((state.loan / propertyValue) * 100);
-                }
-                return 0;
-            } else if (state.product === 'loan' && state.loanType === 'auto') {
-                if (state.loan > 0) {
-                    return Math.round((state.own / state.loan) * 100); 
-                }
-                return 0;
-            }
-            return 0;
+            return MORTGAGE_ENGINE.getCalculatedLtv(state);
+        }
+
+        function getBorrowingAmount() {
+            return MORTGAGE_ENGINE.getBorrowingAmount(state);
+        }
+
+        function syncOwnFromLtvLock() {
+            state.own = MORTGAGE_ENGINE.syncOwnFromLtv(state);
         }
 
         // --- LOGIC: UPDATE INPUTS ---
@@ -991,14 +1001,10 @@
             els.loanRange.value = val;
 
             if (state.ltvLock !== null) {
-                 if (state.product === 'mortgage') {
-                    // Own = (100 - LTV_Button)% * Loan Amount
-                    const ownPercent = (100 - state.ltvLock) / 100;
-                    state.own = Math.round((state.loan * ownPercent) / 1000) * 1000;
-                } 
-                else if (state.product === 'loan' && state.loanType === 'auto') {
-                    const akoDec = state.ltvLock / 100;
-                    state.own = Math.round((state.loan * akoDec) / 1000) * 1000;
+                if (state.product === 'mortgage') {
+                    syncOwnFromLtvLock();
+                } else if (state.product === 'loan' && state.loanType === 'auto') {
+                    state.own = Math.round((state.loan * (state.ltvLock / 100)) / 1000) * 1000;
                 }
                 
                 els.ownInput.value = formatCurrency(state.own);
@@ -1033,11 +1039,8 @@
             renderLtvButtons();
             
             if (state.product === 'mortgage') {
-                // Own = (100 - targetVal)% * Loan Amount
-                const ownPercent = (100 - targetVal) / 100;
-                state.own = Math.round((state.loan * ownPercent) / 1000) * 1000;
-            } 
-            else if (state.product === 'loan' && state.loanType === 'auto') {
+                syncOwnFromLtvLock();
+            } else if (state.product === 'loan' && state.loanType === 'auto') {
                 state.own = Math.round((state.loan * (targetVal / 100)) / 1000) * 1000;
             }
             
@@ -1049,86 +1052,40 @@
         // --- MAIN CALCULATION LOGIC ---
         function calculate() {
             const els = getEls();
-            let finalRate = 0;
-            let monthlyPayment = 0;
-            let totalPaid = 0;
-            let borrowingAmount = state.loan;
+            const result = MORTGAGE_ENGINE.calculate(state, banksData, {
+                fixYears: parseInt(els.fixationSelect.value, 10),
+            });
 
-            // --- MORTGAGE ---
+            const borrowingAmount = result.borrowingAmount;
+            const calcLtv = result.calcLtv;
+            const finalRate = result.finalRate;
+
             if (state.product === 'mortgage') {
-                const propertyValue = state.loan + state.own;
-                els.propertyValueDisplay.innerText = formatCurrency(propertyValue) + " Kč";
-                
-                const calcLtv = getCalculatedLtv();
-                
-                // Rate Adjustment based on LTV
-                let penalty = 0.0;
-                
-                // Penalizace až nad 91% (protože zjednodušený výpočet 90% tlačítka dává reálné LTV cca 91%)
-                if (calcLtv > 91) penalty += 1.5;
-                
-                if (state.mortgageType === 'american') penalty += 1.5; 
-                if (state.mortgageType === 'investment') penalty += 0.4; 
-                if (state.type === 'refi') penalty -= 0.2;
-
-                const base = Math.min(...banksData.map(b => b.baseRate));
-                finalRate = base + penalty;
-
-                // Minimální sazba dle trhu (nejlepší nabídky od 4,18 % – Hypoindex 11/2025)
-                if (finalRate < 4.19) finalRate = 4.19;
-
-                const fixYears = parseInt(els.fixationSelect.value);
-                if (fixYears < 5) finalRate += 0.1;
-                else if (fixYears > 7) {
-                     let discounted = finalRate - 0.15;
-                     if (discounted < 4.19) finalRate = 4.19;
-                     else finalRate = discounted;
+                els.propertyValueDisplay.innerText = formatCurrency(result.propertyValue) + " Kč";
+                if (els.borrowingAmountDisplay) {
+                    els.borrowingAmountDisplay.innerText = formatCurrency(borrowingAmount) + " Kč";
                 }
-                
-                // Display LTV (If button is active, we show button value for consistency)
-                els.ltv.innerText = (state.ltvLock !== null ? state.ltvLock : calcLtv) + " %";
-                
-                if (calcLtv > 91) {
+                els.ltv.innerText = result.displayLtv + " %";
+
+                if (calcLtv > 90) {
                     els.ltvWarning.classList.remove('hidden');
                     els.ltvValueWarning.innerText = calcLtv;
                 } else {
                     els.ltvWarning.classList.add('hidden');
                 }
-            }
-            
-            // --- LOAN ---
-            else {
-                let typeMod = 0;
-                if (state.loanType === 'auto') typeMod = -1.0; 
-                if (state.loanType === 'consolidation') typeMod = -0.5;
-
-                const avgRate = (banksData.reduce((acc, b) => acc + (b.loanRate || 7.0), 0) / banksData.length);
-                finalRate = avgRate + typeMod; 
-
-                if (state.loanType === 'auto') {
-                    borrowingAmount = Math.max(0, state.loan - state.own); 
-                    els.propertyValueDisplay.innerText = formatCurrency(borrowingAmount) + " Kč"; 
-                    els.ltv.innerText = getCalculatedLtv() + " %";
+            } else if (state.loanType === 'auto') {
+                els.propertyValueDisplay.innerText = formatCurrency(state.loan) + " Kč";
+                if (els.borrowingAmountDisplay) {
+                    els.borrowingAmountDisplay.innerText = formatCurrency(borrowingAmount) + " Kč";
                 }
-                else if (state.loanType === 'consolidation') {
-                    borrowingAmount = state.loan + state.extra;
-                }
-            }
-            
-            const r = finalRate / 100 / 12; 
-            const n = state.term * 12; 
-            
-            if (borrowingAmount > 0) {
-                monthlyPayment = (r > 0) ? (borrowingAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : borrowingAmount / n;
+                els.ltv.innerText = calcLtv + " %";
             }
 
-            totalPaid = monthlyPayment * n;
-
-            els.monthly.innerText = formatCurrency(Math.round(monthlyPayment));
+            els.monthly.innerText = formatCurrency(result.monthlyPayment);
             els.rate.innerText = finalRate.toFixed(2).replace('.', ',') + ' %';
-            els.total.innerText = formatCurrency(Math.round(totalPaid)) + ' Kč';
+            els.total.innerText = formatCurrency(result.totalPaid) + ' Kč';
 
-            renderOffers(finalRate, n, borrowingAmount);
+            renderOffers(finalRate, state.term * 12, borrowingAmount);
         }
 
         function renderOffers(calcRate, months, borrowingAmount) {
@@ -1146,7 +1103,7 @@
                     let p = 0;
                     let ltv = getCalculatedLtv();
                     
-                    if(ltv > 91) p += 1.5; 
+                    if(ltv > 90) p += 1.5; 
                     
                     if(state.mortgageType==='american') p+=1.5;
                     if(state.mortgageType==='investment') p+=0.4;
@@ -1207,7 +1164,8 @@
                         <input type="hidden" name="banka" value="${bankName || 'Obecná poptávka'}">
                         <input type="hidden" name="typ_produktu" value="${state.product === 'mortgage' ? 'Hypotéka' : 'Úvěr'}">
                         <input type="hidden" name="typ_detail" value="${state.product === 'mortgage' ? state.mortgageType : state.loanType}">
-                        <input type="hidden" name="vyse_uveru" value="${state.loan}">
+                        <input type="hidden" name="vyse_uveru" value="${getBorrowingAmount()}">
+                        <input type="hidden" name="hodnota_nemovitosti" value="${state.product === 'mortgage' ? state.loan : ''}">
                         <input type="hidden" name="vlastni_zdroje" value="${state.own}">
                         <input type="hidden" name="doba_splaceni" value="${state.term}">
                         <input type="hidden" name="fixace" value="${state.fix}">
@@ -1290,7 +1248,8 @@
             set('banka', bankName || 'Obecná poptávka');
             set('typ_produktu', state.product === 'mortgage' ? 'Hypotéka' : 'Úvěr');
             set('typ_detail', state.product === 'mortgage' ? state.mortgageType : state.loanType);
-            set('vyse_uveru', state.loan);
+            set('vyse_uveru', getBorrowingAmount());
+            set('hodnota_nemovitosti', state.product === 'mortgage' ? state.loan : '');
             set('vlastni_zdroje', state.own);
             set('doba_splaceni', state.term);
             set('fixace', state.fix);
