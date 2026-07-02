@@ -1,6 +1,14 @@
 .vercel
 .env*.local
 .cursor/
+node_modules/
+.next/
+
+# Build-time sync (scripts/sync-public-assets.mjs)
+next-app/public/*
+!next-app/public/.gitkeep
+next-app/legacy-api/*
+!next-app/legacy-api/.gitkeep
 
 # Druhý projekt – vlastní repo na GitHubu
 marek-pribramsky/

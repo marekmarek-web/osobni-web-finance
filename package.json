@@ -2,6 +2,11 @@
   "name": "osobni-web-finance",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "vercel-build": "node scripts/vercel-build.mjs",
+    "sync-public": "node scripts/sync-public-assets.mjs",
+    "build:next": "node scripts/vercel-build.mjs"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
     "resend": "^3.2.0"

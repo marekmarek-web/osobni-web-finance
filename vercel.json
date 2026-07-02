@@ -1,7 +1,18 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install && cd next-app && pnpm install",
+  "buildCommand": "node scripts/vercel-build.mjs",
+  "framework": "nextjs",
+  "outputDirectory": "next-app/.next",
   "functions": {
     "api/send-report.js": { "memory": 256 },
     "api/create-checkout.js": { "memory": 256 },
     "api/stripe-webhook.js": { "memory": 256 }
-  }
+  },
+  "rewrites": [
+    { "source": "/hypotecnikalkulacka/", "destination": "/hypotecnikalkulacka" },
+    { "source": "/zivotnikalkulacka/", "destination": "/zivotnikalkulacka" },
+    { "source": "/investicnikalkulacka/", "destination": "/investicnikalkulacka" },
+    { "source": "/penzijnikalkulacka/", "destination": "/penzijnikalkulacka" }
+  ]
 }
