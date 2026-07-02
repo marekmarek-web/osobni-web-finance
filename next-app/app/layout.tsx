@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SiteHeader } from '@/components/layout/SiteHeader';
 import './globals.css';
 
 const inter = Inter({
@@ -20,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="cs">
-      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${inter.variable} font-sans antialiased header-offset overflow-x-hidden`}>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }

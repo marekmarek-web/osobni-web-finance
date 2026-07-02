@@ -69,6 +69,13 @@ Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční st
 
 **Produkční statické HTML (`hypotecnikalkulacka/`, `zivotnikalkulacka/`, …) se neměnilo.**
 
+## Stav fáze 4 (hotovo – pouze next-app, HTML beze změny)
+
+- [x] React `SiteHeader` + `SiteFooter` podle `partials/header.html` a `partials/footer.html`
+- [x] Scroll header (tmavý → skleněný bílý), dropdown Nástroje, mobilní menu
+- [x] Font Inter + Font Awesome (už v layoutu od fáze 2)
+- **Produkční statické HTML se neměnilo**
+
 ## Princip migrace
 
 1. **Výpočty nejdřív do sdílených modulů** – HTML i Next importují stejnou logiku (JS/TS port).
@@ -97,11 +104,14 @@ Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční st
 - [x] API routes pro sazby a leady
 - [ ] Synchronizace root `calculations/*.js` ↔ calculators-core (volitelné)
 
-### Fáze 4 – Sdílený layout
+### Fáze 4 – Sdílený layout ✅
 
-- [ ] `partials/header.html` + `partials/footer.html` → React `Header` / `Footer`
-- [ ] Navigace, scroll header, dropdown Nástroje
-- [ ] Fonty (Inter), brand barvy, Lucide/FontAwesome ekvivalenty
+- [x] `SiteHeader` – glass header, scroll efekt, dropdown Nástroje, mobilní drawer
+- [x] `SiteFooter` – menu, kontakt, sociální sítě, GDPR/cookies
+- [x] CSS parita: `.glass-header-top`, `.glass-header-scrolled`, `.nav-link`, `.nav-dropdown-*`
+- [x] Integrace v `app/layout.tsx` (header + footer na všech stránkách)
+- [x] `NEXT_PUBLIC_STATIC_SITE_ORIGIN` pro odkazy na statický web mimo Next trasy
+- [ ] Přepnutí produkční URL (až fáze 5)
 
 ### Fáze 5 – Deploy a routing
 

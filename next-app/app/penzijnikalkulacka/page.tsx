@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function PenzijniKalkulackaPage() {
   return (
-    <main id="site-main" className="main-with-header pt-24 pb-16 bg-[#f4f6fb] min-h-screen">
+    <main id="site-main" className="main-with-header pb-16 bg-[#f4f6fb] min-h-screen">
       <div className="max-w-[1200px] mx-auto px-4">
         <CalculatorPreviewBanner staticPath="/penzijnikalkulacka/" label="penzijní kalkulačka" />
         <PensionCalculatorPage />
