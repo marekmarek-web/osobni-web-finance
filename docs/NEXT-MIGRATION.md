@@ -14,6 +14,16 @@ Cíl: postupně přesunout kalkulačky a další stránky do `next-app/` **bez r
   - `calculations/insurance-computation.js` – FP model životního pojištění
   - `calculations/mortgage-engine.js` – hypotéka (LTV: `borrowingAmount = property × LTV%`)
 
+## Stav fáze 2 (hotovo – pouze next-app, HTML beze změny)
+
+- [x] React komponenta `MortgageCalculator` – slider nemovitosti, LTV tlačítka, výsledková karta
+- [x] Import `lib/mortgage-engine.ts` + `lib/bank-offers.ts`
+- [x] Parita labely: Hodnota nemovitosti / Výše úvěru / Vlastní zdroje
+- [x] Bankovní nabídky a modal leadů (stejné hidden fieldy jako HTML)
+- [x] `lib/form-spam-guard.ts` – port ochrany formulářů
+- [x] Tailwind + Font Awesome v Next (bez zásahu do statického HTML)
+- **Produkční `hypotecnikalkulacka/index.html` se neměnilo**
+
 ## Princip migrace
 
 1. **Výpočty nejdřív do sdílených modulů** – HTML i Next importují stejnou logiku (JS/TS port).
@@ -24,12 +34,14 @@ Cíl: postupně přesunout kalkulačky a další stránky do `next-app/` **bez r
 
 ## Doporučené fáze
 
-### Fáze 2 – Hypoteční kalkulačka v Next
+### Fáze 2 – Hypoteční kalkulačka v Next ✅
 
-- [ ] React komponenty pro slider nemovitosti, LTV tlačítka, výsledkovou kartu
-- [ ] Import `lib/mortgage-engine.ts`
-- [ ] Parita s `hypotecnikalkulacka/index.html` (labely, LTV, bankovní nabídky)
-- [ ] Formulář leadů – stejné hidden fieldy jako ve statickém HTML
+- [x] React komponenty pro slider nemovitosti, LTV tlačítka, výsledkovou kartu
+- [x] Import `lib/mortgage-engine.ts`
+- [x] Parita s `hypotecnikalkulacka/index.html` (labely, LTV, bankovní nabídky)
+- [x] Formulář leadů – stejné hidden fieldy jako ve statickém HTML
+- [ ] Vizuální parita header/footer (až fáze 4)
+- [ ] Přepnutí produkční URL (až fáze 5)
 
 ### Fáze 3 – Životní kalkulačka v Next
 

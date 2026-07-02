@@ -21,6 +21,7 @@ export interface BankRate {
   name: string;
   baseRate: number;
   loanRate?: number;
+  logoUrl?: string;
 }
 
 export interface MortgageCalculationResult {

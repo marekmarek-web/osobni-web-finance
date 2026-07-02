@@ -1,15 +1,14 @@
+import MortgageCalculator from '@/components/hypotecnikalkulacka/MortgageCalculator';
+
+export const metadata = {
+  title: 'Hypoteční kalkulačka | Marek Marek',
+  description: 'Kalkulačka hypoték a úvěrů – srovnání bez kontaktu',
+};
+
 export default function HypotecniKalkulackaPage() {
   return (
     <main>
-      <h1>Hypoteční kalkulačka</h1>
-      <p>
-        Placeholder pro fázi 1 migrace. Produkční kalkulačka zůstává na{' '}
-        <a href="/hypotecnikalkulacka/">/hypotecnikalkulacka/</a> (statické HTML).
-      </p>
-      <p>
-        Výpočetní logika je připravena v <code>lib/mortgage-engine.ts</code> (port z{' '}
-        <code>calculations/mortgage-engine.js</code>).
-      </p>
+      <MortgageCalculator />
     </main>
   );
 }
