@@ -9,16 +9,27 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
+          navy: '#1D2354',
+          navyLight: '#2a3366',
           dark: '#0a0f29',
+          main: '#0B3A7A',
+          cyan: '#4FC6F2',
           gold: '#fbbf24',
           lightgold: '#fde047',
-          main: '#0B3A7A',
           light: '#EAF3FF',
+          line: '#D6E6FF',
           border: '#D6E6FF',
+          background: '#F8FAFC',
+          white: '#FFFFFF',
+          text: '#0F172A',
+          muted: '#475569',
         },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
+      },
+      zIndex: {
+        'fixed-cta': '40',
       },
       keyframes: {
         shimmer: {

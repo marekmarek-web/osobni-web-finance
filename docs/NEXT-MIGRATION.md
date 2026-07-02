@@ -24,6 +24,51 @@ Cíl: postupně přesunout kalkulačky a další stránky do `next-app/` **bez r
 - [x] Tailwind + Font Awesome v Next (bez zásahu do statického HTML)
 - **Produkční `hypotecnikalkulacka/index.html` se neměnilo**
 
+> **Pozn.:** Jednoduchá fáze-2 komponenta byla ve fázi 3 nahrazena portem z Aidvisoru (viz níže).
+
+## Stav fáze 3 (hotovo – port kalkulaček z Aidvisoru / premium-brokers)
+
+Zdroj: repozitář `marekmarek-web/temp-marek` (balíček `premium-brokers`). Kalkulačky jsou plnohodnotné Next.js portály s grafy, bankovními nabídkami a lead modaly.
+
+### Co bylo přeneseno (pouze `next-app/`)
+
+| Oblast | Cesta |
+|--------|--------|
+| Výpočetní jádro | `next-app/packages/calculators-core/src/` (hypotéka, život, investice, penze) |
+| UI portály | `next-app/components/calculators/portal/` |
+| Sdílené UI | `next-app/components/ui/`, `next-app/components/forms/` |
+| API | `next-app/app/api/calculators/rates/`, `next-app/app/api/leads/` |
+| Analytics / leady | `next-app/lib/analytics/`, `next-app/lib/forms/`, `next-app/lib/validation/` |
+| Konfigurace | `next-app/config/site.ts`, `next-app/config/cta.ts` |
+
+### Trasy v Next
+
+- `/hypotecnikalkulacka` – hypoteční portál (bankovní nabídky, amortizace, lead modal)
+- `/zivotnikalkulacka` – životní portál (FP model, graf rizik)
+- `/investicnikalkulacka` – investiční portál (projekce, backtest, alokace)
+- `/penzijnikalkulacka` – penzijní portál
+
+Každá stránka zobrazuje `CalculatorPreviewBanner` s odkazem na produkční statické HTML.
+
+### Úpravy logiky oproti Aidvisoru
+
+- **Hypotéka:** `state.loan` = hodnota nemovitosti; `getBorrowingAmount()` = nemovitost × LTV % nebo nemovitost − vlastní zdroje (parita s `calculations/mortgage-engine.js`). LTV penalizace nad 90 %.
+- **Životní:** FP model – invalidita (rent × 200, +20 %), smrt (income replacement + 500k partner), TN 8×, PN RH 1633/2449/4897, zaokrouhlení 100k (parita s `calculations/insurance-computation.js`).
+- **Leady:** FormSubmit na `kontakt@marek-marek.cz` přes `/api/leads`.
+- **Branding:** `config/site.ts` přepsán pro Marek Marek.
+
+### Závislosti
+
+`lucide-react`, `chart.js`, `react-chartjs-2`, `react-apexcharts`, `apexcharts`, `zod`
+
+### Co záměrně nebylo přeneseno
+
+- PDF export z calculators-core
+- Unit testy z calculators-core (`__tests__/`)
+- Header/footer celého webu (až fáze 4)
+
+**Produkční statické HTML (`hypotecnikalkulacka/`, `zivotnikalkulacka/`, …) se neměnilo.**
+
 ## Princip migrace
 
 1. **Výpočty nejdřív do sdílených modulů** – HTML i Next importují stejnou logiku (JS/TS port).
@@ -43,11 +88,14 @@ Cíl: postupně přesunout kalkulačky a další stránky do `next-app/` **bez r
 - [ ] Vizuální parita header/footer (až fáze 4)
 - [ ] Přepnutí produkční URL (až fáze 5)
 
-### Fáze 3 – Životní kalkulačka v Next
+### Fáze 3 – Port Aidvisor kalkulaček ✅
 
-- [ ] Port `insurance-computation.js` → `lib/insurance-computation.ts`
-- [ ] React UI podle `zivotnikalkulacka/index.html`
-- [ ] FP model: invalidita (rent multiplier 200, +20 % nákladů), smrt (income replacement + 500k partner), TN 8×, PN RH 1633/2449/4897, zaokrouhlení 100k
+- [x] `packages/calculators-core` – hypotéka, život, investice, penze
+- [x] Portal UI komponenty (grafy, bankovní nabídky, lead modaly)
+- [x] FP model životního pojištění v `life.engine.ts`
+- [x] Property-based LTV v `mortgage.engine.ts`
+- [x] API routes pro sazby a leady
+- [ ] Synchronizace root `calculations/*.js` ↔ calculators-core (volitelné)
 
 ### Fáze 4 – Sdílený layout
 
@@ -70,9 +118,9 @@ pnpm dev    # lokální vývoj
 pnpm build  # produkční build (povinný v CI)
 ```
 
-## Co záměrně není v scope fáze 1
+## Co záměrně není v scope fáze 1–3
 
-- Přesun celého `index.html`, `financni-plan/`, API routes
+- Přesun celého `index.html`, `financni-plan/`
 - Změna Vercel routingu produkce
 - Odstranění statických HTML souborů
 
