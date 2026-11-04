@@ -1,965 +1,143 @@
-<!DOCTYPE html>
-<html lang="cs" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Marek Marek - Finanční partner</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="icon" type="image/png" href="/images/logo_M_white.png">
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            50: '#f8fafc',
-                            850: '#1e293b',
-                            900: '#0f172a',
-                            950: '#020617',
-                        },
-                        brand: {
-                            dark: '#0a0f29',    /* Midnight Blue */
-                            gold: '#fbbf24',    /* ZLATÁ (Amber 500) - nahrazuje orange */
-                            lightgold: '#fde047', /* Světlejší žlutá pro hover/gradienty */
-                            main: '#0B3A7A',    
-                            light: '#EAF3FF',   
-                            border: '#D6E6FF',  /* Světlá pro ohraničení */
-                        },
-                    },
-                    boxShadow: {
-                        'soft': '0 10px 40px -10px rgba(11, 58, 122, 0.08)',
-                        'glow': '0 0 20px rgba(251, 191, 36, 0.4)', /* Gold glow */
-                    },
-                    animation: {
-                        'shimmer': 'shimmer 2.5s infinite',
-                    },
-                    keyframes: {
-                        shimmer: {
-                            '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
-                            '100%': { transform: 'translateX(150%) skewX(-20deg)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        /* Modern Glass Effect Classes (iOS Style) */
-        .glass-header-top {
-            background-color: #0a0f29;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-header-scrolled {
-            background-color: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid rgba(11, 58, 122, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-        }
-
-        /* CTA Button s animací - Aktualizováno na Gold/Lightgold */
-        .btn-sweep {
-            position: relative;
-            background-color: #fbbf24; /* Gold */
-            color: #0a0f29; 
-            font-weight: 800;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            z-index: 1;
-            box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.39); /* Gold shadow */
-        }
-
-        .btn-sweep::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 100%;
-            background-color: #fde047; /* Lightgold hover */
-            transition: width 0.4s ease;
-            z-index: -1;
-        }
-
-        .btn-sweep:hover::before {
-            width: 100%;
-        }
-
-        .btn-sweep:hover {
-            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3);
-            transform: translateY(-1px);
-        }
-
-        /* Odkaz v menu */
-        .nav-link {
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            padding: 0.6rem 1rem;
-            border-radius: 9999px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-        }
-        .nav-dropdown-panel { visibility: hidden; opacity: 0; transform: translateY(-4px); transition: visibility 0.2s, opacity 0.2s, transform 0.2s; }
-        .nav-dropdown-group:hover .nav-dropdown-panel { visibility: visible; opacity: 1; transform: translateY(0); }
-        .nav-dropdown-group:hover .nav-dropdown-trigger { background: rgba(255,255,255,0.1); }
-        .glass-header-scrolled .nav-dropdown-group:hover .nav-dropdown-trigger { background: rgba(11, 58, 122, 0.08); }
-        .glass-header-scrolled .nav-dropdown-trigger { color: #0B3A7A; }
-        .glass-header-scrolled .nav-dropdown-trigger svg { color: #64748b; }
-        .nav-inner { padding-top: env(safe-area-inset-top, 0px); }
-        body.header-offset { padding-top: calc(5rem + env(safe-area-inset-top, 0px)); }
-
-        .counter-value { font-variant-numeric: tabular-nums; }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #0B3A7A; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #082855; }
-        
-        @media (max-width: 767px) {
-            main, section { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
-            .max-w-7xl, .max-w-5xl, .max-w-4xl { margin-left: 0.5rem !important; margin-right: 0.5rem !important; max-width: calc(100% - 1rem) !important; }
-        }
-        @supports (padding: env(safe-area-inset-bottom)) {
-            #mobile-menu { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-        }
-    </style>
-</head>
-<body class="bg-white text-slate-800 antialiased overflow-x-hidden header-offset">
-
-    <nav class="fixed top-0 left-0 right-0 w-full z-50 transition-all duration-500 glass-header-top" id="navbar">
-        <div class="nav-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center gap-4">
-                <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="window.location.href='/'">
-                    <div id="logo-icon" class="bg-white text-brand-dark font-bold w-10 h-10 flex items-center justify-center rounded-full text-xl transition-all duration-300 shadow-sm overflow-hidden">
-                        <img id="logo-img" src="logo_M_white.png" alt="M" class="w-3/5 h-3/5 object-contain invert transition-all duration-300">
-                    </div>
-                    <div class="flex flex-col leading-tight">
-                        <span id="logo-text" class="text-lg font-bold text-white transition-colors duration-300">Marek Marek<span class="text-brand-gold">.</span></span>
-                        <span id="logo-subtext" class="text-[0.6rem] text-slate-300 font-bold tracking-widest uppercase transition-colors duration-300">Finanční partner</span>
-                    </div>
-                </div>
-                <div class="hidden lg:flex items-center justify-center flex-1 gap-1">
-                    <a href="/#sluzby" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Služby</a>
-                    <div id="nav-divider" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
-                    <a href="/financni-plan/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Rodiny a jednotlivci</a>
-                    <div id="nav-divider-2" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
-                    <a href="/podnikatele/" class="nav-link text-white hover:bg-white/10 hover:backdrop-blur-md">Podnikatelé a firmy</a>
-                    <div id="nav-divider-3" class="h-4 w-px bg-white/20 mx-2 transition-colors duration-300"></div>
-                    <div class="nav-dropdown-group relative" aria-haspopup="true">
-                        <span class="nav-dropdown-trigger nav-link text-white hover:bg-white/10 cursor-pointer flex items-center gap-1 rounded-full px-4 py-2.5 transition-colors">
-                            Nástroje
-                            <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </span>
-                        <div class="nav-dropdown-panel absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 rounded-2xl border border-slate-200/70 bg-white/95 backdrop-blur-xl shadow-lg p-2 z-50 pointer-events-auto">
-                            <a href="/hypotecnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
-                                <span class="font-medium text-slate-800">Hypoteční kalkulačka</span>
-                                <span class="block text-xs text-slate-500 mt-0.5">Měsíční splátka a náklady</span>
-                            </a>
-                            <a href="/investicnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
-                                <span class="font-medium text-slate-800">Investiční kalkulačka</span>
-                                <span class="block text-xs text-slate-500 mt-0.5">Projekce zhodnocení</span>
-                            </a>
-                            <a href="/zivotnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
-                                <span class="font-medium text-slate-800">Kalkulačka životního pojištění</span>
-                                <span class="block text-xs text-slate-500 mt-0.5">Potřebné krytí</span>
-                            </a>
-                            <a href="/penzijnikalkulacka/" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition">
-                                <span class="font-medium text-slate-800">Penzijní kalkulačka</span>
-                                <span class="block text-xs text-slate-500 mt-0.5">Státní příspěvky</span>
-                            </a>
-                            <div class="border-t border-slate-100 mt-2 pt-2">
-                                <a href="/#sluzby" class="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition font-semibold text-brand-main">Všechny kalkulačky →</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!doctype html>
+<html lang="cs" class="no-js"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Marek Marek – Finanční partner</title><meta name="description" content="Pomáhám firmám i jednotlivcům nastavit finance tak, aby dávaly ekonomický i lidský smysl."><meta name="theme-color" content="#FFFFFF">
+<link rel="canonical" href="https://www.marek-marek.cz/"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:site_name" content="Marek Marek"><meta property="og:title" content="Marek Marek – Finanční partner"><meta property="og:description" content="Pomáhám firmám i jednotlivcům nastavit finance tak, aby dávaly ekonomický i lidský smysl."><meta property="og:url" content="https://www.marek-marek.cz/"><meta property="og:image" content="https://www.marek-marek.cz/assets/photos/kancelar.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/assets/logos/m-logo.png">
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css?v=mw2hmvni"><script>document.documentElement.classList.remove('no-js')</script></head><body>
+<a class="skip" href="#obsah">Přeskočit na obsah</a>
+<div class="sheet"><header class="nav"><div class="nav-in">
+    <a class="brand" href="/" aria-label="Marek Marek, úvodní stránka"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><span>Marek Marek<span class="dot">.</span><small>Finanční partner</small></span></a>
+    <nav class="links" aria-label="Hlavní menu">
+      <a href="/#sluzby">Služby</a>
+      <a href="/financni-plan/">Rodiny a jednotlivci</a>
+      <a href="/podnikatele/">Podnikatelé a firmy</a>
+      <div class="dd"><button type="button" aria-expanded="false" aria-haspopup="true">Nástroje <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg></button>
+        <div class="dd-menu"><a href="/duchodova-kalkulacka/"><b>Důchodová kalkulačka</b><span>Kolik vám bude chybět</span></a><a href="/hypotecnikalkulacka/"><b>Hypoteční kalkulačka</b><span>Měsíční splátka a náklady</span></a><a href="/pruvodce/"><b>Průvodce cíli</b><span>Důchod, děti, rodina, majetek najednou</span></a><a href="/povinny-prispevek-zamestnavatele/"><b>Povinný příspěvek 4 %</b><span>Pro firmy, 3 otázky</span></a><a href="/#kalkulacky"><b>Všechny kalkulačky</b><span>Vše na jednom místě</span></a></div></div>
     </nav>
+    <div class="nav-r"><a class="tel" href="tel:+420778511166">+420 778 511 166</a><a class="btn p sm" href="/rezervace/">Vybrat termín</a>
+      <button class="burger" type="button" aria-label="Otevřít menu"><i></i></button></div>
+  </div></header>
+  <div class="mobile-menu" role="dialog" aria-label="Menu">
+    <div class="mm-top"><a class="brand" href="/"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><span>Marek Marek<span class="dot">.</span></span></a><button class="mm-x" type="button" aria-label="Zavřít menu">×</button></div>
+    <ul><li><a href="/#sluzby">Služby</a></li><li><a href="/financni-plan/">Rodiny a jednotlivci</a></li><li><a href="/podnikatele/">Podnikatelé a firmy</a></li><li><a href="/reality/">Reality</a></li></ul>
+    <p class="mm-sub">Nástroje</p>
+    <ul class="mm-tools" style="margin-top:2px"><li><a href="/duchodova-kalkulacka/">Důchodová kalkulačka</a></li><li><a href="/hypotecnikalkulacka/">Hypoteční kalkulačka</a></li><li><a href="/pruvodce/">Průvodce cíli</a></li><li><a href="/povinny-prispevek-zamestnavatele/">Povinný příspěvek 4 %</a></li></ul>
+    <a class="btn p" href="/rezervace/">Vybrat termín</a><a class="btn w" href="tel:+420778511166">Zavolat +420 778 511 166</a>
+  </div><main id="obsah" class="wrap">
+<section class="tile hero">
+  <div class="hero-txt">
+    <div><span class="pill"><i></i>Středočeský a Ústecký kraj</span>
+      <h1>Váš partner pro finanční zdraví<span class="dot">.</span></h1>
+      <p class="lead">Jsem Marek Marek. Pomáhám firmám i jednotlivcům nastavit finance tak, aby dávaly ekonomický i lidský smysl.</p>
+      <div class="cta"><a class="btn p" href="/duchodova-kalkulacka/">Kolik mi bude chybět v důchodu <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="btn w" href="https://www.aidvisora.cz/rezervace/1723b4301ef60ae9c05396b7e608f2b622ce" target="_blank" rel="noopener">Vybrat 30 minut v mém kalendáři</a></div>
+      <p class="hero-also">Nebo: <a href="/hypotecnikalkulacka/">Bydlení</a> · <a href="/povinny-prispevek-zamestnavatele/">Firma</a> · <a href="/pruvodce/">Všechno najednou</a> <span>Bez registrace.</span></p></div>
+    <ul class="proof " aria-label="Hodnocení">
+  <li><a href="https://www.google.com/search?q=marek+marek+recenze" target="_blank" rel="noopener"><i class="pf-ic"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><b><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>4,8</b><span>Google, 25 recenzí</span></a></li>
+  <li><a href="https://www.firmy.cz/detail/13091457-marek-marek-privatni-financni-planovani-roudnice-nad-labem.html" target="_blank" rel="noopener"><i class="pf-ic"><img src="/assets/logos/firmy-cz.png" alt="" width="180" height="180"></i><b><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>5,0</b><span>Firmy.cz, 19 recenzí</span></a></li>
+  <li><a href="https://www.firmy.cz/nejlepsi/Banky-a-financni-sluzby/Bankovni-a-sporitelni-sluzby/Financni-poradenstvi/kraj-ustecky" target="_blank" rel="noopener"><i class="pf-ic"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="#16181D" d="M280-120v-80h160v-124q-49-11-87.5-41.5T296-442q-75-9-125.5-65.5T120-640v-40q0-33 23.5-56.5T200-760h80v-80h400v80h80q33 0 56.5 23.5T840-680v40q0 76-50.5 132.5T664-442q-18 46-56.5 76.5T520-324v124h160v80H280Zm0-408v-152h-80v40q0 38 22 68.5t58 43.5Zm400 0q36-13 58-43.5t22-68.5v-40h-80v152Z"/></svg></i><b>4. místo</b><span>na Firmy.cz v kraji</span></a></li></ul>
+  </div>
+  <div class="hero-ph"><div class="disc"></div><img class="portrait" src="/assets/photos/marek-cutout-760.webp" srcset="/assets/photos/marek-cutout-420.webp 420w, /assets/photos/marek-cutout-760.webp 760w, /assets/photos/marek-cutout.webp 1037w" sizes="(max-width:640px) 70vw, 34vw" alt="Marek Marek, finanční partner" width="1037" height="1918" fetchpriority="high"><p class="hero-tag">Marek Marek<small>Finanční partner</small></p></div>
+</section>
 
-    <!-- HERO SECTION -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-36 overflow-hidden bg-brand-dark min-h-screen flex items-center">
-        <!-- Full Header Background Image with Opacity Overlay -->
-        <div class="absolute inset-0 z-0">
-            <img src="DSC07148.jpg" alt="Background" class="w-full h-full object-cover">
-            <!-- Overlay pro ztmavení fotky (opacity) -->
-            <div class="absolute inset-0 bg-brand-dark/80"></div>
-        </div>
+<section class="sec" id="komu"><div class="sec-head"><div><span class="kicker">Komu pomáhám</span><h2>Rodinám i firmám.</h2></div></div>
+  <div class="grid g2">
+    <a class="tile who has-ph rise" href="/financni-plan/"><img src="/assets/photos/schuzka-2.jpg" alt="Marek Marek na schůzce s klientkou" loading="lazy"><div class="inner"><div class="row"><div><h3>Rodiny a jednotlivci</h3><p>Hypotéka, investice, zajištění dětí i klidné stáří. Vše propojuji do jednoho srozumitelného plánu.</p></div><span class="arrow" style="color:var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></div></a>
+    <a class="tile who ink rise" href="/podnikatele/"><div><span class="kicker" style="color:#B9BBC2">Pro majitele a jednatele</span><h3>Podnikatelé a firmy</h3><p class="mute">Komplexní finanční řízení, na které se můžete spolehnout. Od daňové optimalizace benefitů až po úvěry do 100 mil. Kč.</p></div><div class="row"><span class="cta"><span class="pill" style="background:rgba(255,255,255,.1)">Benefity</span><span class="pill" style="background:rgba(255,255,255,.1)">Financování</span><span class="pill" style="background:rgba(255,255,255,.1)">Pojištění firmy</span></span><span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></a>
+  </div>
+</section>
 
-        <!-- Decorative Elements -->
-        <div class="absolute top-0 right-0 w-2/3 h-full bg-brand-main/10 skew-x-12 transform origin-top-right z-0 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-main/20 rounded-full blur-[100px] z-0 pointer-events-none"></div>
+<section class="sec" id="kalkulacky"><div class="sec-head"><div><span class="kicker">Spočítejte si to</span><h2>Tři otázky, se kterými lidé přicházejí.</h2></div><p>Bez registrace, výsledek hned. Výpočty jsou orientační a běží ve vašem prohlížeči.</p></div>
+  <div class="entries">
+    <a class="tile gold entry big rise" href="/duchodova-kalkulacka/"><span class="kicker">Důchod a majetek</span><h3>Kolik vám bude chybět v důchodu?</h3><p>Odhad podle zákonného vzorce, váš ročník v datech a kolik odkládat. Dvě minuty.</p><span class="go">Spočítat můj důchod <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile entry rise" href="/hypotecnikalkulacka/"><span class="kicker">Bydlení</span><h3>Kolik to stojí tady a kolik budete splácet?</h3><p>Cena podle okresu, splátka a co když sazba vzroste.</p><span class="go">Spočítat bydlení <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile ink entry rise" href="/povinny-prispevek-zamestnavatele/"><span class="kicker">Firma</span><h3>Co musíte a co můžete?</h3><p class="mute">Povinný příspěvek 4 % ve třech otázkách a benefity bez odvodů.</p><span class="go">Projít za firmu <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile white entry rise" href="/pruvodce/"><span class="kicker">Všechno najednou</span><h3>Co chcete mít vyřešené?</h3><p>Důchod, děti, rodina, majetek. Jeden průvodce místo čtyř kalkulaček.</p><span class="go">Otevřít průvodce <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+  </div>
+</section>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-                
-                <!-- Text -->
-                <div class="text-left space-y-8">
-                    
-                    <span class="inline-flex items-center py-1.5 px-3 rounded-full bg-white/5 border border-white/10 text-brand-gold text-[10px] font-bold tracking-widest uppercase mb-2 backdrop-blur-sm">
-                        <span class="w-2 h-2 rounded-full bg-brand-gold mr-2 animate-pulse"></span>
-                        Středočeský a Ústecký kraj
-                    </span>
+<section class="sec" id="sluzby"><div class="sec-head"><div><span class="kicker">Moje služby</span><h2>Jeden partner na celé finance.</h2></div></div>
+  <div class="grid g3">
+    <a class="tile svc rise" href="/investicnikalkulacka/"><div><h3>Investiční plánování</h3><small>Ochrana a zhodnocení kapitálu</small><p>Vytvořím pro vás portfolio na míru. <span data-k="10">Využívám nízkonákladové ETF fondy.</span></p></div><span class="go">Spočítejte si investice<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile svc rise" href="/hypotecnikalkulacka/"><div><h3>Hypoteční úvěr</h3><small>Financování bydlení chytře</small><p>Pomohu vám nastavit hypotéku tak, aby vás nezatížila, a poradím, jak na refinancování nebo čerpání úvěru pro vaše bydlení.</p></div><span class="go">Spočítat hypotéku<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile svc rise" href="/zivotnikalkulacka/"><div><h3>Zabezpečení rizik</h3><small>Životní i majetkové pojištění</small><p>Provedu audit vašich smluv, odstraním duplicity a nastavím krytí tak, aby vás skutečně chránilo v kritických situacích.</p></div><span class="go">Nastavení pojištění<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile svc rise" href="/hypotecnikalkulacka/"><div><h3>Úvěry a konsolidace</h3><small>Optimalizace dluhů</small><p>Máte více půjček? Pomohu vám je sloučit do jedné, snížit měsíční splátku a celkové přeplacení.</p></div><span class="go">Spočítat úsporu<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile svc rise" href="/penzijnikalkulacka/"><div><h3>Doplňkové penzijní spoření</h3><small><span data-k="9">Státní příspěvky</span></small><p>Pomohu vám nastavit penzijní spoření tak, abyste využili státní příspěvky a daňové úlevy.</p></div><span class="go">Optimální nastavení penze<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+    <a class="tile svc rise" href="/reality/"><div><h3>Realitní služby</h3><small>Prodej, nákup a pronájem</small><p>Kompletní servis při prodeji či nákupu nemovitosti. Zajistím tržní odhad, profesionální prezentaci, právní servis a bezpečný převod.</p></div><span class="go">Konzultace realit<span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span></a>
+  </div>
+</section>
 
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] tracking-tight">
-                        Váš partner pro <br/>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-white">finanční zdraví.</span>
-                    </h1>
+<section class="sec" id="postup"><div class="sec-head"><div><span class="kicker">Můj postup</span><h2>Tři kroky k vaší investiční strategii.</h2></div><p>Získejte druhý pohled na své stávající portfolio. <span data-k="2">Vše začíná auditem, který máte zdarma.</span></p></div>
+  <div class="how">
+    <div class="tile ph rise"><img src="/assets/photos/schuzka-2.jpg" alt="Marek Marek vysvětluje plán klientce nad tabletem" loading="lazy"></div>
+    <div><div class="steps"><div class="tile step rise"><span class="num">1</span><div><h3>Komplexní audit majetku</h3><p>Detailní analýza stávajících smluv, fondů a cílů. Odhalím skryté poplatky a neefektivní alokaci kapitálu, která brzdí Váš růst.</p></div></div><div class="tile step rise"><span class="num">2</span><div><h3>Strategie a diverzifikace</h3><p>Sestavení Vašeho profilu (Mírný, Vyvážený, Dynamický). Navrhnu řešení s využitím <span data-k="10">osvědčených nástrojů (Atris, CREIF, MSCI World ETF)</span>.</p></div></div><div class="tile step rise"><span class="num">3</span><div><h3>Spuštění a dlouhodobý růst</h3><p>Pomoc s bezproblémovou implementací zvolené strategie. Zajistím pravidelný monitoring a úpravy i za 5, 10 či 15 let.</p></div></div></div>
+    <div class="tile gold" style="margin-top:var(--gap);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap"><h3>Vyberte si 30 minut v mém kalendáři.</h3><a class="btn p" href="/rezervace/">Vybrat termín</a></div></div>
+  </div>
+</section>
 
-                    <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-xl font-medium">
-                        Jsem <span class="text-white font-bold">Marek Marek</span>. Pomáhám <span class="text-white font-bold">firmám i jednotlivcům</span> nastavit finance tak, aby dávaly <span class="text-white font-bold">ekonomický i lidský smysl</span>. Dám vašim penězům <span class="text-white font-bold">řád a plán</span>.
-                    </p>
+<section class="sec" id="filozofie"><div class="sec-head"><div><span class="kicker">Investiční filozofie</span><h2>Jak to dělají největší fondy světa?</h2></div><p>Inspiruji se strategií jako je např. <a href="https://www.nbim.no/" target="_blank" rel="noopener" style="text-decoration:underline">Norský ropný fond</a>. Diverzifikace, nízké náklady a dlouhodobý horizont.</p></div>
+  <div class="calc-grid" data-calc="time" style="margin-top:0">
+    <div class="tile" style="display:flex;flex-direction:column"><h3>Globální ETF fondy, složené úročení, <span data-k="10">likvidita</span>.</h3>
+      <p class="mute" style="margin-top:12px">Stejná částka, stejný čas, jiný výnos. Zkuste si, co udělá rozdíl jednoho procenta za deset let.</p>
+      <div class="f"><label for="t-r">Modelový výnos<output data-t="rO"></output></label><input id="t-r" type="range" data-t="r" min="2" max="10" step="1" value="7"><div class="ends"><span>2 %</span><span>10 %</span></div></div>
+      <div class="kpis" style="margin-top:auto"><div><span>Investování po 10 letech</span><b data-t="end"></b></div><div><span>Účet s úrokem 1 %</span><b data-t="acc"></b></div></div></div>
+    <div class="tile white"><p class="biglab">Modelový výpočet: 500 000 Kč na 10 let, bez poplatků a daní</p><div class="chart" id="ch-time" data-t="chart"></div><div class="legend" data-for="ch-time"></div><details class="tbl" data-for="ch-time"><summary>Zobrazit data v tabulce</summary><div class="tw"></div></details><p class="fine"><span data-k="1">Je to model, ne výsledek klientů ani fondu.</span> Historické výnosy nejsou zárukou budoucích.</p></div>
+  </div>
+</section>
 
-                    <!-- Counter -->
-                    <div class="grid grid-cols-3 gap-6 pt-6 pb-2 border-t border-white/10" id="stats-section">
-                        <div>
-                            <span class="block text-3xl font-bold text-white counter-value" data-target="250">0</span>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Klientů</span>
-                        </div>
-                        <div>
-                            <span class="block text-3xl font-bold text-white"><span class="counter-value" data-target="10">0</span> let</span>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Zkušeností</span>
-                        </div>
-                        <div>
-                            <span class="block text-3xl font-bold text-white"><span class="counter-value" data-target="135">0</span> mil.</span>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">V portfoliích</span>
-                        </div>
-                    </div>
-
-                    <!-- CTA -->
-                    <div class="flex flex-col sm:flex-row gap-4 pt-6">
-                        <a href="/investicnikalkulacka/" class="group relative w-full sm:w-auto inline-block bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline text-center">
-                            <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
-                            <div class="relative flex items-center justify-center gap-3">
-                                <i class="fas fa-calculator text-xl text-brand-dark"></i>
-                                <span class="text-lg">Spočítat vlastní výnosy</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-
-                <div></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION: TŘI KROKY -->
-    <section id="audit-proces" class="py-24 bg-white relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-brand-gold font-bold tracking-widest uppercase text-xs mb-3 block">Můj postup</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark mb-6">Tři kroky k optimální investiční strategii</h2>
-                <p class="text-lg text-slate-600 leading-relaxed font-light">
-                    Získejte nezávislé posouzení Vašeho stávajícího portfolia. Proces je transparentní, rychlý a vede k maximálnímu využití Vašeho majetku. Vše začíná u auditu v hodnotě <span class="font-semibold text-brand-dark">20 000 Kč</span>, který máte nyní zdarma.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- 1 -->
-                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
-                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border">
-                        <i class="fas fa-magnifying-glass-chart"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <h3 class="text-lg font-bold text-brand-main mb-3">Komplexní audit majetku</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            Detailní analýza stávajících smluv, fondů a cílů. Odhalím skryté poplatky a neefektivní alokaci kapitálu, která brzdí Váš růst.
-                        </p>
-                    </div>
-                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">1</span>
-                </div>
-                <!-- 2 -->
-                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
-                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <h3 class="text-lg font-bold text-brand-main mb-3">Strategie a diverzifikace</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            Sestavení Vašeho profilu (Mírný, Vyvážený, Dynamický). Navrhnu řešení s využitím osvědčených nástrojů (Atris, CREIF, MSCI World ETF).
-                        </p>
-                    </div>
-                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">2</span>
-                </div>
-                <!-- 3 -->
-                <div class="bg-brand-light/50 rounded-xl p-8 border border-brand-border relative group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden">
-                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-brand-gold text-2xl mb-6 relative z-10 border border-brand-border">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <h3 class="text-lg font-bold text-brand-main mb-3">Spuštění a dlouhodobý růst</h3>
-                        <p class="text-slate-600 leading-relaxed text-sm">
-                            Pomoc s bezproblémovou implementací zvolené strategie. Zajistím pravidelný monitoring a úpravy, aby Váš majetek rostl efektivně i za 5, 10, či 15 let.
-                        </p>
-                    </div>
-                    <span class="absolute -top-4 -right-4 text-[10rem] leading-none font-black text-brand-main opacity-[0.03] group-hover:opacity-[0.06] transition-all duration-500 select-none">3</span>
-                </div>
-            </div>
-
-            <div class="mt-16 text-center">
-                <a href="/#kontakt" class="group relative inline-block w-full sm:w-auto bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-8 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
-                    <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
-                    <div class="relative flex items-center justify-center gap-3">
-                        <span class="text-lg">Zarezervovat audit a plán ZDARMA</span>
-                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION: MOJE SLUŽBY -->
-    <section id="sluzby" class="py-24 bg-brand-light/30 border-t border-brand-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-brand-gold font-bold tracking-widest uppercase text-xs mb-2 block">Portfolio</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark">Moje služby</h2>
-            </div>
-
-            <!-- Grid 3 sloupce na velké obrazovce -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- 1. Investice -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Investiční plánování</h3>
-                            <p class="text-slate-500 text-sm mt-1">Ochrana a zhodnocení kapitálu</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Vytvořím pro vás portfolio na míru, které odolá inflaci a zajistí vám rentu. Využívám nízkonákladové ETF fondy.
-                    </p>
-                    <a href="/investicnikalkulacka/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-calculator mr-2"></i> Spočítejte si investice
-                    </a>
-                </div>
-
-                <!-- 2. Hypotéky -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Hypoteční úvěr</h3>
-                            <p class="text-slate-500 text-sm mt-1">Financování bydlení chytře</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Pomohu vám nastavit hypotéku tak, aby vás nezatížila, a poradím, jak na refinancování nebo čerpání úvěru pro vaše bydlení.
-                    </p>
-                    <a href="/hypotecnikalkulacka/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-calculator mr-2"></i> Hypoteční kalkulačka
-                    </a>
-                </div>
-
-                <!-- 3. Pojištění -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-shield-halved"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Zabezpečení rizik</h3>
-                            <p class="text-slate-500 text-sm mt-1">Životní i majetkové pojištění</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Provedu audit vašich smluv, odstraním duplicity a nastavím krytí tak, aby vás skutečně chránilo v kritických situacích.
-                    </p>
-                    <a href="/zivotnikalkulacka/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-file-contract mr-2"></i> Nastavení pojištění
-                    </a>
-                </div>
-
-                <!-- 4. Úvěry -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-percent"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Úvěry a konsolidace</h3>
-                            <p class="text-slate-500 text-sm mt-1">Optimalizace dluhů</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Máte více půjček? Pomohu vám je sloučit do jedné, snížit měsíční splátku a celkové přeplacení.
-                    </p>
-                    <a href="/hypotecnikalkulacka/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-calculator mr-2"></i> Spočítat úsporu
-                    </a>
-                </div>
-
-                <!-- 5. Penze -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-seedling"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Doplňkové penzijní spoření</h3>
-                            <p class="text-slate-500 text-sm mt-1">Státní příspěvky</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Získejte od státu maximum. Pomohu vám nastavit penzijní spoření tak, abyste využili všechny státní příspěvky a daňové úlevy naplno.
-                    </p>
-                    <a href="/penzijnikalkulacka/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-piggy-bank mr-2"></i> Optimální nastavení penze
-                    </a>
-                </div>
-
-                <!-- 6. Realitní služby (NEW) -->
-                <div class="bg-white p-8 rounded-2xl border border-brand-border hover:shadow-lg transition flex flex-col h-full">
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="p-3 bg-brand-light rounded-lg shadow-sm text-brand-main text-2xl">
-                            <i class="fas fa-sign-hanging"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-brand-dark">Realitní služby</h3>
-                            <p class="text-slate-500 text-sm mt-1">Prodej, nákup a pronájem</p>
-                        </div>
-                    </div>
-                    <p class="text-slate-600 mb-6 text-sm flex-grow">
-                        Kompletní servis při prodeji či nákupu nemovitosti. Zajistím tržní odhad, profesionální prezentaci, právní servis a bezpečný převod.
-                    </p>
-                    <a href="/reality/" class="btn-sweep inline-flex items-center text-sm font-bold px-5 py-3 rounded-lg shadow-sm w-full justify-center mt-auto">
-                        <i class="fas fa-key mr-2"></i> Konzultace realit
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION: NORSKÝ FOND -->
-    <section id="reseni" class="py-20 bg-white border-t border-brand-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:flex lg:items-center lg:gap-16">
-                <div class="lg:w-1/2 mb-10 lg:mb-0">
-                    <span class="text-brand-gold font-bold tracking-widest uppercase text-xs">Investiční filozofie</span>
-                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6 text-brand-dark">Jak to dělají nejbohatší fondy světa?</h2>
-                    <p class="text-slate-600 mb-6 text-lg">Inspiruji se strategií jako je např. <a href="https://www.nbim.no/" target="_blank" class="text-brand-main hover:text-brand-gold font-bold underline decoration-brand-gold/30">Norský ropný fond</a>. Diverzifikace, nízké náklady a dlouhodobý horizont.</p>
-                    
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
-                            <span class="text-slate-700">Investice do globálních ETF fondů</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
-                            <span class="text-slate-700">Složené úročení pracující pro vás</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check text-brand-main mt-1 mr-3"></i>
-                            <span class="text-slate-700">Okamžitá dostupnost peněz (likvidita)</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="lg:w-1/2">
-                    <div class="bg-white rounded-xl shadow-xl p-6 border border-brand-border">
-                         <div class="mb-6 border-b border-slate-50 pb-4">
-                            <h3 class="text-lg font-bold text-brand-dark">Projekce majetku (10 let)</h3>
-                            <p class="text-xs text-slate-500">Reálný dopad složeného úročení</p>
-                        </div>
-                        <div class="relative h-64 w-full">
-                            <canvas id="wealthChart"></canvas>
-                        </div>
-                        <div class="mt-4 flex justify-between text-xs font-bold">
-                            <div class="text-red-500 flex items-center">
-                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> Běžný účet
-                            </div>
-                            <div class="text-brand-main flex items-center">
-                                <span class="w-3 h-3 rounded-full bg-brand-main mr-2"></span> Norský ropný fond
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CONTACT SECTION WITH MODAL TRIGGER -->
-    <section id="kontakt" class="py-24 bg-brand-light">
-        <div class="max-w-4xl mx-auto text-center px-4">
-            <h2 class="text-3xl font-bold mb-4 text-brand-dark">Zastavte znehodnocování majetku ještě dnes</h2>
-            <p class="text-slate-600 mb-10 max-w-2xl mx-auto">Vyberte si termín pro nezávaznou konzultaci. Potkáme se osobně v Roudnici nebo online z pohodlí domova.</p>
-            
-            <div class="bg-white p-10 rounded-2xl shadow-lg border border-brand-border max-w-2xl mx-auto">
-                <div class="text-center space-y-6">
-                    <div class="inline-flex p-5 bg-brand-light rounded-full text-brand-main mb-2">
-                        <i class="fas fa-envelope text-4xl"></i>
-                    </div>
-                    
-                    <h3 class="text-2xl font-bold text-brand-dark">Nezávazná konzultace</h3>
-                    
-                    <a href="javascript:void(0)" onclick="openModal()" class="group relative w-full inline-block bg-gradient-to-r from-brand-gold to-brand-lightgold hover:to-brand-gold text-brand-dark font-extrabold py-5 px-6 rounded-xl shadow-lg shadow-brand-gold/20 transition-all transform hover:scale-[1.02] overflow-hidden no-underline">
-                        <div class="absolute top-0 left-0 w-full h-full bg-white/30 skew-x-[-20deg] animate-shimmer"></div>
-                        <div class="relative flex items-center justify-center gap-3">
-                            <span class="text-lg">Mám zájem o konzultaci</span>
-                            <i class="fas fa-external-link-alt group-hover:translate-x-1 transition-transform text-sm opacity-80"></i>
-                        </div>
-                    </a>
-                    
-                    <div class="flex items-center justify-center gap-2 text-xs text-slate-400 mt-4">
-                        <i class="fas fa-lock"></i>
-                        <span>Respektuji vaše soukromí. Žádný spam.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="bg-brand-dark text-slate-400 py-16 border-t border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="bg-white text-brand-dark font-bold w-8 h-8 flex items-center justify-center rounded">
-                            <img src="logo_M_white.png" alt="Marek Marek Logo" class="w-full h-full object-contain p-1 invert">
-                        </div>
-                        <span class="text-xl font-bold text-white">Marek Marek.</span>
-                    </div>
-                    <p class="text-sm text-slate-400 mb-4">
-                        Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="https://www.instagram.com/marekmarek_pfp/" class="text-slate-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="https://www.facebook.com/SMMarkx" class="text-slate-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="https://www.linkedin.com/in/marek-marek-489394226/" class="text-slate-400 hover:text-white transition"><i class="fab fa-linkedin text-xl"></i></a>
-                        <a href="http://wa.me/420778511166" class="text-slate-400 hover:text-white transition"><i class="fab fa-whatsapp text-xl"></i></a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Menu</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/#sluzby" class="hover:text-brand-gold transition">Služby</a></li>
-                        <li><a href="/hypotecnikalkulacka/" class="hover:text-brand-gold transition">Hypoteční kalkulačka</a></li>
-                        <li><a href="/investicnikalkulacka/" class="hover:text-brand-gold transition">Investiční kalkulačka</a></li>
-                        <li><a href="/financni-plan/" class="hover:text-brand-gold transition">Rodiny a jednotlivci</a></li>
-                        <li><a href="/podnikatele/" class="hover:text-brand-gold transition">Podnikatelé a firmy</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Kontakt</h4>
-                    <ul class="space-y-3 text-sm">
-                        <li class="flex items-start">
-                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-brand-gold"></i>
-                            <span>Jana z Dražic 99<br>Roudnice nad Labem</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-phone mr-3 text-brand-gold"></i>
-                            <span>+420 778 511 166</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-envelope mr-3 text-brand-gold"></i>
-                            <a href="mailto:kontakt@marek-marek.cz" class="hover:text-brand-gold transition">kontakt@marek-marek.cz</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-widest">Informace</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/gdpr/" class="hover:text-white transition">Ochrana osobních údajů</a></li>
-                        <li><a href="/cookies/" class="hover:text-white transition">Cookies</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-                <p>&copy; 2025 Marek Marek. Všechna práva vyhrazena.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- CONTACT MODAL -->
-    <div id="contactModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <!-- Backdrop -->
-        <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"></div>
-    
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <!-- Modal panel -->
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg scale-95 opacity-0" id="modalContent">
-              
-              <!-- Close button -->
-              <div class="absolute right-4 top-4">
-                <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-500 transition-colors">
-                  <span class="sr-only">Zavřít</span>
-                  <i class="fas fa-times text-xl"></i>
-                </button>
-              </div>
-    
-              <!-- Wrapper for content to be replaced -->
-              <div id="modalContentContainer">
-                  <div class="bg-gradient-to-r from-slate-50 to-white px-8 py-8 border-b border-slate-100">
-                    <div class="sm:flex sm:items-start">
-                      <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                        <h3 class="text-2xl font-bold leading-6 text-brand-dark uppercase tracking-wide" id="modal-title">Nezávazná konzultace</h3>
-                        <p class="text-sm text-slate-600 mt-2 flex items-center gap-2">
-                            <i class="fas fa-comments text-brand-gold"></i>
-                            <span>Rád s Vámi proberu Vaše možnosti</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="p-8">
-                      <form id="leadForm" class="space-y-5">
-                        <input type="hidden" name="_subject" value="Nová poptávka: Web Marek Marek">
-                        <input type="hidden" name="_template" value="table">
-                        <input type="hidden" name="_captcha" value="false">
-                        
-                        <div>
-                            <label for="email" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Email <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <i class="fas fa-envelope absolute left-4 top-3.5 text-slate-400"></i>
-                                <input type="email" name="email" id="email" required placeholder="vas@email.cz" class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="telefon" class="block text-sm font-bold text-slate-700 mb-1 uppercase tracking-tighter">Telefon <span class="text-slate-400 font-normal normal-case">(nepovinné)</span></label>
-                            <div class="relative">
-                                <i class="fas fa-phone absolute left-4 top-3.5 text-slate-400"></i>
-                                <input type="tel" name="telefon" id="telefon" placeholder="+420 777 ..." class="w-full border border-slate-300 rounded-xl pl-10 pr-4 py-3 focus:ring-2 focus:ring-brand-gold focus:border-transparent outline-none transition-shadow bg-slate-50 focus:bg-white">
-                            </div>
-                        </div>
-
-                        <div class="flex items-start gap-3 mt-2 bg-blue-50/50 p-3 rounded-lg">
-                            <input type="checkbox" id="consent" required class="mt-1 w-4 h-4 text-brand-gold rounded border-slate-300 focus:ring-brand-gold cursor-pointer">
-                            <label for="consent" class="text-xs text-slate-600 cursor-pointer select-none">
-                                Souhlasím se zpracováním osobních údajů.
-                            </label>
-                        </div>
-
-                        <div class="pt-4">
-                            <button type="submit" class="btn-sweep w-full rounded-xl py-4 text-brand-dark font-bold shadow-lg transform transition hover:scale-[1.02] flex items-center justify-center gap-2 text-lg uppercase tracking-wider">
-                                <span>Odeslat nezávazně</span>
-                                <i class="fas fa-paper-plane text-sm"></i>
-                            </button>
-                        </div>
-                      </form>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<section class="sec" id="recenze"><div class="revs rise">
+  <div class="tile ink rev-lead rev2"><div><span class="kicker">Recenze</span><h2>Co říkají klienti.</h2></div>
+    <dl class="rev-nums">
+      <div><dt><i class="pf-ic"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i>Google</dt><dd><b>4,8</b><span>z 5 · 25 recenzí</span></dd><a href="https://www.google.com/search?q=marek+marek+recenze" target="_blank" rel="noopener">Číst na Googlu <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div><dt><i class="pf-ic"><img src="/assets/logos/firmy-cz.png" alt="" width="180" height="180"></i>Firmy.cz</dt><dd><b>5,0</b><span>z 5 · 19 recenzí</span></dd><a href="https://www.firmy.cz/detail/13091457-marek-marek-privatni-financni-planovani-roudnice-nad-labem.html" target="_blank" rel="noopener">Číst na Firmy.cz <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="rank"><dt><i class="pf-ic"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="#16181D" d="M280-120v-80h160v-124q-49-11-87.5-41.5T296-442q-75-9-125.5-65.5T120-640v-40q0-33 23.5-56.5T200-760h80v-80h400v80h80q33 0 56.5 23.5T840-680v40q0 76-50.5 132.5T664-442q-18 46-56.5 76.5T520-324v124h160v80H280Zm0-408v-152h-80v40q0 38 22 68.5t58 43.5Zm400 0q36-13 58-43.5t22-68.5v-40h-80v152Z"/></svg></i>Žebříček Firmy.cz</dt><dd><b>4. místo</b><span>Finanční poradenství v Ústeckém kraji</span></dd><a href="https://www.firmy.cz/nejlepsi/Banky-a-financni-sluzby/Bankovni-a-sporitelni-sluzby/Financni-poradenstvi/kraj-ustecky" target="_blank" rel="noopener">Zobrazit žebříček <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    </dl>
+    <p class="fine">Stav k 4. 11. 2026. Nejlepší je přečíst si je tam, kde je sám nemůžu upravit.</p></div>
+  <div class="rev-grid"><figure class="tile q"><blockquote>„Pana Marka můžeme s přítelkyní doporučit každému kdo bude chtít řešit hypotéku bezstarostně. Veškeré dotazy a požadavky nám vždy vstřícně a rychle vyřešil/ vysvětlil a celé řešení hypotéky bylo rychlejší než jsme očekávali.“</blockquote><figcaption><i class="src-ic" aria-hidden="true"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><span class="rv-who"><span data-k="15">Patrik Paulus</span><span>Recenze, Google</span></span></figcaption></figure><figure class="tile q"><blockquote>„Skvělý a odborný přístup. Pan Marek ochotně vše vysvětlil, poradil nám, co bude pro nás nejlepší a jaké jsou možnosti. Upřímně Vám řekne, co má smysl a co ne.“</blockquote><figcaption><i class="src-ic" aria-hidden="true"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><span class="rv-who"><span data-k="15">Klára Mrázová</span><span>Recenze, Google</span></span></figcaption></figure><figure class="tile q"><blockquote>„Vřele pana Marka doporučuji. Vše řádně vysvětlil a navedl jak hospodařit s penězi. Vše v optimální výši k daným potřebám a okolnostem.“</blockquote><figcaption><i class="src-ic" aria-hidden="true"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><span class="rv-who"><span data-k="15">Petr Došek</span><span>Recenze, Google</span></span></figcaption></figure><figure class="tile q"><blockquote>„Velmi doporučujeme. Vřelé jednání, individuální přístup, vše skvěle vysvětleno a rychlá vzdálená komunikace. Kdyby šlo dát více hvězdiček, tak je dám s velkou radostí :-)“</blockquote><figcaption><i class="src-ic" aria-hidden="true"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><span class="rv-who"><span data-k="15">Alena Pavlová</span><span>Recenze, Google</span></span></figcaption></figure></div></div></section>
+<section class="sec end" id="kontakt"><div class="tile ink end-in">
+  <div class="end-ph"><img src="/assets/photos/marek-cutout-760.webp" srcset="/assets/photos/marek-cutout-420.webp 420w, /assets/photos/marek-cutout-760.webp 760w, /assets/photos/marek-cutout.webp 1037w" sizes="(max-width:640px) 70vw, 34vw" alt="Marek Marek" width="1037" height="1918" loading="lazy"></div>
+  <div class="end-txt"><span class="kicker">Další krok</span><h2>Projdeme to spolu<span class="dot">.</span></h2><p class="lead">Projdeme vaše čísla a řekneme si, co dává smysl. Bez závazku a bez tlačení do produktu.</p>
+    <div class="cta"><a class="btn g" href="https://www.aidvisora.cz/rezervace/1723b4301ef60ae9c05396b7e608f2b622ce" target="_blank" rel="noopener">Vybrat 30 minut v kalendáři <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><button class="btn w" type="button" data-contact="Rád s Vámi proberu Vaše možnosti." data-done>Chci krátkou odpověď</button></div>
+    <p class="fine">Rezervace se otevře v Aidvisoře. Nebo volejte <a href="tel:+420778511166">+420 778 511 166</a>.</p><ul class="proof on-ink" aria-label="Hodnocení">
+  <li><a href="https://www.google.com/search?q=marek+marek+recenze" target="_blank" rel="noopener"><i class="pf-ic"><img src="/assets/logos/google-g.svg" alt="" width="24" height="24"></i><b><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>4,8</b><span>Google, 25 recenzí</span></a></li>
+  <li><a href="https://www.firmy.cz/detail/13091457-marek-marek-privatni-financni-planovani-roudnice-nad-labem.html" target="_blank" rel="noopener"><i class="pf-ic"><img src="/assets/logos/firmy-cz.png" alt="" width="180" height="180"></i><b><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>5,0</b><span>Firmy.cz, 19 recenzí</span></a></li>
+  <li><a href="https://www.firmy.cz/nejlepsi/Banky-a-financni-sluzby/Bankovni-a-sporitelni-sluzby/Financni-poradenstvi/kraj-ustecky" target="_blank" rel="noopener"><i class="pf-ic"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="#16181D" d="M280-120v-80h160v-124q-49-11-87.5-41.5T296-442q-75-9-125.5-65.5T120-640v-40q0-33 23.5-56.5T200-760h80v-80h400v80h80q33 0 56.5 23.5T840-680v40q0 76-50.5 132.5T664-442q-18 46-56.5 76.5T520-324v124h160v80H280Zm0-408v-152h-80v40q0 38 22 68.5t58 43.5Zm400 0q36-13 58-43.5t22-68.5v-40h-80v152Z"/></svg></i><b>4. místo</b><span>na Firmy.cz v kraji</span></a></li></ul></div></div></section>
+</main></div>
+<footer class="foot"><div class="foot-in">
+    <div class="foot-grid">
+      <div><p class="claim">Pomáhám klientům budovat a chránit majetek pomocí ověřených strategií.</p>
+        <div class="soc"><a href="https://www.instagram.com/marekmarek_pfp/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg></a><a href="https://www.facebook.com/SMMarkx" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 8.5V6.8c0-.8.5-1 1-1h2V2.2h-2.8C11 2.2 10 4.2 10 6.3v2.2H7.5V12H10v9.8h4V12h2.7l.4-3.5z"/></svg></a><a href="https://www.linkedin.com/in/marek-marek-489394226/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.9 21H3V8.8h3.900V21zM5 7.100a2.200 2.200 0 1 1 0-4.400 2.200 2.200 0 0 1 0 4.400zM21 21h-3.900v-5.900c0-1.400 0-3.200-2-3.200s-2.200 1.500-2.200 3.100v6H9V8.800h3.700v1.700h.1c.5-1 1.800-2 3.600-2 3.900 0 4.600 2.500 4.600 5.800V21z"/></svg></a><a href="https://wa.me/420778511166" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l1.700-5A8.500 8.500 0 1 1 8 19.400L3 21z"/></svg></a></div></div>
+      <div><h4>Menu</h4><ul><li><a href="/#sluzby">Služby</a></li><li><a href="/financni-plan/">Rodiny a jednotlivci</a></li><li><a href="/podnikatele/">Podnikatelé a firmy</a></li><li><a href="/podnikatelelp/">Pro majitele s.r.o.</a></li><li><a href="/reality/">Reality</a></li></ul></div>
+      <div><h4>Nástroje</h4><ul><li><a href="/hypotecnikalkulacka/">Hypoteční kalkulačka</a></li><li><a href="/pruvodce/">Průvodce cíli</a></li><li><a href="/duchodova-kalkulacka/">Důchodová kalkulačka</a></li><li><a href="/povinny-prispevek-zamestnavatele/">Povinný příspěvek 4&nbsp;%</a></li><li><a href="/financni-analyza/">Finanční analýza</a></li></ul></div>
+      <div><h4>Kontakt</h4><ul><li>Kancelář: Jana z Dražic 99<br>Roudnice nad Labem</li><li><a href="tel:+420778511166">+420 778 511 166</a></li><li><a href="mailto:kontakt@marek-marek.cz">kontakt@marek-marek.cz</a></li><li><a href="/rezervace/">Vybrat termín</a></li><li><a href="https://www.firmy.cz/detail/13091457-marek-marek-privatni-financni-planovani-roudnice-nad-labem.html" target="_blank" rel="noopener">Firmy.cz</a></li></ul></div>
     </div>
-
-    <script>
-        // Modal functions
-        function openModal() {
-            const modal = document.getElementById('contactModal');
-            const backdrop = document.getElementById('modalBackdrop');
-            const content = document.getElementById('modalContent');
-            
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-            
-            // Trigger animations
-            setTimeout(() => {
-                backdrop.classList.remove('opacity-0');
-                content.classList.remove('opacity-0', 'scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('contactModal');
-            const backdrop = document.getElementById('modalBackdrop');
-            const content = document.getElementById('modalContent');
-            
-            backdrop.classList.add('opacity-0');
-            content.classList.remove('scale-100');
-            content.classList.add('opacity-0', 'scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto'; // Re-enable scrolling
-            }, 300);
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('contactModal');
-            if (event.target == document.querySelector('#contactModal .fixed.inset-0.bg-slate-900\\/75')) {
-                closeModal();
-            }
-        }
-
-        // ZMĚNA: Přidána logika pro odeslání formuláře přes Fetch API
-        document.getElementById('leadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalContent = submitButton.innerHTML;
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Odesílám...';
-
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-
-            try {
-                const response = await fetch("https://formsubmit.co/ajax/kontakt@marek-marek.cz", {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    // Success state
-                    document.getElementById('modalContentContainer').innerHTML = `
-                        <div class="p-12 text-center">
-                            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm"><i class="fas fa-check"></i></div>
-                            <h3 class="text-2xl font-bold text-brand-dark mb-2">Poptávka odeslána!</h3>
-                            <p class="text-slate-600 mb-8">Děkuji. Budu Vás brzy kontaktovat.</p>
-                            <button onclick="closeModal()" class="text-brand-gold font-bold hover:underline">Zavřít okno</button>
-                        </div>
-                    `;
-                } else {
-                    alert("Omlouváme se, došlo k chybě při odesílání formuláře.");
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalContent;
-                }
-            } catch (error) {
-                console.error('Chyba:', error);
-                alert("Nepodařilo se odeslat formulář. Zkontrolujte prosím své připojení.");
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalContent;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- HELPER FUNCTIONS ---
-            const byId = (id) => document.getElementById(id);
-            const $ = (selector) => document.querySelector(selector);
-            const $$ = (selector) => document.querySelectorAll(selector);
-
-            // --- HEADER SCROLL LOGIC (LIQUID GLASS) ---
-            const navbar = byId('navbar');
-            const logoIcon = byId('logo-icon');
-            const logoText = byId('logo-text');
-            const logoSubtext = byId('logo-subtext');
-            const navLinks = $$('.nav-link');
-            const dividers = $$('[id^="nav-divider"]');
-            const logoImg = byId('logo-img');
-
-            function updateHeader() {
-                if (!navbar) return;
-
-                if (window.scrollY > 20) {
-                    // SCROLLED (Light Glass)
-                    navbar.classList.add('glass-header-scrolled');
-                    navbar.classList.remove('glass-header-top');
-                    
-                    if(logoIcon) {
-                        logoIcon.classList.remove('bg-white', 'text-brand-dark');
-                        logoIcon.classList.add('bg-brand-dark', 'text-white');
-                    }
-                    
-                    if(logoImg) {
-                        logoImg.classList.remove('invert');
-                    }
-                    
-                    if(logoText) {
-                        logoText.classList.remove('text-white');
-                        logoText.classList.add('text-brand-dark');
-                    }
-                    
-                    if(logoSubtext) {
-                        logoSubtext.classList.remove('text-slate-300');
-                        logoSubtext.classList.add('text-slate-500');
-                    }
-
-                    navLinks.forEach(link => {
-                        link.classList.remove('text-white');
-                        link.classList.add('text-brand-main');
-                        link.classList.add('hover:bg-brand-light');
-                        link.classList.remove('hover:bg-white/10');
-                        link.classList.remove('hover:backdrop-blur-md');
-                    });
-
-                    dividers.forEach(div => {
-                        div.classList.remove('bg-white/20');
-                        div.classList.add('bg-brand-border');
-                    });
-
-                } else {
-                    // TOP (Dark Glass)
-                    navbar.classList.remove('glass-header-scrolled');
-                    navbar.classList.add('glass-header-top');
-
-                    if(logoIcon) {
-                        logoIcon.classList.add('bg-white', 'text-brand-dark');
-                        logoIcon.classList.remove('bg-brand-dark', 'text-white');
-                    }
-
-                    if(logoImg) {
-                        logoImg.classList.add('invert');
-                    }
-                    
-                    if(logoText) {
-                        logoText.classList.add('text-white');
-                        logoText.classList.remove('text-brand-dark');
-                    }
-                    
-                    if(logoSubtext) {
-                        logoSubtext.classList.add('text-slate-300');
-                        logoSubtext.classList.remove('text-slate-500');
-                    }
-
-                    navLinks.forEach(link => {
-                        link.classList.add('text-white');
-                        link.classList.remove('text-brand-main');
-                        link.classList.remove('hover:bg-brand-light');
-                        link.classList.add('hover:bg-white/10');
-                        link.classList.add('hover:backdrop-blur-md');
-                    });
-
-                    dividers.forEach(div => {
-                        div.classList.add('bg-white/20');
-                        div.classList.remove('bg-brand-border');
-                    });
-                }
-            }
-
-            window.addEventListener('scroll', updateHeader);
-            updateHeader(); 
-
-            // --- CHART.JS ---
-            const chartCanvas = byId('wealthChart');
-            if (chartCanvas) {
-                const ctx = chartCanvas.getContext('2d');
-                const labels = ['Start', '2 roky', '4 roky', '6 let', '8 let', '10 let'];
-                const averageData = [500000, 510000, 520000, 530000, 540000, 550000];
-                const strategyData = [500000, 580000, 690000, 820000, 980000, 1200000];
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Norský ropný fond',
-                                data: strategyData,
-                                borderColor: '#0B3A7A',
-                                backgroundColor: (context) => {
-                                    const ctx = context.chart.ctx;
-                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                                    gradient.addColorStop(0, 'rgba(11, 58, 122, 0.4)');
-                                    gradient.addColorStop(1, 'rgba(11, 58, 122, 0.0)');
-                                    return gradient;
-                                },
-                                borderWidth: 3,
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: '#0B3A7A',
-                                pointRadius: 5,
-                                fill: true,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Běžný účet',
-                                data: averageData,
-                                borderColor: '#ef4444',
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointBackgroundColor: '#ef4444',
-                                pointRadius: 3,
-                                fill: false,
-                                tension: 0.2
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { intersect: false, mode: 'index' },
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, color: '#94a3b8', callback: value => value / 1000 + 'k' } },
-                            x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8' } }
-                        }
-                    }
-                });
-            }
-
-            // --- COUNTER ---
-            const counters = $$('.counter-value');
-            const statsSection = byId('stats-section');
-            const duration = 2000; 
-
-            if (counters.length && statsSection) {
-                const animateCounters = () => {
-                    counters.forEach(counter => {
-                        const target = +counter.getAttribute('data-target');
-                        const startTime = performance.now();
-                        const updateCount = (currentTime) => {
-                            const elapsed = currentTime - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            const easeOut = 1 - Math.pow(1 - progress, 3);
-                            const currentVal = Math.floor(easeOut * target);
-                            
-                            if (target === 250) {
-                                counter.innerText = currentVal + (progress === 1 ? '+' : '');
-                            } else {
-                                counter.innerText = currentVal;
-                            }
-                            if (progress < 1) requestAnimationFrame(updateCount);
-                        };
-                        requestAnimationFrame(updateCount);
-                    });
-                }
-                let animated = false;
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if(entry.isIntersecting && !animated) {
-                            animateCounters();
-                            animated = true;
-                        }
-                    });
-                }, { threshold: 0.5 });
-                observer.observe(statsSection);
-            }
-
-        });
-    </script>
-</body>
-</html>
-
+    <p class="reg"><span data-k="13">Marek Marek, IČO: 05474434, je vázaným zástupcem samostatného zprostředkovatele BEplan finanční plánování s.r.o., IČO: 05779944. Služby jsou poskytovány v rámci následujících registrací. Pojištění: vázaný zástupce podle zákona č. 170/2018 Sb., o distribuci pojištění a zajištění. Spotřebitelské úvěry: vázaný zástupce podle zákona č. 257/2016 Sb., o spotřebitelském úvěru. Investiční služby a produkty: vázaný zástupce podle zákona č. 256/2004 Sb., o podnikání na kapitálovém trhu. Doplňkové penzijní spoření: vázaný zástupce podle zákona č. 427/2011 Sb., o doplňkovém penzijním spoření.</span> Výpočty na webu jsou orientační a nejsou nabídkou ani investičním doporučením.</p>
+    <p class="wordmark" aria-hidden="true">Marek Marek<span>.</span></p>
+    <div class="foot-b"><span>© <span class="year">2026</span> Marek Marek. Všechna práva vyhrazena.</span>
+      <span><a href="/gdpr/">Ochrana osobních údajů</a> &nbsp;·&nbsp; <a href="/cookies/">Cookies</a> &nbsp;·&nbsp; <a href="#" data-cookie-open>Nastavení cookies</a></span></div>
+    
+  </div></footer>
+<div class="callbar"><a href="tel:+420778511166"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg> Zavolat</a><a href="/rezervace/">Vybrat termín</a></div>
+<div class="cookie" hidden role="region" aria-label="Cookies"><p>Web si pamatuje jen vaše volby a čísla z kalkulaček, ve vašem prohlížeči. Žádné měření ani reklama. <a href="/cookies/">Více</a></p><div><button class="btn sm g" type="button" data-v="ok">Rozumím</button></div></div>
+<dialog id="kontakt-okno" aria-labelledby="dlg-t"><button class="x" type="button" aria-label="Zavřít">×</button>
+    <ol class="dlg-steps" data-first hidden><li class="done">Výpočet hotový</li><li class="now">Kam se ozvat</li></ol>
+    <h2 id="dlg-t">Probereme to spolu</h2><p class="sub" data-subject>Rád s Vámi proberu Vaše možnosti.</p>
+    <div class="dlg-pick">
+      <a class="pick p" href="https://www.aidvisora.cz/rezervace/1723b4301ef60ae9c05396b7e608f2b622ce" target="_blank" rel="noopener"><b>Vybrat 30 minut</b><span>Online, v kanceláři nebo telefonem. Otevře se rezervace v Aidvisoře.</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="pick" type="button" data-short aria-expanded="false"><b>Chci krátkou odpověď</b><span>Napíšu nebo zavolám, jak chcete.</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+    <form class="form" novalidate data-shortform hidden>
+      <input type="hidden" name="tema">
+      <div class="f"><div class="lab">Jak se mám ozvat?</div><div class="seg" data-via role="group" aria-label="Jak se ozvat"><button type="button" data-v="email" aria-pressed="true">E-mail</button><button type="button" data-v="tel" aria-pressed="false">Telefon</button></div></div>
+      <div data-via-email><div class="inp" data-req><label for="f-email-d">E-mail *</label><input id="f-email-d" type="email" name="email" autocomplete="email"><em>Vyplňte platný e-mail.</em></div></div>
+      <div data-via-tel hidden><div class="inp" data-req><label for="f-telefon-d">Telefon *</label><input id="f-telefon-d" type="tel" name="telefon" autocomplete="tel"><em>Vyplňte telefon.</em></div>
+        <fieldset class="when"><legend>Kdy se Vám hodí zavolat?</legend><div class="chips"><label><input type="radio" name="kdy_volat" value="ráno"><span>Ráno</span></label><label><input type="radio" name="kdy_volat" value="poledne"><span>Poledne</span></label><label><input type="radio" name="kdy_volat" value="večer"><span>Večer</span></label></div></fieldset></div>
+      <div class="inp"><label for="f-jmeno-d">Jméno (nepovinné)</label><input id="f-jmeno-d" type="text" name="jmeno" autocomplete="name"></div>
+      <div class="inp"><label for="f-zprava-d">Zpráva (nepovinné)</label><textarea id="f-zprava-d" name="zprava" rows="2"></textarea></div>
+      <label class="check" data-attach hidden><input type="checkbox" name="pripojit"><span>Připojit hodnoty výpočtu <small data-attach-txt></small></span></label>
+      <label class="check" data-req><input type="checkbox" name="souhlas" id="d-c"><span>Souhlasím se <a href="/gdpr/">zpracováním osobních údajů</a>.</span></label>
+      <button class="btn p" type="submit">Poslat</button>
+      <p class="fine" style="margin:0">Ozvu se osobně, žádný spam.</p>
+      <div class="ok" role="status"><b>Díky, zpráva odešla.</b>Ozvu se osobně.</div><p class="send-err fine" role="alert" hidden>Zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo volejte <a href="tel:+420778511166">+420 778 511 166</a>.</p>
+    </form></dialog>
+<script src="/assets/js/mortgage-engine.js"></script><script src="/assets/js/insurance-computation.js"></script><script src="/assets/js/calc.js"></script>
+<script src="/assets/js/ui.js?v=mw2hmvni"></script></body></html>

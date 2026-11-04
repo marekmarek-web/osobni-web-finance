@@ -1,0 +1,117 @@
+/* Bydlení: mapa, splátka, rozcestí. Jen tokeny ze site.css, žádná modrá. */
+.by-hero{padding-bottom:clamp(18px,2vw,30px)}
+.by-path{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.by-path a{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px 0 6px;border-radius:999px;background:var(--sand);font-weight:600;font-size:15px;transition:background .2s}
+.by-path a:hover{background:var(--gold-soft)}
+.by-path i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font:600 14px/1 var(--head);font-style:normal}
+
+.by-sec{margin-top:clamp(40px,5vw,84px)}
+.by-sec:first-of-type{margin-top:clamp(18px,2vw,30px)}
+.by-head{display:flex;gap:clamp(14px,1.6vw,22px);align-items:flex-start;padding:0 clamp(6px,1vw,14px) clamp(18px,2vw,28px)}
+.by-n{display:grid;place-items:center;flex:none;width:clamp(44px,4vw,58px);height:clamp(44px,4vw,58px);border-radius:50%;background:var(--gold);font:700 clamp(19px,1.7vw,24px)/1 var(--head)}
+.by-head .kicker{margin-bottom:6px}
+.by-head h2{font-size:clamp(28px,3.2vw,50px)}
+.by-head p{margin-top:10px;color:var(--mute);max-width:40em}
+
+/* Krok 1: mapa */
+.by-map-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,1fr);gap:var(--gap)}
+.by-mapbox{display:flex;flex-direction:column;padding:clamp(16px,2vw,28px)}
+.by-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:14.5px}
+.by-crumbs>span[aria-hidden]{color:var(--line)}
+.by-crumbs button{min-height:40px;padding:0 14px;border:0;border-radius:999px;background:var(--sand);font-weight:600;cursor:pointer;transition:background .2s}
+.by-crumbs button:hover:not(:disabled){background:var(--gold-soft)}
+.by-crumbs button:disabled{background:none;color:var(--mute);cursor:default;font-weight:500}
+.by-crumbs button[aria-current]{background:var(--ink);color:#fff}
+.by-crumb-last{padding:0 8px;color:var(--mute);font-weight:500}.by-crumb-last.on{color:var(--ink);font-weight:700}
+.by-svg{position:relative;margin-top:14px;aspect-ratio:1000/573;width:100%;overflow:hidden;border-radius:var(--r-m)}
+.by-svg svg{display:block;width:100%;height:100%;overflow:hidden}
+.by-load{display:grid;place-items:center;height:100%;border-radius:var(--r-l);background:var(--sand);color:var(--mute);font-size:15px;text-align:center;padding:20px}
+.by-area{fill:var(--sand-2);stroke:#fff;stroke-width:1.1;vector-effect:non-scaling-stroke;stroke-linejoin:round;cursor:pointer;transition:fill .35s,opacity .35s,filter .25s;outline:none}
+.by-area:hover,.by-area:focus-visible{filter:brightness(.9);stroke:var(--ink);stroke-width:1.6}
+.by-area.dim{fill:var(--sand);opacity:.75}
+.by-area.dim:hover{filter:none;fill:var(--sand-2);stroke:#fff}
+.by-area.on{fill:var(--ink);stroke:var(--gold);stroke-width:2.2}
+.by-area.off{opacity:.55}
+.by-hover{min-height:24px;margin-top:10px;font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.by-scale{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.by-scale i{flex:1;max-width:220px;height:8px;border-radius:999px;background:linear-gradient(90deg,rgb(243,238,223),rgb(251,227,160),rgb(246,185,26),rgb(201,138,0),rgb(74,58,22))}
+.by-selects{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.by-selects .inp select{background:var(--sand);box-shadow:none}
+.by-selects .inp select:disabled{color:var(--mute);opacity:.7}
+.by-side{display:flex;flex-direction:column;padding:clamp(16px,2vw,28px)}
+.by-opt{font-size:12.5px;font-weight:400;color:var(--mute)}
+.by-sizes button{min-height:46px}
+.by-sizes button:disabled{opacity:.35;cursor:not-allowed}
+.by-res{margin-top:18px;flex:1}
+.by-range{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .32em;margin-top:8px;font:700 clamp(34px,3.6vw,56px)/1.05 var(--head);letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.by-range span{white-space:nowrap}
+.by-range em{font-style:normal;font-size:.42em;font-weight:600;letter-spacing:0;color:var(--mute)}
+.by-unit{margin-top:4px;font-size:14px;font-weight:500;color:var(--mute)}
+.by-res .res-foot .btn{flex:1 1 auto}
+.by-src a,.by-sources a,.by-ref a{text-decoration:underline}
+
+/* Krok 2: splátka */
+.by-loan{margin-top:0}
+.by-ctrl{display:flex;flex-direction:column}
+.by-ctrl>.seg{margin-top:0}
+.by-num{margin-top:18px}
+.by-num label{display:flex;justify-content:space-between;gap:8px;align-items:baseline;color:var(--mute)}
+.by-suf{position:relative}
+.by-suf input{padding-right:52px!important;font-weight:600;font-size:18px!important;font-variant-numeric:tabular-nums}
+.by-suf span{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--mute);font-weight:500;pointer-events:none}
+.by-num em.by-from,.by-rate-note{display:block;margin-top:6px;font-style:normal;font-size:13px;color:var(--mute)}
+.by-rate-note.bad{color:var(--clay);font-weight:500}
+.by-ref{margin-top:16px}
+.by-out .bignum{margin-top:6px}
+.by-need{margin-top:10px;padding:12px 14px;border-radius:var(--r-m);background:var(--gold-soft);font-size:14px;font-weight:500}
+.by-plus{margin-top:22px;padding:clamp(16px,1.8vw,22px);border-radius:var(--r-l);background:var(--sand)}
+.by-plus-h{font:600 clamp(18px,1.5vw,21px)/1.25 var(--head);letter-spacing:-.015em}
+.by-bars{display:grid;gap:12px;margin-top:14px}
+.by-bars:empty{display:none}
+.by-brow p{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--mute)}
+.by-brow b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.by-brow svg{display:block;width:100%;height:14px;margin-top:6px;border-radius:999px}
+.by-btrack{fill:#fff}
+.by-b1{fill:var(--ink)}
+.by-b2{fill:var(--gold-mark)}
+.by-brow rect:last-child{transition:width .5s var(--ease)}
+.by-plus-t{margin-top:12px;font-size:15px;line-height:1.45}
+.by-plus-t b{font-weight:700}
+.by-plus details.tbl .tw{background:#fff;border-radius:var(--r-m);padding:4px 12px}
+.by-out .res-foot{margin-top:auto;padding-top:18px}
+.by-out .res-foot .fine{flex:1 1 260px}
+
+/* Krok 3: rozcestí */
+.by-way{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:clamp(240px,22vw,320px)}
+.by-way h3{font-size:clamp(28px,2.8vw,44px)}
+.by-way p{margin-top:12px;max-width:30em}
+.tile.gold.by-way p{color:var(--ink-2)}
+.by-way .go{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600}
+.by-fork a.tile.by-way{display:flex;transition:transform .4s var(--ease)}
+a.by-way:hover{transform:translateY(-3px)}
+.by-way .res-foot .btn{align-self:flex-start}
+
+/* Zdroje */
+.by-sources{margin-top:var(--gap)}
+.by-sources h3{font-size:20px}
+.by-sources ul{display:grid;gap:8px;margin-top:12px;padding-left:18px;list-style:disc;font-size:14px;color:var(--mute);max-width:62em}
+
+@media(max-width:1020px){
+  .by-map-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .by-selects{grid-template-columns:1fr}
+  .seg.by-sizes{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .by-path{display:grid;grid-template-columns:1fr}
+  .by-res .kpis{grid-template-columns:1fr 1fr}
+  .by-out .bignum{font-size:clamp(44px,13vw,64px)}
+  .by-way .res-foot .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.by-area,.by-brow rect{transition:none}}
+/* 3D náhled nemovitosti nad přepínačem */
+.by-3d{position:relative;margin:-4px -4px 14px;border-radius:20px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#fff 0%,var(--sand) 70%);aspect-ratio:16/11}
+.by-3d canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:pan-y;opacity:0;transition:opacity .5s}
+.by-3d.ready canvas{opacity:1}
+.by-3d canvas:active{cursor:grabbing}
+.by-3d-hint{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--mute);background:rgba(255,255,255,.8);padding:4px 10px;border-radius:99px;pointer-events:none;transition:opacity .3s}
+.by-3d.used .by-3d-hint{opacity:0}

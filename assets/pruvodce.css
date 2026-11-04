@@ -1,0 +1,157 @@
+/* Spojený průvodce (plán v2, sekce 7). Jen třídy pv-*, sdílené tokeny ze site.css. */
+.pv{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--gap);align-items:start;scroll-margin-top:92px}
+.pv-main{padding:clamp(20px,3vw,44px)}
+.pv-top{display:flex;align-items:center;gap:16px;margin-bottom:clamp(22px,2.6vw,34px)}
+.pv-count{flex:none;font-size:14.5px;color:var(--mute)}.pv-count b{color:var(--ink);font-weight:600}
+.pv-bar{flex:1;height:6px;border-radius:999px;background:#fff;overflow:hidden}
+.pv-bar i{display:block;height:100%;width:0;border-radius:999px;background:var(--ink);transition:width .5s var(--ease)}
+.pv-step h2{font-size:clamp(30px,3.3vw,52px);max-width:16em}
+.pv-step h2:focus{outline:0}
+.pv-lead{margin-top:12px;max-width:40em;color:var(--mute);font-size:clamp(16px,1.2vw,18px)}
+.pv-lead a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.pv-step.enter{animation:pvIn .45s var(--ease)}
+@keyframes pvIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Výběr témat */
+.pv-topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:26px}
+.pv-topic{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;min-height:118px;padding:20px 22px;border:0;border-radius:var(--r-l);background:#fff;text-align:left;cursor:pointer;transition:transform .3s var(--ease),box-shadow .2s,background .2s}
+.pv-topic:hover{transform:translateY(-2px)}
+.pv-topic[aria-pressed=true]{background:var(--gold-soft);box-shadow:inset 0 0 0 2px var(--ink)}
+.pv-ic{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--sand);color:var(--ink);flex:none;transition:background .2s}
+.pv-ic svg{width:26px;height:26px}
+.pv-ic.sm{width:40px;height:40px}.pv-ic.sm svg{width:21px;height:21px}
+.pv-topic[aria-pressed=true] .pv-ic{background:var(--gold)}
+.pv-tt b{display:block;font:700 clamp(19px,1.6vw,23px)/1.15 var(--head);letter-spacing:-.02em}
+.pv-tt span{display:block;margin-top:5px;font-size:14.5px;line-height:1.4;color:var(--mute)}
+.pv-ck{position:relative;width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 2px #CFC9BB;transition:background .2s,box-shadow .2s}
+.pv-topic[aria-pressed=true] .pv-ck{background:var(--ink);box-shadow:none}
+.pv-topic[aria-pressed=true] .pv-ck::after{content:"";position:absolute;left:10px;top:6px;width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg)}
+.pv-pick{background:var(--gold-soft);color:var(--ink);font-weight:500}
+
+/* Pole: posuvník vždy s číslem */
+.pv-cols{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:clamp(18px,2.6vw,36px);align-items:start;margin-top:26px}
+.pv-f{margin-top:22px}.pv-cols>div>.pv-f:first-child{margin-top:4px}
+.pv-fh{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pv-fh label,.pv-lab{flex:1;min-width:0;font-size:14.5px;font-weight:500;color:var(--ink-2);line-height:1.3}
+.pv-num{display:inline-flex;align-items:center;flex:none;min-height:46px;padding:0 14px 0 10px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .2s}
+.pv-num:focus-within{box-shadow:inset 0 0 0 2px var(--ink)}
+.pv-num input{width:8.5ch;padding:0;border:0;background:none;text-align:right;font:600 17px/1 var(--body);font-variant-numeric:tabular-nums}
+.pv-num input:focus{outline:0}
+.pv-num i{margin-left:6px;font-style:normal;font-size:14px;color:var(--mute)}
+.pv-f input[type=range]{margin-top:6px}
+.pv-f .ends{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);margin-top:-1px}
+.pv-hint{margin-top:6px;font-size:13px;line-height:1.45;color:var(--mute)}
+p.pv-hint.pv-pick{margin-top:14px;padding:12px 14px;border-radius:var(--r-m);font-size:14px}
+.pv-tag{flex:none;padding:4px 10px;border-radius:999px;background:var(--gold-soft);font-size:12px;font-weight:600}
+.pv-f .seg{margin-top:8px}
+.pv-stepper{display:inline-flex;align-items:center;gap:2px;margin-top:8px;padding:3px;border-radius:999px;background:#fff}
+.pv-stepper button{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:var(--sand);font-size:22px;line-height:1;cursor:pointer;transition:background .2s}
+.pv-stepper button:hover{background:var(--gold-soft)}
+.pv-stepper input{width:3.4ch;border:0;background:none;text-align:center;font:600 18px/1 var(--body);font-variant-numeric:tabular-nums}
+.pv-stepper input:focus{outline:0}.pv-stepper:focus-within{box-shadow:inset 0 0 0 2px var(--ink)}
+.pv-stepper.sm{margin:0;background:var(--sand)}.pv-stepper.sm button{width:40px;height:40px;background:#fff}
+.pv-kids{display:grid;gap:8px;margin-top:10px}
+.pv-kid{display:flex;align-items:center;gap:12px;padding:5px 14px 5px 18px;border-radius:999px;background:#fff;font-size:15px;font-weight:500}
+.pv-kid>span{flex:1}.pv-kid i{font-style:normal;color:var(--mute);font-size:14px;min-width:2.2em}
+.pv-mini{flex:none;min-height:40px;padding:0 16px;border:0;border-radius:999px;background:#fff;font-size:13.5px;font-weight:600;cursor:pointer;transition:background .2s}
+.pv-mini:hover{background:var(--gold-soft)}
+.pv-nokids{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-top:24px;padding:20px 22px;border-radius:var(--r-l);background:#fff;font-weight:500}
+
+/* Výsledek kroku */
+.pv-res{min-width:0;padding:clamp(18px,2.2vw,32px);border-radius:var(--r-l);background:#fff}
+.pv-big{margin-top:4px;font:700 clamp(40px,4.6vw,74px)/1.02 var(--head);letter-spacing:-.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pv-big small{margin-left:.15em;font-size:.3em;font-weight:600;letter-spacing:0;color:var(--mute)}
+.pv-sub{margin-top:6px;font-size:15px;color:var(--mute)}.pv-sub b{color:var(--ink);font-weight:600}
+.pv-res .kpis{margin-top:18px}
+.pv-res .warn{margin-top:14px}
+.pv-chart{position:relative;width:100%;min-height:20px;margin-top:20px;touch-action:pan-y}
+.pv-chart svg{display:block;overflow:visible}
+.pv-line{min-height:220px}.pv-line.sm{min-height:150px}
+.pv-tl{font:600 13.5px var(--body);fill:var(--ink)}
+.pv-tv{font:500 13.5px var(--body);fill:var(--mute);font-variant-numeric:tabular-nums}
+.pv-tn{font:400 12.5px var(--body);fill:var(--mute)}
+.pv-ax{font:400 12px var(--body);fill:var(--mute)}
+.pv-ll{font:600 12.5px var(--body);fill:var(--mute);paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.pv-ll.b{fill:var(--ink);font-size:13.5px}
+.pv-read{min-height:1.5em;margin-top:8px;font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.pv-res .reslist{margin-top:16px}
+.resrow strong small{font:500 13px var(--body);letter-spacing:0}
+.pv-note{margin-top:14px;padding:14px 16px;border-radius:var(--r-m);background:var(--sand);font-size:14px;line-height:1.5}
+.pv-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-weight:600;border-bottom:1.5px solid currentColor}
+.pv-link svg{width:15px;height:15px}
+.pv-nav{display:flex;justify-content:space-between;gap:8px;margin-top:32px}
+
+/* Postranní panel */
+.pv-side{position:sticky;top:88px;display:grid;gap:var(--gap)}
+.pv-route{padding:18px}
+.pv-route h3,.pv-know h3{font-size:18px}
+.pv-route ol{display:grid;gap:2px;margin-top:10px}
+.pv-route button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:6px 10px;border:0;border-radius:var(--r-m);background:none;text-align:left;font-size:15px;font-weight:500;color:var(--mute);cursor:pointer;transition:background .2s}
+.pv-route button:hover{background:var(--sand)}
+.pv-route button i{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sand);font:600 12.5px/1 var(--body);font-style:normal;flex:none}
+.pv-route button.done i{background:var(--ink);color:#fff}
+.pv-route button[aria-current=step]{background:var(--sand);color:var(--ink);font-weight:600}
+.pv-route button[aria-current=step] i{background:var(--gold);color:var(--ink)}
+.pv-know{padding:20px 22px}
+.pv-know ul,.pv-know2 ul{display:grid;gap:9px;margin:10px 0 20px}
+.pv-know ul:last-child,.pv-know2 ul{margin-bottom:0}
+.pv-know li,.pv-know2 li{position:relative;padding-left:21px;font-size:14.5px;line-height:1.45;color:var(--ink-2)}
+.pv-know li b,.pv-know2 li b{font-weight:600;color:var(--ink);white-space:nowrap}
+.pv-know li::before,.pv-know2 li::before{content:"";position:absolute;left:0;top:.42em;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.pv-know ul+h3+ul li::before,.pv-know2>div+div li::before{background:none;box-shadow:inset 0 0 0 1.5px var(--mute)}
+.pv-priv{padding:0 6px;margin-top:0}
+.pv-priv button{padding:0;border:0;background:none;font:inherit;color:var(--ink);text-decoration:underline;cursor:pointer}
+
+/* Přehled */
+.pv-sumhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:18px 24px}
+.pv-sumcta{display:flex;flex-wrap:wrap;gap:8px}
+.pv-plan{margin-top:24px;padding:clamp(18px,2.4vw,32px);border-radius:var(--r-l)}
+.pv-plan-h{max-width:44em;font:600 clamp(18px,1.6vw,23px)/1.4 var(--head);letter-spacing:-.012em}
+.pv-plan-h b{font-weight:700;background:linear-gradient(transparent 58%,var(--gold-soft) 58%);white-space:nowrap}
+.pv-plan .legend{margin-top:12px}
+.pv-legnote{flex-basis:100%;font-size:12.5px}
+.pv-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.pv-cards.one{grid-template-columns:1fr}
+.pv-card{min-width:0;padding:clamp(18px,2vw,26px);border-radius:var(--r-l);background:#fff}
+.pv-card.todo{background:rgba(255,255,255,.55)}
+.pv-card-h{display:flex;align-items:center;gap:12px}
+.pv-card-h h3{flex:1;min-width:0;font-size:19px}
+.pv-card-h .pv-mini{background:var(--sand)}
+.pv-cbig{margin-top:16px;font:700 clamp(28px,2.6vw,40px)/1.08 var(--head);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pv-cbig small{display:inline-block;margin-left:6px;font:500 14px/1.3 var(--body);letter-spacing:0;color:var(--mute)}
+.pv-cline{margin-top:6px;font-size:14px;line-height:1.45;color:var(--mute)}
+.pv-card .pv-chart{margin-top:14px}
+.pv-card .pv-link{font-size:14px}
+.pv-todo{margin-top:12px;font-size:14.5px;color:var(--mute)}
+.pv-know2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);margin-top:var(--gap)}
+.pv-know2>div{padding:clamp(18px,2vw,26px);border-radius:var(--r-l);background:#fff}
+.pv-know2 h3{font-size:18px}
+.pv-main details.tbl table{font-size:13px}
+
+/* Jak to počítám */
+.pv-how .tile h3{font-size:clamp(20px,1.7vw,24px)}
+.pv-how .tile p{margin-top:10px;color:var(--mute);font-size:15px;line-height:1.55}
+
+@media (max-width:1020px){
+  .pv{grid-template-columns:1fr}
+  .pv-side{position:static}
+  .pv-route ol{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .pv-route ol::-webkit-scrollbar{display:none}
+  .pv-route button{width:auto;white-space:nowrap}
+}
+@media (max-width:820px){
+  .pv-cols,.pv-cards,.pv-know2{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .pv-main{padding:20px 14px}
+  .pv-top{flex-wrap:wrap;gap:8px}.pv-bar{flex-basis:100%}
+  .pv-topics{grid-template-columns:1fr}
+  .pv-topic{min-height:0;padding:16px;gap:14px}
+  .pv-ic{width:44px;height:44px}.pv-ic svg{width:22px;height:22px}
+  .pv-res{padding:18px 16px}
+  .pv-nav .btn{flex:1 1 auto;padding:0 18px}
+  .pv-sumcta,.pv-sumcta .btn{flex:1 1 100%}
+  .pv-num input{width:7.5ch}
+  .pv-know{padding:18px}
+}
+@media print{.pv-side,.pv-nav,.pv-sumcta{display:none}.pv{grid-template-columns:1fr}}
