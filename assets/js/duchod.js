@@ -1,4 +1,4 @@
-/* Důchodová kalkulačka v2: zákonný vzorec 2026, ročník v datech, výdaje státu, mezera, PDF. Bez knihoven, nic se neodesílá. */
+/* Důchodová kalkulačka v2: zákonný vzorec 2026, ročník v datech, výdaje státu, mezera, kontrola let pojištění, analýza na e-mail. Bez knihoven, odesílá se jen formulář s e-mailem. */
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -32,7 +32,8 @@
   const KEY = 'mm-duchod-v2';
   const S = { by: 1990, wage: 45000, yrs: null, kids: 0, g: 3, sy: 4, law: 'now', want: null, delay: 0, r: 4 };
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+  let noSave = false;
+  const save = () => { if (noSave) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 
   /* --- Posuvník a číselné pole drží stejnou hodnotu --- */
   const paint = (r) => r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min)) * 100 + '%');
@@ -112,6 +113,7 @@
     set('sRange', `${nf.format(Math.round(R.lo.total / 1000))}–${nf.format(Math.round(R.hi.total / 1000))} tis.`);
     set('sGap', R.gap > 0 ? `${nf.format(Math.round(R.gap / 1000))} tis. měsíčně` : 'nic');
     drawSky(false);
+    ckRender();
     save();
   }
 
@@ -238,10 +240,88 @@
     new IntersectionObserver(([e]) => { atEnd = e.isIntersecting; vis(); }).observe($('#konec'));
   }
 
-  /* --- Souhrn do okna kontaktu (připojí se jen se zaškrtnutím) --- */
-  window.MM_summary = () => `rok narození ${S.by}, hrubá mzda ${kc(S.wage)}, odhad důchodu ${nf.format(r100(R.lo.total))}–${nf.format(r100(R.hi.total))} Kč, chybí ${kc(r100(R.gap))} měsíčně`;
+  /* --- Kontrola let pojištění: klient označí roky z výpisu ČSSZ, výpis se nikam nenahrává.
+     Pravidla zákona č. 155/1995 Sb.: § 29 (35 let, nebo 30 let bez náhradních dob), § 5 a § 34 odst. 2 (náhradní doby 80 %,
+     péče o dítě do 4 let celá), studium jen prvních 6 let po 18 a jen do roku 2009 (ČSSZ, Náhradní doba pojištění, 4. 11. 2026). --- */
+  const CKT = { p: 'Práce nebo podnikání', s: 'Studium', d: 'Péče o dítě do 4 let', u: 'Úřad práce', n: 'Bez pojištění' };
+  const NEED = 35, NEED_NO_SUB = 30, VOL_MIN = 3428;
+  if (!S.tl || typeof S.tl !== 'object') S.tl = {};
+  let brush = 'p';
+  const spans = (ys) => { const out = []; ys.forEach((y) => { const l = out[out.length - 1]; if (l && l[1] === y - 1) l[1] = y; else out.push([y, y]); }); return out.map(([a, b]) => (a === b ? String(a) : a + '–' + b)).join(', '); };
+  const yrsTxt = (v) => { const r = Math.round(v); return r + (r === 1 ? ' rok' : r > 1 && r < 5 ? ' roky' : ' let'); };
+  let C = {};
+  const ckCompute = () => {
+    const Y0 = Math.max(1960, S.by + 18), Y1 = YEAR - 1, rows = [];
+    const g = { p: [], sOk: [], sLate: [], sOver: [], d: [], u: [], n: [] };
+    for (let y = Y0; y <= Y1; y++) {
+      const t = S.tl[y] || 'p';
+      let st = 'ok';
+      if (t === 'p') g.p.push(y);
+      else if (t === 's') { if (y > 2009) { g.sLate.push(y); st = 'bad'; } else if (g.sOk.length < 6) { g.sOk.push(y); st = 'sub'; } else { g.sOver.push(y); st = 'bad'; } }
+      else if (t === 'd') { g.d.push(y); st = 'sub'; }
+      else if (t === 'u') { g.u.push(y); st = 'sub'; }
+      else { g.n.push(y); st = 'bad'; }
+      rows.push([y, t, st]);
+    }
+    const future = Math.max(0, R.retYear - YEAR);
+    const own = g.p.length + future;
+    const sub = own > 0 ? (g.sOk.length + g.u.length) * 0.8 + g.d.length : 0;
+    const total = own + sub;
+    const perYear = R.hi.vz * P.perYear;
+    const lost = (g.n.length + g.sLate.length + g.sOver.length) * perYear + (g.sOk.length + g.u.length) * 0.2 * perYear;
+    return { Y0, Y1, rows, g, future, own, sub, total, perYear, lost };
+  };
+  const ckFindings = () => {
+    const { g, future, own, total, perYear } = C, f = [];
+    const kcY = (n) => kc(r100(n * perYear));
+    if (total >= NEED) f.push(['ok', 'Platné pravidlo', `Potřebnou dobu pojištění splníte: zhruba ${yrsTxt(total)} z ${NEED} potřebných.`, `Zákon, § 29 odst. 1. Počítáme s tím, že do důchodu budete pojištění dál (${yrsTxt(future)}).`]);
+    else f.push(['bad', 'Platné pravidlo', `Do ${NEED} potřebných let vám chybí zhruba ${yrsTxt(NEED - total)}.`, own >= NEED_NO_SUB
+      ? `Bez náhradních dob máte ${yrsTxt(own)}. Zákon zná i nárok s ${NEED_NO_SUB} lety bez náhradních dob (§ 29 odst. 3).`
+      : `Bez nároku se důchod nepřizná ke dni důchodového věku, jen později, až dobu doplníte. S 20 lety vzniká nárok až 2 roky po důchodovém věku (§ 29 odst. 2).`]);
+    if (g.n.length) f.push(['bad', 'Model', `${spans(g.n)}: bez pojištění, ${yrsTxt(g.n.length)}. Tyto roky se nezapočtou.`, `Každý takový rok znamená zhruba ${kcY(1)} měsíčně méně, dohromady asi ${kcY(g.n.length)}. Zákon umožňuje dobrovolné důchodové pojištění, v roce 2026 nejméně ${kc(VOL_MIN)} měsíčně, zpětně jen omezeně.`]);
+    if (g.sLate.length) f.push(['bad', 'Platné pravidlo', `${spans(g.sLate)}: studium po roce 2009 se nezapočítává.`, 'Výjimkou je prezenční doktorské studium dokončené ve standardní době, nejvýš 4 roky.']);
+    if (g.sOver.length) f.push(['bad', 'Platné pravidlo', `${spans(g.sOver)}: studium nad 6 let se nezapočte.`, 'Počítá se jen prvních 6 let studia po 18. roce.']);
+    if (g.sOk.length) f.push(['doc', 'Platné pravidlo', `${spans(g.sOk)}: studium se započte jako náhradní doba, v rozsahu 80 %.`, 'Ve výpisu ČSSZ obvykle chybí. Délka studia se dokládá až při žádosti o důchod.']);
+    if (g.d.length) f.push(['doc', 'Platné pravidlo', `${spans(g.d)}: péče o dítě do 4 let se započte celá.`, 'Ve výpisu může chybět. Doklad je potřeba, jen když ČSSZ dítě nedohledá v registru obyvatel. Muži péči dokládají rozhodnutím správy sociálního zabezpečení.']);
+    if (g.u.length) f.push(['doc', 'Platné pravidlo', `${spans(g.u)}: úřad práce se započte jen za dobu s podporou, v rozsahu 80 %.`, 'Bez podpory nejvýš 3 roky zpětně od důchodu, před 55. rokem nejvýš 1 rok. Co ČSSZ nemá, doložíte potvrzením úřadu práce.']);
+    if (!g.n.length && !g.sLate.length && !g.sOver.length) f.push(['ok', 'Předpoklad', 'Mezery jste neoznačili.', 'Platí, jen pokud roky odpovídají výpisu na ePortálu ČSSZ.']);
+    return f;
+  };
+  const ckSumRows = () => [['Práce a podnikání', yrsTxt(C.g.p.length)], ['Náhradní doby, započteno', yrsTxt(C.sub)], ['Nezapočte se', yrsTxt(C.g.n.length + C.g.sLate.length + C.g.sOver.length)], ['Do důchodu, předpoklad', yrsTxt(C.future)], ['Celkem pro nárok', `${yrsTxt(C.total)} z ${NEED}`]];
+  const ckYearsHtml = (btn) => C.rows.map(([y, t, st]) => btn
+    ? `<button type="button" class="ck-y t-${t}${st === 'bad' ? ' bad' : ''}" data-y="${y}" aria-label="${y}: ${CKT[t]}${st === 'bad' ? ', nezapočte se' : ''}"><b>${String(y).slice(2)}</b></button>`
+    : `<span class="ck-y t-${t}${st === 'bad' ? ' bad' : ''}"><b>${String(y).slice(2)}</b></span>`).join('');
+  const ckFindHtml = (f) => f.map(([k, chip, h, p]) => `<li class="ck-f ${k}"><span class="ck-chip">${chip}</span><b>${h}</b><span>${p}</span></li>`).join('');
+  const ckBox = $('[data-ck-years]'), ckOut = $('[data-ck-out]');
+  function ckRender() {
+    if (!ckBox) return;
+    C = ckCompute();
+    if (C.Y0 > C.Y1) { ckBox.innerHTML = ''; ckOut.innerHTML = '<p class="mute">Kontrola začíná rokem, kdy vám bylo 18.</p>'; return; }
+    ckBox.innerHTML = `<span class="ck-ax">${C.Y0}</span>${ckYearsHtml(true)}<span class="ck-ax">${C.Y1}</span>`;
+    const f = ckFindings(), diff = Math.round(C.total) !== R.yrs;
+    ckOut.innerHTML = `<div class="ck-kpi"><div><span>Celkem pro nárok</span><b>${yrsTxt(C.total)}</b><small>potřeba ${NEED}</small></div><div><span>Nezapočte se</span><b>${yrsTxt(C.g.n.length + C.g.sLate.length + C.g.sOver.length)}</b><small>z označených roků</small></div><div><span>Dopad na důchod, model</span><b>${C.lost > 0 ? '−' + kc(r100(C.lost)) : '0 Kč'}</b><small>měsíčně, v dnešních penězích</small></div></div>
+      <ol class="ck-list">${ckFindHtml(f)}</ol>
+      ${diff ? `<p class="ck-use">V odhadu nahoře počítáte s ${R.yrs} lety pojištění. <button type="button" class="btn line sm" data-ck-use>Použít ${Math.round(C.total)} let v odhadu</button></p>` : ''}`;
+  }
+  if (ckBox) {
+    const marks = $$('[data-ck-brush] button');
+    marks.forEach((b) => b.addEventListener('click', () => { brush = b.dataset.v; marks.forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
+    ckBox.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-y]'); if (!b) return;
+      const y = +b.dataset.y;
+      if (brush === 'p') delete S.tl[y]; else S.tl[y] = (S.tl[y] === brush ? undefined : brush);
+      if (S.tl[y] === undefined) delete S.tl[y];
+      save(); ckRender();
+      const nb = $(`[data-y="${y}"]`, ckBox); if (nb) nb.focus();
+    });
+    ckOut.addEventListener('click', (e) => { if (e.target.closest('[data-ck-use]')) { S.yrs = Math.round(C.total); update(); } });
+  }
 
-  /* --- Zpráva pro PDF: stejná čísla jako na stránce. Klient ji dostane e-mailem, ne stažením. --- */
+  /* --- Souhrn do okna kontaktu (připojí se jen se zaškrtnutím) --- */
+  window.MM_summary = () => `rok narození ${S.by}, hrubá mzda ${kc(S.wage)}, odhad důchodu ${nf.format(r100(R.lo.total))}–${nf.format(r100(R.hi.total))} Kč, chybí ${kc(r100(R.gap))} měsíčně` +
+    (C.rows ? `, roky pojištění pro nárok zhruba ${yrsTxt(C.total)} z ${NEED}` : '');
+
+  /* --- Zpráva pro PDF: stejná čísla jako na stránce. Klient ji dostane e-mailem od Marka, stáhnout ji nejde. --- */
   const fillReport = () => {
     const rp = $('[data-report]'), q = (k) => $(`[data-r="${k}"]`, rp);
     q('date').textContent = new Date().toLocaleDateString('cs-CZ');
@@ -254,13 +334,30 @@
     const max = Math.max(R.want, R.mid, 1), W = 380, x0 = 110;
     const bar = (y, l, v, f, t) => `<text x="0" y="${y + 15}" font-size="12" fill="#5C5E66">${l}</text><rect x="${x0}" y="${y}" width="${Math.max(4, (v / max) * W)}" height="22" rx="4" fill="${f}"/><text x="${x0 + Math.max(4, (v / max) * W) + 8}" y="${y + 15}" font-size="12" font-weight="700" fill="#16181D">${t}</text>`;
     q('chart').innerHTML = `<svg viewBox="0 0 600 100" role="img" aria-label="Chcete, stát, chybí">${bar(2, 'Chcete', R.want, '#16181D', kc(R.want))}${bar(38, 'Stát (odhad)', R.mid, '#B9BBC2', kc(r100(R.mid)))}${bar(74, 'Chybí', R.gap, '#F6B91A', kc(r100(R.gap)))}</svg>`;
-    q('inputs').innerHTML = [['Rok narození', S.by], ['Hrubá mzda', kc(S.wage)], ['Roky pojištění', R.yrs], ['Vychované děti', S.kids], ['Cíl v důchodu', kc(R.want)], ['Zhodnocení po inflaci', S.r + ' % ročně'], ['Začnu odkládat za', S.delay + ' let']].map(([a, b]) => `<tr><th>${a}</th><td>${b}</td></tr>`).join('');
+    q('inputs').innerHTML = [['Rok narození', S.by], ['Hrubá mzda', kc(S.wage)], ['Roky pojištění v odhadu', R.yrs], ['Vychované děti', S.kids], ['Cíl v důchodu', kc(R.want)], ['Zhodnocení po inflaci', S.r + ' % ročně'], ['Začnu odkládat za', S.delay + ' let']].map(([a, b]) => `<tr><th>${a}</th><td>${b}</td></tr>`).join('');
+    if (!C.rows) return;
+    q('ckSum').innerHTML = ckSumRows().map(([a, b]) => `<tr><th>${a}</th><td>${b}</td></tr>`).join('');
+    q('ckYears').innerHTML = `<div class="ck-years">${ckYearsHtml(false)}</div><p class="ck-leg">${Object.keys(CKT).map((k) => `<span><i class="t-${k}"></i>${CKT[k]}</span>`).join('')}<span><i class="bad"></i>Nezapočte se</span></p>`;
+    q('ckFind').innerHTML = ckFindHtml(ckFindings());
   };
-  // E-mail s analýzou: formulář ověří ui.js, tady se jen připraví obsah. V návrhu se nic neodesílá.
-  const pf = $('[data-pdf-form]');
-  if (pf) pf.addEventListener('submit', fillReport, true);
-  // Náhled pro Marka, jak PDF vypadá: ?nahled-pdf
+  addEventListener('beforeprint', fillReport);
 
+  /* --- Analýza na e-mail: ui.js ověří a odešle Markovi. Přiloží se celé nálezy a odkaz na náhled PDF.
+     Čísla jsou v odkazu za #, ten prohlížeč na server neposílá. --- */
+  const pf = $('[data-pdf-form]');
+  if (pf) pf.addEventListener('submit', () => {
+    const f = ckFindings().map(([, chip, h, p]) => `${h} ${p} (${chip})`).join(' | ');
+    pf.elements.analyza.value = window.MM_summary() + '. Kontrola let: ' + f;
+    const st = { by: S.by, wage: S.wage, yrs: S.yrs, kids: S.kids, law: S.law, want: S.want, delay: S.delay, r: S.r, tl: S.tl };
+    pf.elements.nahled_pdf.value = location.origin + location.pathname + '?nahled-pdf#a=' + btoa(unescape(encodeURIComponent(JSON.stringify(st))));
+  }, true);
+
+  // Náhled PDF pro Marka: ?nahled-pdf, s čísly klienta z odkazu v e-mailu. Do prohlížeče Marka se neukládají.
+  const preview = /[?&]nahled-pdf\b/.test(location.search);
+  if (preview) {
+    const m = location.hash.match(/#a=([\w+/=]+)/);
+    if (m) { try { Object.assign(S, JSON.parse(decodeURIComponent(escape(atob(m[1]))))); } catch (e) {} noSave = true; }
+  }
   update();
-  if (/[?&]nahled-pdf\b/.test(location.search)) { fillReport(); document.body.classList.add('pdf-view'); }
+  if (preview) { fillReport(); document.body.classList.add('pdf-view'); }
 })();

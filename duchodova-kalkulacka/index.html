@@ -3,7 +3,7 @@
 <title>Důchodová kalkulačka 2026: kolik vám bude chybět | Marek Marek</title><meta name="description" content="Spočítejte si důchod podle zákonného vzorce 2026, uvidíte svůj ročník v datech a kolik odkládat. Bez registrace."><meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://www.marek-marek.cz/duchodova-kalkulacka/"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:site_name" content="Marek Marek"><meta property="og:title" content="Důchodová kalkulačka 2026: kolik vám bude chybět | Marek Marek"><meta property="og:description" content="Spočítejte si důchod podle zákonného vzorce 2026, uvidíte svůj ročník v datech a kolik odkládat. Bez registrace."><meta property="og:url" content="https://www.marek-marek.cz/duchodova-kalkulacka/"><meta property="og:image" content="https://www.marek-marek.cz/assets/photos/kancelar.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/assets/logos/m-logo.png">
 <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v=mw2hmvni"><link rel="stylesheet" href="/assets/duchod.css?v=mw2hmvni"><script>document.documentElement.classList.remove('no-js')</script></head><body>
+<link rel="stylesheet" href="/assets/site.css?v=mw2ifrck"><link rel="stylesheet" href="/assets/duchod.css?v=mw2ifrck"><script>document.documentElement.classList.remove('no-js')</script></head><body>
 <a class="skip" href="#obsah">Přeskočit na obsah</a>
 <div class="sheet"><header class="nav"><div class="nav-in">
     <a class="brand" href="/" aria-label="Marek Marek, úvodní stránka"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><span>Marek Marek<span class="dot">.</span><small>Finanční partner</small></span></a>
@@ -160,14 +160,33 @@
       <div class="cta"><a class="btn p" href="https://www.aidvisora.cz/rezervace/1723b4301ef60ae9c05396b7e608f2b622ce" target="_blank" rel="noopener">Chci plán na penzi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><button class="btn w" type="button" data-contact="Důchodová kalkulačka: chci krátkou odpověď." data-done>Chci krátkou odpověď</button></div>
     </div>
   </div>
-  <form class="tile pdf-tile form" data-pdf-form novalidate>
-    <div><h3>Vaše důchodová analýza na dvě strany.</h3><p class="mute">Vaše čísla, graf, co udělat tento měsíc, předpoklady a zdroje. Pošlu vám ji na e-mail jako PDF.</p></div>
-    <div class="pdf-f">
-      <label class="f" data-req><span class="lab">E-mail</span><input type="email" name="email" autocomplete="email" placeholder="vas@email.cz"></label>
-      <label class="check" data-req><input type="checkbox" name="souhlas" id="pdf-souhlas"><span>Souhlasím se <a href="/gdpr/">zpracováním osobních údajů</a>.</span></label>
-      <button class="btn p" type="submit">Poslat analýzu na e-mail <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <section class="tile white ck" id="kontrola" aria-labelledby="ck-h">
+    <div class="ck-head"><div><span class="kicker">Kontrola let pojištění</span><h3 id="ck-h">Kde máte mezery a co se nezapočte.</h3></div>
+      <p class="mute">Otevřete Moje konto na ePortálu ČSSZ a projděte rok po roku. Označte roky, kdy jste studovali, byli s dítětem, na úřadu práce, nebo nebyli pojištění vůbec. Ostatní roky nechte jako práci. Zůstává jen ve vašem prohlížeči, výpis nikam nenahráváte.</p></div>
+    <div class="ck-brush" role="radiogroup" aria-label="Co označuji" data-ck-brush>
+      <button type="button" data-v="p" aria-pressed="true"><i class="t-p"></i>Práce nebo podnikání</button>
+      <button type="button" data-v="s" aria-pressed="false"><i class="t-s"></i>Studium</button>
+      <button type="button" data-v="d" aria-pressed="false"><i class="t-d"></i>Péče o dítě do 4 let</button>
+      <button type="button" data-v="u" aria-pressed="false"><i class="t-u"></i>Úřad práce</button>
+      <button type="button" data-v="n" aria-pressed="false"><i class="t-n"></i>Nic, bez pojištění</button>
     </div>
-    <div class="ok" role="status"><b>Analýza je na cestě.</b>Tohle je ukázka návrhu, zatím se nic neodeslalo. Na ostrém webu přijde PDF na váš e-mail a Markovi kopie.</div>
+    <div class="ck-years" data-ck-years aria-label="Vaše roky od 18 let"></div>
+    <p class="fine">Vyberte druh nahoře a klepněte na roky. Počítáme po celých letech, ČSSZ počítá po dnech.</p>
+    <div class="ck-out" data-ck-out aria-live="polite"></div>
+    <p class="fine"><span data-k="94">Pravidla: zákon č. 155/1995 Sb., § 29 (potřebná doba pojištění) a § 5 (náhradní doby), stránky ČSSZ „Starobní důchod podrobně“ a „Náhradní doba pojištění“, leták ČSSZ o nezaměstnanosti, přehled údajů ČSSZ pro rok 2026. Ověřeno 4. 11. 2026.</span> Informativní kontrola podle dnešních pravidel. Nejde o rozhodnutí ČSSZ ani o doporučení, nárok a výši stanoví ČSSZ.</p>
+  </section>
+  <form class="tile pdf-tile form" data-pdf-form novalidate>
+    <div class="pdf-txt"><span class="kicker">Analýza na e-mail</span><h3>Celá analýza na tři strany, v PDF.</h3><p class="mute">Odhad důchodu, graf, kontrola let pojištění se všemi nálezy, předpoklady a zdroje. Pošlu vám ji osobně na e-mail.</p></div>
+    <div class="pdf-f">
+      <input type="hidden" name="tema" value="Důchodová analýza na e-mail">
+      <input type="hidden" name="analyza" value="">
+      <input type="hidden" name="nahled_pdf" value="">
+      <div class="inp" data-req><label for="pdf-email">Váš e-mail</label><input id="pdf-email" type="email" name="email" autocomplete="email" placeholder="vas@email.cz"><em>Doplňte e-mail, ať mám kam analýzu poslat.</em></div>
+      <label class="check" data-req><input type="checkbox" name="souhlas" id="pdf-souhlas"><span>Souhlasím se <a href="/gdpr/">zpracováním osobních údajů</a>.</span></label>
+      <button class="btn p" type="submit">Poslat mi analýzu <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="ok" role="status"><b>Díky, mám to.</b>Analýzu vám pošlu e-mailem jako PDF. Kdybyste chtěli projít výsledky rovnou, vyberte si termín v kalendáři.</div>
+    <p class="send-err fine" role="alert" hidden>Nepodařilo se odeslat. Zkuste to prosím znovu, nebo volejte <a href="tel:+420778511166">+420 778 511 166</a>.</p>
   </form>
 </section><div class="dsum" data-sum hidden><span>Odhad <b data-o="sRange">–</b></span><span>Chybí <b data-o="sGap">–</b></span><a class="btn g sm" href="https://www.aidvisora.cz/rezervace/1723b4301ef60ae9c05396b7e608f2b622ce" target="_blank" rel="noopener">Probrat s Markem</a></div><section class="sec end" id="konec"><div class="tile ink end-in">
   <div class="end-ph"><img src="/assets/photos/marek-cutout-760.webp" srcset="/assets/photos/marek-cutout-420.webp 420w, /assets/photos/marek-cutout-760.webp 760w, /assets/photos/marek-cutout.webp 1037w" sizes="(max-width:640px) 70vw, 34vw" alt="Marek Marek" width="1037" height="1918" loading="lazy"></div>
@@ -190,11 +209,19 @@
     <div class="rp-chart" data-r="chart"></div>
     <div class="rp-cols">
       <div><h2>Vaše zadání</h2><table class="rp-t" data-r="inputs"></table></div>
-      <div><h2>Co udělat tento měsíc</h2><ol class="rp-do"><li>Otevřete Moje konto na ePortálu ČSSZ a zkontrolujte roky pojištění. Hledejte mezery.</li><li>Zjistěte, jestli vám zaměstnavatel přispívá na penzijní spoření, a kolik.</li><li>Rozhodněte, kolik budete odkládat, a nastavte to jako trvalý příkaz hned po výplatě.</li></ol></div>
+      <div><h2>Roky pojištění v kostce</h2><table class="rp-t" data-r="ckSum"></table></div>
     </div>
   </div>
   <div class="rp-page">
     <header class="rp-head"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><b>Marek Marek<span>.</span></b><span class="rp-date">Strana 2</span></header>
+    <p class="rp-kick">Kontrola let pojištění</p>
+    <h2 class="rp-h1">Kde máte mezery a co se nezapočte</h2>
+    <p class="rp-lead">Podle roků, které jste označili. Počítáno po celých letech podle dnešních pravidel, ne rozhodnutí ČSSZ.</p>
+    <div class="rp-years" data-r="ckYears"></div>
+    <ol class="rp-find" data-r="ckFind"></ol>
+  </div>
+  <div class="rp-page">
+    <header class="rp-head"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><b>Marek Marek<span>.</span></b><span class="rp-date">Strana 3</span></header>
     <h2>Předpoklady a zdroje</h2>
     <ul class="rp-src">
       <li>Výpočet důchodu: zákonný vzorec, parametry 2026 podle ČSSZ (základní výměra 4 900 Kč, redukční hranice 21 546 a 195 868 Kč, 1,495 % za rok pojištění, výchovné 500 Kč na dítě, minimální důchod 9 800 Kč).</li>
@@ -203,8 +230,9 @@
       <li>Věková struktura: Eurostat (skutečnost 25. 9. 2026, projekce EUROPOP2023 12. 5. 2026).</li>
       <li>Výdaje státu: Ministerstvo financí, Státní rozpočet 2026 v kostce.</li>
       <li>Výpis ČSSZ: ePortál ČSSZ, Moje konto. Ověřeno 4. 11. 2026.</li>
+      <li>Kontrola let: zákon č. 155/1995 Sb., § 29 a § 5, ČSSZ „Starobní důchod podrobně“, „Náhradní doba pojištění“, leták o nezaměstnanosti a přehled údajů pro rok 2026. Roky označil klient sám.</li>
     </ul>
-    <p class="rp-note">Informativní odhad podle dnešních pravidel, nárok stanoví ČSSZ. Výpočty jsou orientační a nejsou nabídkou ani investičním doporučením.</p>
+    <p class="rp-note">Informativní odhad podle dnešních pravidel, nárok stanoví ČSSZ. Výpočty jsou orientační a nejsou nabídkou ani doporučením.</p>
     <div class="rp-end">
       <img src="/assets/photos/marek-cutout-760.webp" srcset="/assets/photos/marek-cutout-420.webp 420w, /assets/photos/marek-cutout-760.webp 760w, /assets/photos/marek-cutout.webp 1037w" sizes="(max-width:640px) 70vw, 34vw" alt="" width="1037" height="1918">
       <div><p class="rp-big">Projdeme to spolu<span>.</span></p><p>Vezměte tuhle analýzu a výpis z ČSSZ. Za 30 minut budete vědět, kolik odkládat a kam. Nezávazně.</p>
@@ -250,4 +278,4 @@
       <div class="ok" role="status"><b>Díky, zpráva odešla.</b>Ozvu se osobně.</div><p class="send-err fine" role="alert" hidden>Zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo volejte <a href="tel:+420778511166">+420 778 511 166</a>.</p>
     </form></dialog>
 
-<script src="/assets/js/ui.js?v=mw2hmvni"></script><script src="/assets/js/duchod.js?v=mw2hmvni"></script></body></html>
+<script src="/assets/js/ui.js?v=mw2ifrck"></script><script src="/assets/js/duchod.js?v=mw2ifrck"></script></body></html>
