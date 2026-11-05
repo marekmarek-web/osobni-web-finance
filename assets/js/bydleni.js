@@ -182,6 +182,8 @@
     $('[data-sel-kraj]', mapRoot).addEventListener('change', (e) => pickKraj(e.target.value === '' ? null : +e.target.value));
     $('[data-sel-okres]', mapRoot).addEventListener('change', (e) => pickOkres(e.target.value === '' ? null : +e.target.value));
     $('[data-to-loan]', mapRoot).addEventListener('click', () => {
+      // Na Realitách není splátka: cenu převezme výpočet prodeje (reality.js).
+      if (!L) { if (st.est) document.dispatchEvent(new CustomEvent('mm:cena', { detail: st.est })); return; }
       if (st.est) loan.fromMap(st.est, true);
       const t = $('#splatka');
       t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
@@ -201,12 +203,19 @@
 
   /* ===================== Krok 2: hypotéka a úvěr ===================== */
   const L = $('[data-by-loan]');
-  const REF = L ? +L.dataset.ref : 0;
-  const lst = { kind: 'hypo', priceTouched: false, years: { hypo: 30, uver: 5 }, rate: { hypo: '', uver: '' } };
-  const annuity = (P, ratePct, years) => {
-    const n = years * 12, r = ratePct / 1200;
-    return r === 0 ? P / n : (P * r) / (1 - Math.pow(1 + r, -n));
+  const REF = L ? { hypo: +L.dataset.ref, am: +L.dataset.refAm, uver: +L.dataset.refUver, leas: null } : {};
+  const KIND = {
+    hypo: { y: [5, 30, 30], lab: 'hypotéky', amt: 'Výše hypotéky', txt: 'Úvěr na koupi bydlení. Banka půjčí nejvýše 80 % ceny nemovitosti, žadatelům do 36 let na vlastní bydlení až 90 % (závazný limit ČNB).' },
+    am: { y: [5, 20, 15], lab: 'americké hypotéky', amt: 'Výše úvěru', txt: 'Peníze na cokoliv, třeba na auto, rekonstrukci nebo splacení dražších půjček. Zástavou je vaše nemovitost. Banky půjčí obvykle do 70 % její hodnoty, splatnost obvykle do 20 let.' },
+    uver: { y: [1, 10, 5], lab: 'úvěru', amt: 'Výše úvěru', txt: 'Spotřebitelský úvěr bez zástavy. Kratší splatnost, vyšší sazba než u hypotéky.' },
+    leas: { y: [1, 6, 4], lab: 'leasingu', amt: 'Financujete', txt: 'Finanční leasing auta: akontace na začátku, měsíční splátky, na konci odkup za zůstatkovou hodnotu.' },
   };
+  const lst = { kind: 'hypo', priceTouched: false, years: { hypo: 30, am: 15, uver: 5, leas: 4 }, rate: { hypo: '', am: '', uver: '', leas: '' }, pick: null };
+  const annuity = (P, ratePct, years, fv = 0) => {
+    const n = years * 12, r = ratePct / 1200;
+    return r === 0 ? (P - fv) / n : ((P - fv / Math.pow(1 + r, n)) * r) / (1 - Math.pow(1 + r, -n));
+  };
+  const yTxt = (y) => y + (y === 1 ? ' rok' : y < 5 ? ' roky' : ' let');
   const loan = {
     fromMap(e, force) {
       if (!L) return;
@@ -228,30 +237,50 @@
     const box = $('[data-bars]', L);
     const max = Math.max(a, b) || 1;
     const row = (v, lab, cls) => `<div class="by-brow"><p><span>${lab}</span><b>${kc(v)}</b></p><svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="0" width="100" height="10" class="by-btrack"/><rect x="0" y="0" width="${Math.max(5, (v / max) * 100).toFixed(2)}" height="10" class="${cls}"/></svg></div>`;
-    box.innerHTML = row(a, 'Splátka s dnešní sazbou', 'by-b1') + row(b, 'Splátka o 1 bod výš', 'by-b2');
+    box.innerHTML = row(a, 'Splátka s touto sazbou', 'by-b1') + row(b, 'Splátka o 1 bod výš', 'by-b2');
     box.setAttribute('aria-label', `Splátka ${kc(a)} měsíčně, při sazbě o 1 bod vyšší ${kc(b)} měsíčně.`);
+  }
+
+  // Co se financuje a jak se počítá splátka, podle druhu.
+  function deal() {
+    const k = lst.kind, years = +$('[data-years]', L).value;
+    if (k === 'hypo') {
+      const own = +$('[data-own]', L).value, price = parseNum($('[data-price]', L).value);
+      $('[data-owno]', L).textContent = `${own} %${price ? ' · ' + kc(price * own / 100) : ''}`;
+      const P = Math.round(price * (1 - own / 100));
+      return { years, P, pay: (r) => annuity(P, r, years), total: (pm) => pm * years * 12 };
+    }
+    if (k === 'leas') {
+      const car = parseNum($('[data-car]', L).value), ak = +$('[data-ak]', L).value / 100, res = +$('[data-res]', L).value / 100;
+      $('[data-ako]', L).textContent = `${Math.round(ak * 100)} %${car ? ' · ' + kc(car * ak) : ''}`;
+      $('[data-reso]', L).textContent = `${Math.round(res * 100)} %${car ? ' · ' + kc(car * res) : ''}`;
+      const P = Math.round(car * (1 - ak)), fv = car * res;
+      return { years, P, pay: (r) => annuity(P, r, years, fv), total: (pm) => car * ak + pm * years * 12 + fv, extra: `Akontace ${kc(car * ak)}${fv ? `, odkup na konci ${kc(fv)}` : ''}, celkem včetně nich.` };
+    }
+    const P = parseNum($('[data-amt]', L).value);
+    if (k === 'am') {
+      const val = parseNum($('[data-val]', L).value), ltv = val ? (P / val) * 100 : 0;
+      const el = $('[data-ltv]', L);
+      el.textContent = val ? `To je ${Math.round(ltv)} % hodnoty nemovitosti.${ltv > 70 ? ' Nad 70 % půjčí jen část bank a dráž.' : ''}` : '';
+      el.classList.toggle('bad', ltv > 70);
+    } else $('[data-ltv]', L).textContent = '';
+    return { years, P, pay: (r) => annuity(P, r, years), total: (pm) => pm * years * 12 };
   }
 
   function calc() {
     if (!L) return;
-    const hypo = lst.kind === 'hypo';
-    const years = +$('[data-years]', L).value;
-    const own = +$('[data-own]', L).value;
-    const price = parseNum($('[data-price]', L).value);
-    const P = hypo ? Math.round(price * (1 - own / 100)) : parseNum($('[data-amt]', L).value);
+    const k = lst.kind, K = KIND[k], d = deal(), P = d.P, years = d.years;
     const r = rateNow();
-    $('[data-owno]', L).textContent = `${own} %${hypo && price ? ' · ' + kc(price * own / 100) : ''}`;
-    $('[data-yearso]', L).textContent = years + (years === 1 ? ' rok' : years < 5 ? ' roky' : ' let');
+    $('[data-yearso]', L).textContent = yTxt(years);
+    const ref = REF[k], rate = r.own || ref;
     const note = $('[data-rate-note]', L);
     note.classList.toggle('bad', r.bad);
-    note.textContent = r.bad ? 'Sazbu zadejte jako číslo, třeba 5,2.' : hypo ? (r.own ? 'Počítám s vaší sazbou. Referenční sazbu máte pod polem pro srovnání.' : `Bez vaší nabídky počítám s referenční sazbou ${pct(REF)}.`) : (r.own ? 'Počítám s vaší sazbou.' : 'U úvěru zadejte sazbu z nabídky.');
-    const rate = r.own || (hypo ? REF : null);
-    const need = !rate || !P;
-    $('[data-need]', L).hidden = !(!hypo && !rate);
-    $('[data-out-lab]', L).textContent = hypo ? 'Měsíční splátka hypotéky' : 'Měsíční splátka úvěru';
-    $('[data-l-amt]', L).textContent = hypo ? 'Výše hypotéky' : 'Výše úvěru';
+    note.textContent = r.bad ? 'Sazbu zadejte jako číslo, třeba 5,2.' : r.own ? (lst.pick ? `Sazba ${lst.pick.bank}: ${lst.pick.note}.` : 'Počítám s vaší sazbou.') : ref ? `Bez vaší nabídky počítám s ${k === 'hypo' ? 'referenční sazbou' : 'nejnižší inzerovanou sazbou'} ${pct(ref)}.` : 'Zadejte sazbu z nabídky.';
+    $('[data-need]', L).hidden = !!rate;
+    $('[data-out-lab]', L).textContent = 'Měsíční splátka ' + K.lab;
+    $('[data-l-amt]', L).textContent = K.amt;
     $('[data-o-amt]', L).textContent = P ? kc(P) : '–';
-    if (need) {
+    if (!rate || !P) {
       $('[data-pmt]', L).innerHTML = '–<small>Kč</small>';
       $('[data-o-rate]', L).textContent = rate ? pct(rate) : '–';
       $('[data-o-tot]', L).textContent = '–';
@@ -260,17 +289,17 @@
       setSummary(null);
       return;
     }
-    const pm = annuity(P, rate, years), pm1 = annuity(P, rate + 1, years);
-    const tot = pm * years * 12, tot1 = pm1 * years * 12;
+    const pm = d.pay(rate), pm1 = d.pay(rate + 1);
+    const tot = d.total(pm), tot1 = d.total(pm1);
     $('[data-pmt]', L).innerHTML = `${n0(pm)}<small>Kč</small>`;
     $('[data-o-rate]', L).textContent = pct(rate) + (r.own ? '' : ' (ref.)');
     $('[data-o-tot]', L).textContent = kc(tot);
     bars(pm, pm1);
-    $('[data-plus]', L).innerHTML = `Při sazbě ${pct(rate + 1)} zaplatíte o <b>${kc(pm1 - pm)} měsíčně</b> víc, za ${years} ${years < 5 ? 'roky' : 'let'} celkem o <b>${kc(tot1 - tot)}</b>.`;
-    $('[data-plustable]', L).innerHTML = `<table><thead><tr><th></th><th>Sazba</th><th>Splátka</th><th>Celkem</th><th>Z toho úroky</th></tr></thead><tbody>
-      <tr><td>Dnes</td><td>${pct(rate)}</td><td>${kc(pm)}</td><td>${kc(tot)}</td><td>${kc(tot - P)}</td></tr>
-      <tr><td>+1 bod</td><td>${pct(rate + 1)}</td><td>${kc(pm1)}</td><td>${kc(tot1)}</td><td>${kc(tot1 - P)}</td></tr></tbody></table>`;
-    setSummary({ hypo, P, years, rate, pm, own: !!r.own });
+    $('[data-plus]', L).innerHTML = `Při sazbě ${pct(rate + 1)} zaplatíte o <b>${kc(pm1 - pm)} měsíčně</b> víc, za ${yTxt(years)} celkem o <b>${kc(tot1 - tot)}</b>.${d.extra ? ' ' + d.extra : ''}`;
+    $('[data-plustable]', L).innerHTML = `<table><thead><tr><th></th><th>Sazba</th><th>Splátka</th><th>Celkem</th></tr></thead><tbody>
+      <tr><td>Dnes</td><td>${pct(rate)}</td><td>${kc(pm)}</td><td>${kc(tot)}</td></tr>
+      <tr><td>+1 bod</td><td>${pct(rate + 1)}</td><td>${kc(pm1)}</td><td>${kc(tot1)}</td></tr></tbody></table>`;
+    setSummary({ k, P, years, rate, pm, own: !!r.own });
   }
 
   // Shrnutí pro okno kontaktu (ui.js ho připojí jen po výslovném zaškrtnutí). Nikdy do URL.
@@ -278,29 +307,49 @@
   window.MM_summary = () => summary;
   function setSummary(s) {
     const e = st.est;
-    const place = e ? `${st.type === 'byt' ? 'byt' : 'dům'} ${st.m2} m², ${e.place}, odhad ${mil(e.lo)} až ${mil(e.hi)} Kč` : '';
-    const fin = s ? `${s.hypo ? 'hypotéka' : 'úvěr'} ${kc(s.P)} na ${s.years} let, sazba ${pct(s.rate)}${s.own ? ' z nabídky' : ' referenční'}, splátka asi ${kc(s.pm)}` : '';
+    const place = e && (!s || s.k === 'hypo') ? `${st.type === 'byt' ? 'byt' : 'dům'} ${st.m2} m², ${e.place}, odhad ${mil(e.lo)} až ${mil(e.hi)} Kč` : '';
+    const name = { hypo: 'hypotéka', am: 'americká hypotéka', uver: 'úvěr', leas: 'leasing' };
+    const fin = s ? `${name[s.k]} ${kc(s.P)} na ${yTxt(s.years)}, sazba ${pct(s.rate)}${lst.pick && s.own ? ' (' + lst.pick.bank + ')' : s.own ? ' z nabídky' : ' referenční'}, splátka asi ${kc(s.pm)}` : '';
     summary = [place, fin].filter(Boolean).join('; ');
+    const btn = $('.res-foot [data-contact]', L);
+    if (btn) btn.setAttribute('data-contact', s ? `Bydlení: chci probrat ${name[s.k]}${lst.pick && s.own ? ' u ' + lst.pick.bank : ''}.` : 'Bydlení: chci probrat výpočet splátky.');
   }
 
   function setKind(k) {
     const ri = $('[data-rate]', L);
     lst.rate[lst.kind] = ri.value; ri.value = lst.rate[k];
-    if (!ri.dataset.ph) ri.dataset.ph = ri.placeholder;
-    ri.placeholder = k === 'hypo' ? ri.dataset.ph : 'z nabídky';
+    if (lst.pick && lst.pick.kind !== k) lst.pick = null;
     lst.kind = k;
+    ri.placeholder = REF[k] ? String(REF[k]).replace('.', ',') : 'z nabídky';
     $$('[data-kind] button', L).forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === k));
     $('[data-hypo]', L).hidden = k !== 'hypo';
-    $('[data-uver]', L).hidden = k !== 'uver';
-    $('[data-rate-opt]', L).textContent = k === 'hypo' ? 'nepovinné' : 'potřebná';
-    $('[data-by-loan] .by-ref').hidden = k !== 'hypo';
-    const y = $('[data-years]', L);
-    if (k === 'hypo') { y.min = 5; y.max = 30; } else { y.min = 1; y.max = 10; }
+    $('[data-am]', L).hidden = k !== 'am';
+    $('[data-uver]', L).hidden = !(k === 'uver' || k === 'am');
+    $('[data-leas]', L).hidden = k !== 'leas';
+    $('[data-kind-txt]', L).textContent = KIND[k].txt;
+    $('[data-rate-opt]', L).textContent = REF[k] ? 'nepovinné' : 'potřebná';
+    $$('[data-ref-hint]', L).forEach((h) => (h.hidden = h.dataset.refHint !== k));
+    const y = $('[data-years]', L), [y0, y1] = KIND[k].y;
+    y.min = y0; y.max = y1;
     y.value = lst.years[k];
-    $('[data-yends]', L).innerHTML = k === 'hypo' ? '<span>5 let</span><span>30 let</span>' : '<span>1 rok</span><span>10 let</span>';
+    $('[data-yends]', L).innerHTML = `<span>${yTxt(y0)}</span><span>${yTxt(y1)}</span>`;
     paint(y);
     calc();
   }
+
+  // Tlačítko „Spočítat“ v tabulkách bank: dosadí sazbu té banky a vrátí se k výpočtu.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-pick]'); if (!b || !L) return;
+    const k = b.dataset.pick;
+    lst.rate[k] = b.dataset.rate ? String(b.dataset.rate).replace('.', ',') : lst.rate[k];
+    if (lst.kind === k) $('[data-rate]', L).value = lst.rate[k];
+    lst.pick = b.dataset.rate ? { kind: k, bank: b.dataset.bank, note: b.dataset.note } : null;
+    if (lst.kind === k) calc(); else { lst.rate[lst.kind] = $('[data-rate]', L).value; const keep = lst.rate[k]; setKind(k); $('[data-rate]', L).value = keep; calc(); }
+    const out = $('[data-picked]', L);
+    out.hidden = !lst.pick; out.textContent = lst.pick ? `Dosazeno: ${lst.pick.bank}, ${pct(+b.dataset.rate)}.` : '';
+    L.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    if (!lst.pick) setTimeout(() => $('[data-car]', L).focus({ preventScroll: true }), reduced ? 0 : 500);
+  });
 
   function initLoan() {
     if (!L) return;
@@ -311,13 +360,42 @@
       inp.addEventListener('blur', () => { const v = parseNum(inp.value); inp.value = v ? n0(v) : ''; });
     };
     money($('[data-price]', L), () => { lst.priceTouched = true; if (st.est) $('[data-from-map]', L).textContent = `Z mapy vyšlo ${kc(st.est.mid)}, máte vlastní cenu.`; });
-    money($('[data-amt]', L));
-    $('[data-rate]', L).addEventListener('input', calc);
+    money($('[data-amt]', L)); money($('[data-val]', L)); money($('[data-car]', L));
+    $('[data-rate]', L).addEventListener('input', () => { lst.pick = null; $('[data-picked]', L).hidden = true; calc(); });
     // Bez mapy (chyba načtení) počítej s výchozí cenou, ať výpočet nikdy nezůstane prázdný.
     if (!parseNum($('[data-price]', L).value)) $('[data-price]', L).value = n0(4500000);
     calc();
   }
 
+  /* ===================== Konec fixace: o kolik vzroste splátka ===================== */
+  function initRefix() {
+    const F = $('[data-refix]'); if (!F) return;
+    const g = (k) => $(`[data-rf="${k}"]`, F), o = (k) => $(`[data-rfo="${k}"]`, F);
+    const num = (k) => { const v = parseFloat(String(g(k).value).replace(',', '.').replace(/[^\d.]/g, '')); return isFinite(v) ? v : 0; };
+    const yT = (y) => y + (y === 1 ? ' rok' : y < 5 ? ' roky' : ' let');
+    const pay = (P, r, y) => { const n = y * 12, i = r / 1200; return i === 0 ? P / n : (P * i) / (1 - Math.pow(1 + i, -n)); };
+    const run = () => {
+      const P = parseNum(g('bal').value), y = +g('yrs').value, r0 = num('old'), r1 = num('new');
+      o('yrs').textContent = yT(y); paint(g('yrs'));
+      if (!P || !r1) { o('diff').innerHTML = '–'; return; }
+      const a = pay(P, r0, y), b = pay(P, r1, y), d = b - a;
+      o('diff').innerHTML = `${d >= 0 ? '+' : '−'}${n0(Math.abs(d))}<small>Kč měsíčně</small>`;
+      const mx = Math.max(a, b);
+      o('bars').innerHTML = [[`Teď, ${pct(r0)}`, a, 'a'], [`Po fixaci, ${pct(r1)}`, b, 'b']].map(([l, v, c]) => `<div class="rf-bar"><p><span>${l}</span><b>${kc(v)}</b></p><i><em class="${c}" style="width:${(v / mx) * 100}%"></em></i></div>`).join('');
+      o('year').textContent = kc(d * 12);
+      o('tot').textContent = kc(d * y * 12);
+      // Kolik let by bylo potřeba při nové sazbě, aby splátka zůstala stejná.
+      const i = r1 / 1200, x = 1 - (P * i) / a;
+      const n = x > 0 ? -Math.log(x) / Math.log(1 + i) : Infinity;
+      o('ext').textContent = !isFinite(n) ? 'nejde' : n / 12 > 40 ? 'přes 40 let' : `${yT(Math.ceil(n / 12))} místo ${y}`;
+      window.MM_summary = () => `konec fixace: zbývá ${kc(P)} na ${yT(y)}, sazba ${pct(r0)} → ${pct(r1)}, splátka ${kc(a)} → ${kc(b)}`;
+    };
+    $$('input', F).forEach((i) => i.addEventListener('input', run));
+    g('bal').addEventListener('blur', () => { const v = parseNum(g('bal').value); g('bal').value = v ? n0(v) : ''; });
+    run();
+  }
+
   initLoan();
+  initRefix();
   initMap();
 })();

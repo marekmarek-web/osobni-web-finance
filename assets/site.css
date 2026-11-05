@@ -482,7 +482,7 @@ html.no-js .rise{opacity:1;transform:none}
   .nb-list li,.nb-dps .nb-list li{grid-template-columns:88px minmax(0,1fr) auto;row-gap:4px}.nb-logo{width:88px;height:33px}
   .nb-list li b{grid-column:2;font-size:14px}.nb-list li b::before{font:400 12px var(--body,inherit);color:var(--mute);margin-right:6px}
   .nb-list li b::before{content:attr(data-l)}
-  .nb-go{grid-column:3;grid-row:1/span 4}
+  .nb-go{grid-column:3;grid-row:1/span 3}
 }
 
 /* Infografika pro jednatele */
@@ -520,3 +520,10 @@ html.no-js .rise{opacity:1;transform:none}
 .send-err{color:var(--clay);font-weight:600}.send-err a{text-decoration:underline}
 .logos.lw{display:flex;flex-wrap:wrap;justify-content:center}.logos.lw>div{flex:1 1 0;min-width:130px;max-width:220px}
 .logos.lw>div{padding:0}.logos.lw a{display:grid;place-items:center;width:100%;height:100%;padding:18px;border-radius:inherit;transition:background .2s}.logos.lw a:hover{background:rgba(0,0,0,.04)}.logos.lw img{max-width:100%}
+.nb-wide{grid-column:1/-1}
+.nb-rp{grid-column:1/-1;font-size:13.5px;color:var(--mute)}
+.nb-rp summary{cursor:pointer;width:max-content;font-weight:600;color:var(--ink);list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:28px}
+.nb-rp summary::-webkit-details-marker{display:none}
+.nb-rp summary::after{content:"+";display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--sand);font-size:13px;line-height:1}
+.nb-rp[open] summary::after{content:"−"}
+.nb-rp p{margin-top:4px;line-height:1.5}.nb-rp a{color:inherit}

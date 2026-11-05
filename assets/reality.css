@@ -108,3 +108,15 @@
   .rl-cmp .top{flex-direction:column;gap:6px}
   .rl .res-foot .btn{width:100%}
 }
+
+/* Mapa ČR s 3D náhledem (z Bydlení): světlé karty v tmavé stránce, barvy jako na Bydlení. */
+.rl .by-sec .by-map-grid{color:var(--ink)}
+.rl .by-sec .by-mapbox{background:#fff}
+.rl .by-sec .by-side{background:var(--sand)}
+.rl .by-sec .by-map-grid .fine{color:var(--mute)}
+.rl .rl-from:empty{display:none}
+.rl .by-sec .f>label,.rl .by-sec .f>.lab{color:var(--ink)}
+.rl .by-sec .f output{color:var(--ink)}
+.rl .by-sec .seg{background:#fff}
+.rl .by-sec .seg button{color:var(--ink)}
+.rl .by-sec .seg button[aria-pressed=true]{background:var(--ink);color:#fff}

@@ -115,3 +115,39 @@ a.by-way:hover{transform:translateY(-3px)}
 .by-3d canvas:active{cursor:grabbing}
 .by-3d-hint{position:absolute;right:12px;bottom:10px;font-size:12px;color:var(--mute);background:rgba(255,255,255,.8);padding:4px 10px;border-radius:99px;pointer-events:none;transition:opacity .3s}
 .by-3d.used .by-3d-hint{opacity:0}
+/* Čtyři druhy financování, sazba z tabulky bank */
+.seg.by-kinds{grid-auto-columns:auto;grid-template-columns:repeat(4,minmax(0,1fr))}
+.seg.by-kinds button{padding-inline:6px}
+.by-kind-txt{margin:10px 0 4px}
+.by-from.bad{color:var(--clay);font-weight:500}
+.by-picked{margin-top:10px;padding:10px 14px;border-radius:var(--r-m);background:var(--gold-soft);font-size:14px;font-weight:600}
+@media (max-width:420px){.seg.by-kinds{grid-template-columns:repeat(2,minmax(0,1fr));border-radius:22px}.seg.by-kinds button{border-radius:18px}}
+/* Konec fixace */
+.rf-in{display:grid;gap:clamp(22px,3vw,40px)}
+.rf-head{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(16px,3vw,48px);align-items:end}
+.rf-head h2{font-size:clamp(30px,3.4vw,52px);line-height:1.04;letter-spacing:-.03em}
+.rf-head .kicker{color:var(--gold)}
+.rf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(16px,2vw,24px)}
+.rf-ctrl{display:grid;gap:14px;align-content:start;padding:clamp(18px,2vw,28px);border-radius:var(--r-l);background:rgba(255,255,255,.06)}
+.rf-ctrl label{color:#fff}.rf-ctrl .inp input{background:#fff;color:var(--ink)}.rf-ctrl .by-suf span{color:var(--mute)}
+.rf-ctrl .f output{color:#fff}.rf-ctrl .ends{color:#B9BBC2}
+.rf-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rf-out{display:flex;flex-direction:column;gap:12px;padding:clamp(20px,2.4vw,34px);border-radius:var(--r-l);background:var(--gold);color:var(--ink)}
+.rf-out .biglab{font-weight:600}
+.rf-big{font:700 clamp(44px,5.4vw,84px)/1 var(--head);letter-spacing:-.04em}.rf-big small{font-size:.32em;letter-spacing:0;margin-left:8px;font-weight:600}
+.rf-bars{display:grid;gap:10px;margin-top:4px}
+.rf-bar p{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.rf-bar i{display:block;height:12px;border-radius:99px;background:rgba(22,24,29,.12);overflow:hidden}
+.rf-bar em{display:block;height:100%;border-radius:99px;transition:width .5s var(--ease)}
+.rf-bar em.a{background:rgba(22,24,29,.45)}.rf-bar em.b{background:var(--ink)}
+.rf-out .kpis{margin-top:auto;padding-top:14px;border-top:1px solid rgba(22,24,29,.18)}
+.rf-out .kpis span{color:rgba(22,24,29,.7)}
+.rf-law h3{font-size:clamp(20px,1.8vw,26px);margin-bottom:14px}
+.rf-opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:o}
+.rf-opts li{counter-increment:o;display:grid;gap:6px;align-content:start;padding:18px;border-radius:var(--r-m);background:rgba(255,255,255,.06)}
+.rf-opts li::before{content:counter(o);display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:700;font-size:14px}
+.rf-opts span{color:#B9BBC2;font-size:14.5px;line-height:1.45}
+.rf-law .fine{margin-top:14px;color:#B9BBC2}.rf-law .fine a{color:#fff}
+.rf-law .cta{margin-top:16px}
+@media (max-width:980px){.rf-head,.rf-grid{grid-template-columns:1fr}.rf-opts{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.rf-opts{grid-template-columns:1fr}.rf-two{grid-template-columns:1fr 1fr}}

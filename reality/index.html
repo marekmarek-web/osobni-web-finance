@@ -3,7 +3,7 @@
 <title>Prodej nemovitosti: kolik vám zůstane | Marek Marek</title><meta name="description" content="Spočítám, připravím, provedu vás prodejem. Kolik vám po prodeji reálně zůstane, víte předem."><meta name="theme-color" content="#FFFFFF">
 <link rel="canonical" href="https://www.marek-marek.cz/reality/"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:site_name" content="Marek Marek"><meta property="og:title" content="Prodej nemovitosti: kolik vám zůstane | Marek Marek"><meta property="og:description" content="Spočítám, připravím, provedu vás prodejem. Kolik vám po prodeji reálně zůstane, víte předem."><meta property="og:url" content="https://www.marek-marek.cz/reality/"><meta property="og:image" content="https://www.marek-marek.cz/assets/photos/kancelar.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/assets/logos/m-logo.png">
 <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-ext-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/site.css?v=mw2ifrck"><link rel="stylesheet" href="/assets/reality.css?v=mw2ifrck"><script>document.documentElement.classList.remove('no-js')</script></head><body>
+<link rel="stylesheet" href="/assets/site.css?v=mw397xw3"><link rel="stylesheet" href="/assets/bydleni.css?v=mw397xw3"><link rel="stylesheet" href="/assets/reality.css?v=mw397xw3"><script>document.documentElement.classList.remove('no-js')</script></head><body>
 <a class="skip" href="#obsah">Přeskočit na obsah</a>
 <div class="sheet"><header class="nav"><div class="nav-in">
     <a class="brand" href="/" aria-label="Marek Marek, úvodní stránka"><span class="brand-m"><img src="/assets/logos/m-logo.png" alt="" width="27" height="27"></span><span>Marek Marek<span class="dot">.</span><small>Finanční partner</small></span></a>
@@ -46,10 +46,56 @@
   </div>
 </section>
 
+<section class="sec by-sec" id="cena" data-by-map>
+  <div class="sec-head"><div><span class="kicker">Cena podle místa</span><h2>Kolik stojí nemovitosti ve vašem okolí.</h2></div><p>Klikněte na kraj, pak na okres. Uvidíte průměrné prodejní ceny podle ČSÚ a model domu nebo bytu ve vaší velikosti.</p></div>
+  <div class="by-map-grid">
+    <div class="tile white by-mapbox">
+      <nav class="by-crumbs" aria-label="Výběr místa">
+        <button type="button" data-crumb="cr" aria-current="true">Česká republika</button><span aria-hidden="true">/</span>
+        <button type="button" data-crumb="kraj" disabled>Kraj</button><span aria-hidden="true">/</span>
+        <span class="by-crumb-last" data-crumb="okres">Okres</span>
+      </nav>
+      <div class="by-svg" data-svgbox>
+        <p class="by-load" data-load>Načítám mapu…</p>
+      </div>
+      <p class="by-hover" data-hover aria-live="polite">Vyberte kraj</p>
+      <div class="by-scale" data-scale aria-hidden="true"><span data-smin></span><i></i><span data-smax></span></div>
+      <div class="by-selects">
+        <div class="inp"><label for="by-kraj">Kraj</label><select id="by-kraj" data-sel-kraj><option value="">Celá ČR</option></select></div>
+        <div class="inp"><label for="by-okres">Okres</label><select id="by-okres" data-sel-okres disabled><option value="">Nejdřív vyberte kraj</option></select></div>
+      </div>
+      <details class="tbl"><summary>Ceny v tabulce</summary><div class="tw" data-maptable></div></details>
+    </div>
+
+    <div class="tile by-side">
+      <div class="by-3d"><canvas data-dum3d role="img" aria-label="Model nemovitosti"></canvas><span class="by-3d-hint" aria-hidden="true">Táhnutím otočíte</span></div>
+      <div class="f" style="margin-top:0"><div class="lab">Co to je</div>
+        <div class="seg" role="group" aria-label="Typ nemovitosti" data-type><button type="button" data-v="byt" aria-pressed="true">Byt</button><button type="button" data-v="dum" aria-pressed="false">Rodinný dům</button></div></div>
+      <div class="f"><label for="by-m2">Užitná plocha<output data-m2o></output></label><input id="by-m2" type="range" data-m2 min="20" max="300" step="5" value="70"><div class="ends"><span>20 m²</span><span>300 m²</span></div></div>
+      <div class="f" data-sizewrap hidden><div class="lab">Velikost obce <small class="by-opt">nepovinné</small></div>
+        <div class="seg wrap4 by-sizes" role="group" aria-label="Velikost obce" data-sizes></div></div>
+
+      <div class="stage by-res" aria-live="polite" aria-atomic="true">
+        <p class="biglab" data-place>Česká republika, průměr</p>
+        <p class="by-range"><span data-lo>–</span><em>až</em><span data-hi>–</span></p>
+        <p class="by-unit">Kč, zaokrouhleno</p>
+        <div class="kpis"><div><span>Průměr za m²</span><b data-pm2>–</b></div><div><span>Proti průměru ČR</span><b data-cmp>–</b></div><div><span>Prodejů v datech</span><b data-nn>–</b></div></div>
+        <p class="warn" data-low hidden>V datech je pro toto místo málo prodejů. Rozpětí berte s velkou rezervou.</p>
+        <div class="res-foot"><button class="btn p" type="button" data-to-loan>Použít tuto cenu u prodeje <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+        <p class="fine">Orientační výpočet, ne tržní odhad ani posudek. Průměrná kupní cena za m² krát plocha. <span data-k="22">Rozpětí: od nejnižšího po nejvyšší průměr pro vybrané místo (podle velikosti obce a roku 2024), vždy aspoň ±10 % kolem průměru. Těch ±10 % je náš předpoklad, ne údaj ČSÚ.</span> Stav, pozemek a konkrétní ulice cenu posunou oběma směry.</p>
+        <p class="fine by-src">Zdroj cen: <span data-k="20"><a href="https://csu.gov.cz/produkty/ceny-nemovitosti-2022-2024" target="_blank" rel="noopener">ČSÚ, Ceny nemovitostí 2022–2024</a>, vydáno 31. 12. 2025, průměr let 2022 až 2024</span>. <span data-k="23">Hranice krajů a okresů: ČÚZK, CC BY 4.0.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module" src="/assets/js/dum3d.js?v=1"></script>
+
 <section class="sec" id="vynos"><div class="sec-head"><div><span class="kicker">Čistý výnos</span><h2>Spočítejte si, co vám zůstane.</h2></div><p>Tři čísla stačí. Výsledek je rozpětí, protože prodejní cenu nikdo nezná na korunu.</p></div>
   <div class="tile rl-calc">
     <div class="rl-ctrls">
       <div class="f"><label for="rl-cena">Předpokládaná prodejní cena<output data-o="cena"></output></label><input id="rl-cena" type="range" data-r="cena" min="1000000" max="20000000" step="100000" value="5500000"></div>
+      <p class="fine rl-from" data-from-map></p>
       <div class="f"><label for="rl-hypo">Zbývá doplatit hypotéku<output data-o="hypo"></output></label><input id="rl-hypo" type="range" data-r="hypo" min="0" max="15000000" step="50000" value="1800000"></div>
       <div class="f"><label for="rl-nakl">Náklady prodeje<output data-o="nakl"></output></label><input id="rl-nakl" type="range" data-r="nakl" min="0" max="8" step="0.5" value="4"></div>
       <div class="f"><div class="lab">Jak jistá je cena</div><div class="seg" role="group" aria-label="Jak jistá je cena" data-s="jist"><button type="button" data-v="3" aria-pressed="false">± 3 %</button><button type="button" data-v="5" aria-pressed="true">± 5 %</button><button type="button" data-v="10" aria-pressed="false">± 10 %</button></div></div>
@@ -145,4 +191,4 @@
       <div class="ok" role="status"><b>Díky, zpráva odešla.</b>Ozvu se osobně.</div><p class="send-err fine" role="alert" hidden>Zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo volejte <a href="tel:+420778511166">+420 778 511 166</a>.</p>
     </form></dialog>
 
-<script src="/assets/js/ui.js?v=mw2ifrck"></script><script src="/assets/js/reality.js?v=mw2ifrck"></script></body></html>
+<script src="/assets/js/ui.js?v=mw397xw3"></script><script src="/assets/js/bydleni.js?v=mw397xw3"></script><script src="/assets/js/reality.js?v=mw397xw3"></script></body></html>

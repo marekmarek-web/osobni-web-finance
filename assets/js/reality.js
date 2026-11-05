@@ -57,5 +57,13 @@
     g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b));
     S[g.dataset.s] = +b.dataset.v; update();
   })));
+  // Cena z mapy ČR nahoře (bydleni.js): přenese střed odhadu do prodejní ceny.
+  document.addEventListener('mm:cena', (e) => {
+    const c = R.cena, val = Math.min(+c.max, Math.max(+c.min, Math.round(e.detail.mid / 100000) * 100000));
+    c.value = val; paint(c); update();
+    const t = document.getElementById('vynos');
+    t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    const n = q('[data-from-map]'); if (n) n.textContent = 'Cena převzatá z mapy (' + e.detail.place + '). Posuvníkem ji upravíte.';
+  });
   update();
 })();

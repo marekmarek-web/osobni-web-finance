@@ -276,14 +276,14 @@
     const kcY = (n) => kc(r100(n * perYear));
     if (total >= NEED) f.push(['ok', 'Platné pravidlo', `Potřebnou dobu pojištění splníte: zhruba ${yrsTxt(total)} z ${NEED} potřebných.`, `Zákon, § 29 odst. 1. Počítáme s tím, že do důchodu budete pojištění dál (${yrsTxt(future)}).`]);
     else f.push(['bad', 'Platné pravidlo', `Do ${NEED} potřebných let vám chybí zhruba ${yrsTxt(NEED - total)}.`, own >= NEED_NO_SUB
-      ? `Bez náhradních dob máte ${yrsTxt(own)}. Zákon zná i nárok s ${NEED_NO_SUB} lety bez náhradních dob (§ 29 odst. 3).`
-      : `Bez nároku se důchod nepřizná ke dni důchodového věku, jen později, až dobu doplníte. S 20 lety vzniká nárok až 2 roky po důchodovém věku (§ 29 odst. 2).`]);
-    if (g.n.length) f.push(['bad', 'Model', `${spans(g.n)}: bez pojištění, ${yrsTxt(g.n.length)}. Tyto roky se nezapočtou.`, `Každý takový rok znamená zhruba ${kcY(1)} měsíčně méně, dohromady asi ${kcY(g.n.length)}. Zákon umožňuje dobrovolné důchodové pojištění, v roce 2026 nejméně ${kc(VOL_MIN)} měsíčně, zpětně jen omezeně.`]);
-    if (g.sLate.length) f.push(['bad', 'Platné pravidlo', `${spans(g.sLate)}: studium po roce 2009 se nezapočítává.`, 'Výjimkou je prezenční doktorské studium dokončené ve standardní době, nejvýš 4 roky.']);
+      ? `Bez náhradních dob máte ${yrsTxt(own)}. Zákon zná i nárok s ${NEED_NO_SUB} lety doby pojištění bez náhradních dob (§ 29 odst. 3 písm. a).`
+      : `Bez splnění podmínek se důchod nepřizná ke dni důchodového věku, jen později. S 20 lety doby pojištění včetně náhradních dob vzniká nárok až 2 roky po důchodovém věku muže stejného data narození (§ 29 odst. 2 písm. g); stejně s 15 lety bez náhradních dob (§ 29 odst. 3 písm. b).`]);
+    if (g.n.length) f.push(['bad', 'Model', `${spans(g.n)}: bez pojištění, ${yrsTxt(g.n.length)}. Tyto roky se nezapočtou.`, `Orientační odhad: každý takový rok znamená zhruba ${kcY(1)} měsíčně méně, dohromady asi ${kcY(g.n.length)}. Zákon umožňuje dobrovolné důchodové pojištění, v roce 2026 nejméně ${kc(VOL_MIN)} měsíčně. Bez udání důvodu lze doplatit nejvýše 1 rok zpětně, celkem nejvýše 15 let; z důvodů v zákoně i déle.`]);
+    if (g.sLate.length) f.push(['bad', 'Platné pravidlo', `${spans(g.sLate)}: studium po roce 2009 se nezapočítává.`, 'Výjimkou je prezenční doktorské studium, poprvé, ve standardní době a úspěšně dokončené, nejvýš 4 roky.']);
     if (g.sOver.length) f.push(['bad', 'Platné pravidlo', `${spans(g.sOver)}: studium nad 6 let se nezapočte.`, 'Počítá se jen prvních 6 let studia po 18. roce.']);
-    if (g.sOk.length) f.push(['doc', 'Platné pravidlo', `${spans(g.sOk)}: studium se započte jako náhradní doba, v rozsahu 80 %.`, 'Ve výpisu ČSSZ obvykle chybí. Délka studia se dokládá až při žádosti o důchod.']);
-    if (g.d.length) f.push(['doc', 'Platné pravidlo', `${spans(g.d)}: péče o dítě do 4 let se započte celá.`, 'Ve výpisu může chybět. Doklad je potřeba, jen když ČSSZ dítě nedohledá v registru obyvatel. Muži péči dokládají rozhodnutím správy sociálního zabezpečení.']);
-    if (g.u.length) f.push(['doc', 'Platné pravidlo', `${spans(g.u)}: úřad práce se započte jen za dobu s podporou, v rozsahu 80 %.`, 'Bez podpory nejvýš 3 roky zpětně od důchodu, před 55. rokem nejvýš 1 rok. Co ČSSZ nemá, doložíte potvrzením úřadu práce.']);
+    if (g.sOk.length) f.push(['doc', 'Platné pravidlo', `${spans(g.sOk)}: studium se započte jako náhradní doba, v rozsahu 80 %.`, 'Ve výpisu ČSSZ často chybí. Délka studia se dokládá až při žádosti o důchod.']);
+    if (g.d.length) f.push(['doc', 'Platné pravidlo', `${spans(g.d)}: péče o dítě do 4 let se započte celá.`, 'Ve výpisu může chybět. Rodný list a čestné prohlášení předkládáte až při žádosti o důchod. Muži dokládají péči skončenou do 30. 6. 2007 rozhodnutím správy sociálního zabezpečení.']);
+    if (g.u.length) f.push(['doc', 'Platné pravidlo', `${spans(g.u)}: úřad práce se započte jen za dobu s podporou, v rozsahu 80 %.`, 'Platí pro evidenci po roce 1995. Bez podpory nejvýš 3 roky zpětně od vzniku nároku, z toho před 55. rokem nejvýš 1 rok. Co ČSSZ nemá, doložíte potvrzením úřadu práce.']);
     if (!g.n.length && !g.sLate.length && !g.sOver.length) f.push(['ok', 'Předpoklad', 'Mezery jste neoznačili.', 'Platí, jen pokud roky odpovídají výpisu na ePortálu ČSSZ.']);
     return f;
   };
@@ -292,27 +292,88 @@
     ? `<button type="button" class="ck-y t-${t}${st === 'bad' ? ' bad' : ''}" data-y="${y}" aria-label="${y}: ${CKT[t]}${st === 'bad' ? ', nezapočte se' : ''}"><b>${String(y).slice(2)}</b></button>`
     : `<span class="ck-y t-${t}${st === 'bad' ? ' bad' : ''}"><b>${String(y).slice(2)}</b></span>`).join('');
   const ckFindHtml = (f) => f.map(([k, chip, h, p]) => `<li class="ck-f ${k}"><span class="ck-chip">${chip}</span><b>${h}</b><span>${p}</span></li>`).join('');
-  const ckBox = $('[data-ck-years]'), ckOut = $('[data-ck-out]');
+  const CKI = { bad: '<path d="M12 7v6M12 16.5v.5"/>', doc: '<path d="M8 4h6l4 4v12H8zM14 4v4h4M10.5 13h5M10.5 16h5"/>', ok: '<path d="M7.5 12.5l3 3 6-6.5"/>' };
+  const ckCards = (f) => f.map(([k, chip, h, p], i) => `<li class="ck-f ${k}" style="--i:${i}"><svg class="ck-ic" viewBox="0 0 24 24" aria-hidden="true">${CKI[k]}</svg><div><span class="ck-chip">${chip}</span><b>${h}</b><span>${p}</span></div></li>`).join('');
+  const ckBox = $('[data-ck-years]'), ckOut = $('[data-ck-out]'), ckG = $('[data-ck-gauge]');
+  let ckKey = '', ckSig = '';
+  // Plynulé dopočítání čísla z předchozí hodnoty.
+  const countTo = (el, to, fmt) => {
+    const from = +el.dataset.v || 0; el.dataset.v = to;
+    if (reduced || from === to) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = (t) => { const k = Math.min(1, (t - t0) / 600), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (to - from) * e); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  const ckCell = (y, t, st, fut) => fut
+    ? `<span class="ck-y fut${y % 5 ? '' : ' tick'}${y === YEAR ? ' now' : ''}" data-fy="${y}"><b>${String(y).slice(2)}</b></span>`
+    : `<button type="button" class="ck-y t-${t}${st === 'bad' ? ' bad' : ''}${y % 5 ? '' : ' tick'}" data-y="${y}" aria-label="${y}: ${CKT[t]}${st === 'bad' ? ', nezapočte se' : ''}"><b>${String(y).slice(2)}</b></button>`;
   function ckRender() {
     if (!ckBox) return;
     C = ckCompute();
-    if (C.Y0 > C.Y1) { ckBox.innerHTML = ''; ckOut.innerHTML = '<p class="mute">Kontrola začíná rokem, kdy vám bylo 18.</p>'; return; }
-    ckBox.innerHTML = `<span class="ck-ax">${C.Y0}</span>${ckYearsHtml(true)}<span class="ck-ax">${C.Y1}</span>`;
-    const f = ckFindings(), diff = Math.round(C.total) !== R.yrs;
-    ckOut.innerHTML = `<div class="ck-kpi"><div><span>Celkem pro nárok</span><b>${yrsTxt(C.total)}</b><small>potřeba ${NEED}</small></div><div><span>Nezapočte se</span><b>${yrsTxt(C.g.n.length + C.g.sLate.length + C.g.sOver.length)}</b><small>z označených roků</small></div><div><span>Dopad na důchod, model</span><b>${C.lost > 0 ? '−' + kc(r100(C.lost)) : '0 Kč'}</b><small>měsíčně, v dnešních penězích</small></div></div>
-      <ol class="ck-list">${ckFindHtml(f)}</ol>
-      ${diff ? `<p class="ck-use">V odhadu nahoře počítáte s ${R.yrs} lety pojištění. <button type="button" class="btn line sm" data-ck-use>Použít ${Math.round(C.total)} let v odhadu</button></p>` : ''}`;
+    if (C.Y0 > C.Y1) { ckBox.innerHTML = ''; ckKey = ''; ckOut.innerHTML = '<p class="mute">Kontrola začíná rokem, kdy vám bylo 18.</p>'; return; }
+    const key = C.Y0 + '-' + R.retYear;
+    if (key !== ckKey) {
+      // Celá osa jen při změně roku narození nebo důchodu. Při malování se mění jen třídy.
+      ckKey = key;
+      const fut = []; for (let y = YEAR; y < R.retYear; y++) fut.push(ckCell(y, '', '', true));
+      ckBox.innerHTML = `<div class="ck-mk"><span>${C.Y0}<small>18 let</small></span><span class="m-ret">${R.retYear}<small>důchod</small></span></div>
+        <div class="ck-cells" style="--n:${C.rows.length + fut.length}">${C.rows.map(([y, t, st]) => ckCell(y, t, st, false)).join('')}${fut.join('')}${fut.length ? `<span class="ck-fsum">+${yrsTxt(fut.length)}<small>do důchodu</small></span>` : ''}</div>`;
+    } else {
+      C.rows.forEach(([y, t, st]) => { const c = ckBox.querySelector(`[data-y="${y}"]`); if (!c) return; c.className = `ck-y t-${t}${st === 'bad' ? ' bad' : ''}${y % 5 ? '' : ' tick'}`; c.setAttribute('aria-label', `${y}: ${CKT[t]}${st === 'bad' ? ', nezapočte se' : ''}`); });
+    }
+    // Prstenec: 35 let = celý kruh. Vlastní práce, náhradní doby, budoucí roky.
+    const L = 2 * Math.PI * 58, cap = (v) => Math.max(0, Math.min(NEED, v));
+    const own = cap(C.g.p.length), sub = cap(own + C.sub) - own, fut = cap(own + sub + C.future) - own - sub;
+    const seg = (n, from, len) => { const c = ckG.querySelector(`[data-g="${n}"]`); c.style.strokeDasharray = `${(len / NEED) * L} ${L}`; c.style.strokeDashoffset = `${-(from / NEED) * L}`; };
+    seg('own', 0, own); seg('sub', own, sub); seg('fut', own + sub, fut);
+    countTo($('[data-ck-n]', ckG), Math.round(C.total), (v) => Math.round(v));
+    const okAll = C.total >= NEED;
+    ckG.classList.toggle('done', okAll);
+    $('[data-ck-st]', ckG).textContent = okAll ? 'Potřebnou dobu pojištění splníte.' : `Chybí zhruba ${yrsTxt(NEED - C.total)}.`;
+    const lostY = C.g.n.length + C.g.sLate.length + C.g.sOver.length;
+    const f = ckFindings(), diff = Math.round(C.total) !== R.yrs, sig = f.map((x) => x[0] + x[2]).join('|') + diff;
+    if (!ckOut.firstElementChild || !ckOut.querySelector('.ck-kpi')) {
+      ckOut.innerHTML = `<div class="ck-kpi"><div><span>Náhradní doby, započteno</span><b data-k="sub">0</b><small>studium, dítě, úřad práce</small></div><div><span>Nezapočte se</span><b data-k="lost">0</b><small>z označených roků</small></div><div><span>Dopad na důchod, model</span><b data-k="kc">0 Kč</b><small>měsíčně, v dnešních penězích</small></div></div><ol class="ck-list"></ol><div data-ck-use-w></div>`;
+    }
+    countTo($('[data-k="sub"]', ckOut), Math.round(C.sub), (v) => yrsTxt(v));
+    countTo($('[data-k="lost"]', ckOut), lostY, (v) => yrsTxt(v));
+    countTo($('[data-k="kc"]', ckOut), r100(C.lost), (v) => (v >= 50 ? '−' + kc(r100(v)) : '0 Kč'));
+    if (sig !== ckSig) {
+      ckSig = sig;
+      const ol = $('.ck-list', ckOut);
+      ol.innerHTML = ckCards(f); ol.classList.remove('in'); void ol.offsetWidth; ol.classList.add('in');
+      $('[data-ck-use-w]', ckOut).innerHTML = diff ? `<p class="ck-use">V odhadu nahoře počítáte s ${R.yrs} lety pojištění. <button type="button" class="btn w sm" data-ck-use>Použít ${Math.round(C.total)} let v odhadu</button></p>` : '';
+    }
   }
   if (ckBox) {
     const marks = $$('[data-ck-brush] button');
     marks.forEach((b) => b.addEventListener('click', () => { brush = b.dataset.v; marks.forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
+    // Malování tahem: první buňka určí, jestli druh přidávám, nebo mažu. Klávesnice a klepnutí jdou přes click.
+    let drag = null;
+    const paint = (y) => {
+      if (drag.done.has(y)) return; drag.done.add(y);
+      if (drag.mode === 'p') delete S.tl[y]; else S.tl[y] = drag.mode;
+      ckRender();
+    };
+    ckBox.addEventListener('pointerdown', (e) => {
+      const b = e.target.closest('[data-y]'); if (!b || e.button) return;
+      const y = +b.dataset.y;
+      drag = { mode: brush === 'p' || S.tl[y] === brush ? 'p' : brush, done: new Set(), moved: false, id: e.pointerId, touch: e.pointerType !== 'mouse' };
+      if (!drag.touch) { e.preventDefault(); paint(y); }
+    });
+    ckBox.addEventListener('pointermove', (e) => {
+      if (!drag || drag.touch) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY), b = el && el.closest('[data-y]');
+      if (b && ckBox.contains(b)) { drag.moved = true; paint(+b.dataset.y); }
+    });
+    const end = () => { if (drag && drag.done.size) { save(); ckBox.dataset.painted = '1'; } drag = drag && drag.touch ? drag : null; };
+    addEventListener('pointerup', end); addEventListener('pointercancel', () => { drag = null; });
     ckBox.addEventListener('click', (e) => {
       const b = e.target.closest('[data-y]'); if (!b) return;
+      if (ckBox.dataset.painted) { delete ckBox.dataset.painted; drag = null; return; }
       const y = +b.dataset.y;
-      if (brush === 'p') delete S.tl[y]; else S.tl[y] = (S.tl[y] === brush ? undefined : brush);
-      if (S.tl[y] === undefined) delete S.tl[y];
-      save(); ckRender();
-      const nb = $(`[data-y="${y}"]`, ckBox); if (nb) nb.focus();
+      if (brush === 'p' || S.tl[y] === brush) delete S.tl[y]; else S.tl[y] = brush;
+      drag = null; save(); ckRender();
     });
     ckOut.addEventListener('click', (e) => { if (e.target.closest('[data-ck-use]')) { S.yrs = Math.round(C.total); update(); } });
   }
