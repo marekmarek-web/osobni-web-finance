@@ -48,10 +48,10 @@
     const att = form.querySelector('[name=pripojit]');
     if (att && att.checked && typeof window.MM_summary === 'function') d.vypocet = window.MM_summary();
     d.stranka = location.pathname;
-    d._subject = 'Web marek-marek.cz: ' + (d.tema || 'nový kontakt');
-    d._template = 'table';
-    return fetch('https://formsubmit.co/ajax/kontakt@marek-marek.cz', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(d) })
-      .then((r) => { if (!r.ok) throw new Error(r.status); });
+    // Poptávky jdou rovnou do Aidvisory (CRM a e-mail Markovi). Klíč je veřejný, jen pro zápis z této domény.
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 15000);
+    return fetch('https://www.aidvisora.cz/api/public/web-leads/wlf_ZIYuSu3L5Q4UK9HQMNP5_bP1', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d), signal: ctl.signal })
+      .then((r) => { if (!r.ok) throw new Error(r.status); }).finally(() => clearTimeout(t));
   };
   function wireForm(form) {
     form.addEventListener('submit', (e) => {
@@ -73,7 +73,7 @@
     });
     $$('input,select,textarea', form).forEach((i) => i.addEventListener('input', () => { const w = i.closest('[data-req]'); if (w) w.classList.remove('err'); }));
   }
-  $$('form.form').forEach(wireForm);
+  $$('form.form').forEach((f) => { f.insertAdjacentHTML('beforeend', '<input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">'); wireForm(f); });
 
   /* --- Kontaktní okno v2: kalendář, nebo krátká odpověď. Zavření nic nemaže a vrací focus. --- */
   const dlg = $('#kontakt-okno');
