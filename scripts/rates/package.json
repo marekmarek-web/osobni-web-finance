@@ -1,0 +1,9 @@
+{
+  "name": "marek-marek-rates-collector",
+  "private": true,
+  "type": "module",
+  "description": "Denní sběr sazeb bank (Playwright). Nesouvisí s buildem webu.",
+  "dependencies": {
+    "playwright": "^1.57.0"
+  }
+}

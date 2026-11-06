@@ -475,7 +475,7 @@ html.no-js .rise{opacity:1;transform:none}
 .nb-logo img{width:100%;height:100%;object-fit:contain}
 .nb-txt{font:700 10px/1.05 var(--head);text-align:center;padding:2px 4px;color:var(--ink)}
 .nb-go{padding:8px 14px;font-size:13.5px}
-.nb-t .fine{margin-top:14px}
+.nb-t .fine{margin-top:16px;padding:14px 16px 14px 18px;background:var(--gold-soft);border-left:4px solid var(--gold-mark);border-radius:var(--r-m);color:var(--ink);font-size:14px;line-height:1.55}.nb-t .fine span{display:block}
 .nb-lease{margin-top:16px;padding:16px;border-radius:14px;background:var(--sand);display:grid;gap:6px;justify-items:start}.nb-lease span{color:var(--mute);font-size:14px}
 @media (max-width:760px){
   .nb-head{display:none}
