@@ -10,6 +10,8 @@
 # Použití:  run-daily.sh [--no-push]
 # Kopie pro běh: RATES_RUNNER_DIR (výchozí ~/.marek-rates/repo), vytvoří se při prvním běhu.
 set -uo pipefail
+# Skript se před během zkopíruje mimo repozitář (git reset by jinak přepsal soubor za běhu).
+if [ -z "${RATES_REEXEC:-}" ]; then T="$(mktemp -t rates-run).sh"; cp "$0" "$T"; RATES_REEXEC=1 exec bash "$T" "$@"; fi
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 REMOTE="https://github.com/marekmarek-web/osobni-web-finance.git"
