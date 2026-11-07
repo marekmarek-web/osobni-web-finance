@@ -1,10 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
-  "buildCommand": "node ../scripts/vercel-build.mjs",
-  "functions": {
-    "legacy-api/*.js": {
-      "memory": 256
-    }
-  }
+  "buildCommand": "node ../scripts/vercel-build.mjs"
 }
