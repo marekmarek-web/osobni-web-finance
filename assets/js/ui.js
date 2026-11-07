@@ -114,8 +114,8 @@
 
   /* --- Cookies a režim kontroly tvrzení --- */
   const ck = $('.cookie');
-  if (ck && !store.get('mm-cookies')) ck.hidden = false;
-  if (ck) $$('button', ck).forEach((b) => b.addEventListener('click', () => { store.set('mm-cookies', b.dataset.v); ck.hidden = true; }));
+  if (ck && !store.get('mm-cookies-v2')) ck.hidden = false;
+  if (ck) $$('button', ck).forEach((b) => b.addEventListener('click', () => { store.set('mm-cookies-v2', b.dataset.v); ck.hidden = true; }));
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-cookie-open]');
     if (b && ck) { e.preventDefault(); ck.hidden = false; }

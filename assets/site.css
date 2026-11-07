@@ -312,8 +312,8 @@ html.kontrola [data-k]::after{content:attr(data-k);position:absolute;top:-10px;r
 .menu-open .callbar{display:none!important}
 .rise{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .8s var(--ease)}.rise.in{opacity:1;transform:none}
 html.no-js .rise{opacity:1;transform:none}
-.cookie{position:fixed;left:12px;bottom:12px;z-index:50;display:flex;gap:14px;align-items:center;flex-wrap:wrap;max-width:min(560px,calc(100vw - 24px));padding:14px 16px 14px 20px;border-radius:var(--r-l);background:var(--ink);color:#fff;font-size:14px;box-shadow:0 20px 50px -20px rgba(22,24,29,.6)}
-.cookie[hidden]{display:none}.cookie p{flex:1 1 220px}.cookie a{text-decoration:underline}.cookie div{display:flex;gap:6px}
+.cookie{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:60;display:flex;gap:18px 24px;align-items:center;justify-content:space-between;flex-wrap:wrap;width:min(760px,calc(100vw - 24px));padding:20px 22px 20px 26px;border-radius:var(--r-l);background:var(--ink);color:#fff;font-size:15px;line-height:1.5;border:2px solid var(--gold);box-shadow:0 24px 60px -16px rgba(22,24,29,.75)}
+.cookie[hidden]{display:none}.cookie-t{flex:1 1 320px}.cookie-t b{display:block;font-size:17px;margin-bottom:4px}.cookie p{margin:0;color:rgba(255,255,255,.88)}.cookie a{color:#fff;text-decoration:underline}.cookie .btn{min-width:150px}
 
 @media(max-width:1020px){
   .links,.tel,.nav-r .btn{display:none}.burger{display:grid}.nav-in{height:66px}
@@ -357,7 +357,8 @@ html.no-js .rise{opacity:1;transform:none}
   .callbar{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:45;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:999px;background:var(--ink);box-shadow:0 14px 34px -12px rgba(22,24,29,.7)}
   .callbar a,.callbar button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;color:#fff;background:none}
   .callbar button{background:var(--gold);color:var(--ink)}
-  .cookie{bottom:82px}
+  .cookie{bottom:82px;padding:18px 18px 18px 20px}
+  .cookie>div:last-child,.cookie .btn{width:100%}
   .faq details p{padding-right:0}
   .resrow{padding:14px 16px}
   .hero-txt{padding:30px 20px 26px}
