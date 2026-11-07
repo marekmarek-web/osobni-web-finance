@@ -114,8 +114,36 @@
 
   /* --- Cookies a režim kontroly tvrzení --- */
   const ck = $('.cookie');
-  if (ck && !store.get('mm-cookies-v2')) ck.hidden = false;
-  if (ck) $$('button', ck).forEach((b) => b.addEventListener('click', () => { store.set('mm-cookies-v2', b.dataset.v); ck.hidden = true; }));
+  const GA_ID = 'G-8MGJNNYT2W', CK = 'mm-cookies-v3'; /* 'yes' = analytika povolena, 'no' = jen nezbytné */
+  let gaOn = false;
+  const gaOff = () => {
+    window['ga-disable-' + GA_ID] = true;
+    document.cookie.split(';').forEach((c) => {
+      const n = c.split('=')[0].trim();
+      if (n === '_ga' || n.indexOf('_ga_') === 0) {
+        [location.hostname, '.' + location.hostname, '.' + location.hostname.replace(/^www\./, ''), ''].forEach((d) => {
+          document.cookie = n + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : '');
+        });
+      }
+    });
+  };
+  const gaLoad = () => {
+    window['ga-disable-' + GA_ID] = false;
+    if (gaOn) return;
+    gaOn = true;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false });
+  };
+  const sync = () => { if (store.get(CK) === 'yes') gaLoad(); else gaOff(); };
+  if (ck && !store.get(CK)) ck.hidden = false;
+  sync();
+  if (ck) $$('button', ck).forEach((b) => b.addEventListener('click', () => { store.set(CK, b.dataset.v === 'yes' ? 'yes' : 'no'); ck.hidden = true; sync(); }));
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-cookie-open]');
     if (b && ck) { e.preventDefault(); ck.hidden = false; }
