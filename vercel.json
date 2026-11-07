@@ -5,14 +5,26 @@
   "framework": "nextjs",
   "outputDirectory": "next-app/.next",
   "functions": {
-    "api/send-report.js": { "memory": 256 },
-    "api/create-checkout.js": { "memory": 256 },
-    "api/stripe-webhook.js": { "memory": 256 }
+    "api/send-report.js": {
+      "memory": 256
+    }
   },
   "rewrites": [
-    { "source": "/hypotecnikalkulacka/", "destination": "/hypotecnikalkulacka" },
-    { "source": "/zivotnikalkulacka/", "destination": "/zivotnikalkulacka" },
-    { "source": "/investicnikalkulacka/", "destination": "/investicnikalkulacka" },
-    { "source": "/penzijnikalkulacka/", "destination": "/penzijnikalkulacka" }
+    {
+      "source": "/hypotecnikalkulacka/",
+      "destination": "/hypotecnikalkulacka"
+    },
+    {
+      "source": "/zivotnikalkulacka/",
+      "destination": "/zivotnikalkulacka"
+    },
+    {
+      "source": "/investicnikalkulacka/",
+      "destination": "/investicnikalkulacka"
+    },
+    {
+      "source": "/penzijnikalkulacka/",
+      "destination": "/penzijnikalkulacka"
+    }
   ]
 }

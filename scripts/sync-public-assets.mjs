@@ -33,7 +33,6 @@ const COPY_DIRS = [
   'podnikatelelp',
   'gdpr',
   'cookies',
-  'fp-poradce',
   'financni-analyza',
   'reality',
   'js',
@@ -48,7 +47,6 @@ const COPY_ROOT_FILES = [
   'config.js',
   'CNAME',
   'logo_M_white.png',
-  'fp-poradce-vstup.html',
 ];
 
 function ensureDir(path) {

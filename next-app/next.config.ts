@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
         { source: "/podnikatele", destination: "/podnikatele/index.html" },
         { source: "/gdpr", destination: "/gdpr/index.html" },
         { source: "/cookies", destination: "/cookies/index.html" },
-        { source: "/fp-poradce", destination: "/fp-poradce/index.html" },
         { source: "/financni-analyza", destination: "/financni-analyza/index.html" },
         { source: "/reality", destination: "/reality/index.html" },
         { source: "/podnikatelelp", destination: "/podnikatelelp/index.html" },

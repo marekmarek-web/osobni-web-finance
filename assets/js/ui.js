@@ -511,10 +511,5 @@
     show(0);
   });
 
-  /* --- Vstup pro poradce: přepnutí přihlášení a registrace --- */
-  $$('[data-auth]').forEach((root) => {
-    const seg = $('.tabs', root); const pp = $$('[data-pane]', root);
-    $$('button', seg).forEach((b) => b.addEventListener('click', () => { $$('button', seg).forEach((x) => x.setAttribute('aria-pressed', x === b)); pp.forEach((p) => (p.hidden = p.dataset.pane !== b.dataset.v)); }));
-  });
   $$('.year').forEach((y) => (y.textContent = new Date().getFullYear()));
 })();
