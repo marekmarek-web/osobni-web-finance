@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-07T05:30:06.600Z",
+  "generatedAt": "2026-11-08T05:30:06.198Z",
   "maxAgeHours": 48,
   "offers": [
     {
@@ -13,7 +13,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad Pro Americkou hypotéku Poskytovatelem úvěru je ČSOB Hypoteční banka, a.s., výše úvěru 2 500 000 Kč, jednorázové čerpání v době 12 měsíců po podpisu smlouvy, splatnost 20 let, pevná zápůjční úroková sazba 6,29 % p. a. s fixací na 3 roky, roční procentní sazba nákladů 6,92 % p. a., celková částka zaplacená klientem 4 525 358 Kč, měsíční splátka 18 332 Kč, počet splátek 240, úvěr zajištěn zástavním právem k nemovitosti v hodnotě 3 571 429 Kč, o úvěr žádají dvě osoby. Spotřebitel je povinen",
       "sourceUrl": "https://www.csob.cz/lide/bydleni/hypoteka/reprezentativni-priklad",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "kb",
@@ -25,7 +25,7 @@
       "exampleDate": "2026-09-07",
       "example": "Vzorový příkladVýše úvěru 2 000 000 Kč, splatnost 20 let, pevná úroková sazba 5,99 % p.a, fixace 3 roky, RPSN 6,22 %, celková splatná částka 3 442 259,55 Kč. 1. splátka úroků 4326,11 Kč, 2.-239. anuitní splátka 14349 Kč, 240. anuitní splátka 13971,44 Kč.Jednorázové poplatky za: poskytnutí úvěru včetně ocenění 4 900 Kč, návrh na vklad do katastru 2 000 Kč, návrh na výmaz z katastru 2 000 Kč. Měsíční poplatky za: spravování úvěru 0 Kč, el. výpisy 0 Kč. Příklad je spočítán k datu čerpání 7.9.2026 a termínu splácení",
       "sourceUrl": "https://www.kb.cz/cs/obcane/pujcky/hypoteky/americka-hypoteka",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "mbank",
@@ -37,7 +37,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad hypotéky ve výši 1 100 000 Kč: při hodnotě nemovitosti nabízené jako zajištění úvěru 2 000 000 Kč, pevné tříleté úrokové sazbě 5,79 % ročně a době splatnosti 25 let (300 splátek) činí pravidelná měsíční splátka 6 946,78 Kč, roční procentní sazba nákladů (RPSN) 5,99 % a celková částka zaplacená spotřebitelem je 2 088 035,30 Kč. Do RPSN jsou započítány následující náklady: vklad a výmaz zástavního práva v katastru nemovitostí 4 000 Kč, poplatek za vedení úvěrového účtu 0 Kč, poplatek za",
       "sourceUrl": "https://www.mbank.cz/osobni/hypoteky/americka-hypoteka/",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "cs",
@@ -49,7 +49,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad: Úvěr ve výši 200 000 Kč se splatností 108 měsíců a úrokovou sazbou 6,99 % ročně má měsíční splátku 2 521 Kč. Jednorázový poplatek za vyřízení úvěru je 0 Kč, měsíční poplatek za správu úvěru je 0 Kč, RPSN je 7,33 % a celková částka splatná spotřebitelem činí 272 193 Kč. Díky řádnému splácení bude u tohoto úvěru počet odpuštěných splátek 10, doba splácení 98 měsíců, úroková sazba 5,32 % ročně, RPSN 5,53 % a celková částka splatná spotřebitelem 246 983 Kč. Navíc klientovi v rámci akce vrácení",
       "sourceUrl": "https://www.csas.cz/cs/osobni-finance/pujcky/pujcka",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "csob",
@@ -61,7 +61,7 @@
       "exampleDate": "2025-09-30",
       "example": "Vzorový příklad pro online půjčku Půjčka ve výši 550 000 Kč se splatností 8 let: pevná úroková sazba 8,60 % p. a., RPSN 8,95 %, měsíční splátka 7 944 Kč, celkem k úhradě 762 624 Kč. Nejedná se o návrh na uzavření smlouvy. Doplňující informace Jde pouze o orientační výpočet, konkrétní parametry úvěru budou uvedeny v předsmluvních informacích a smlouvě o úvěru. U všech půjček od 300 tisíc korun poskytnutých za období 1. 1. – 30. 9. 2025: 53 % klientů dosáhlo na úrok do 6,99 % p.a. 20 % klientů dosáhlo na úrok",
       "sourceUrl": "https://www.csob.cz/lide/pujcky/pujcka-na-cokoliv",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "kb",
@@ -73,7 +73,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad:Výše úvěru 1 000 000 Kč, splatnost 8 let, pevná úroková sazba 4,99 % p. a., RPSN 5,13 %, celková splatná částka 1 215 325,23 Kč. 1. splátka úroků 1 940,56 Kč, 2.-95. anuitní splátka 12 764 Kč, 96. anuitní splátka 12 718,67 Kč. Měsíční poplatky za vedení tarifu Start 0 Kč, el. výpisy 0 Kč. Jednorázový poplatek za zpracování a vyhodnocení žádosti o úvěr 850 Kč. Příklad je spočítán k datu čerpání 1. dubna 2026 a termínu splácení úvěru vždy k 15. dni v měsíci. Může se vám hodit Konsolidace",
       "sourceUrl": "https://www.kb.cz/cs/obcane/pujcky/osobni-pujcka",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "mbank",
@@ -85,7 +85,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad: Výše úvěru 80 000 Kč na 60 měsíců, úroková sazba 4,49 % p. a., RPSN 4,58 %, měsíční splátka 1 491,08 Kč a celková splatná částka 89 464,67 Kč. Výpočet je pouze orientační a závazné informace budou uvedeny na předsmluvním formuláři a v úvěrové smlouvě. Pojištění k půjčce pro klidné splácení Díky pojištění schopnosti splácet úvěr máte jistotu, že když přijdete o práci nebo onemocníte, zaplatí za vás splátku půjčky a vy se nemusíte bát výpadku příjmů nebo sahat na úspory. Sjednáte si ho",
       "sourceUrl": "https://www.mbank.cz/osobni/uvery/mpujcka/",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "rb",
@@ -97,7 +97,7 @@
       "exampleDate": "2026-04-01",
       "example": "Reprezentativní příklad Výše půjčky 400 000 Kč na 96 měsíců při měsíční splátce 5 238 Kč, pevná úroková sazba 4,9 % p.a., RPSN 5,0 %. Celková částka splatná spotřebitelem 502 848 Kč. U všech půjček od 250 tisíc korun poskytnutých za období 1. 4. 2026 až 30. 9. 2026. 74 % klientů dosáhlo úrok do 8,5 % p.a. 11 % klientů dosáhlo úrok 8,5 – 10 % p.a. 16 % klientů dosáhlo úrok nad 10 % p.a. Výše sazby nepřekračuje 17,9 %. 412 440 000Osobní a firemní finance 7-22412 446 402Blokace karet 24/7Informační servisAktuální",
       "sourceUrl": "https://www.rb.cz/osobni/pujcky/minutova-pujcka",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "ucb",
@@ -109,7 +109,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad Když si půjčíte 205 000 Kč na 84 měsíců s úrokovou sazbou 7,39 % ročně, na splátkách celkem zaplatíte 263 811,30 Kč. Měsíční splátka bude 3 141 Kč a roční procentní sazba nákladů neboli RPSN 7,76 %. Jakou vám dáme úrokovou sazbu? To, jakou úrokovou sazbu vám nakonec nabídneme, závisí nejen na tom, co vidíte v kalkulačce: kolik si půjčujete a na jak dlouho. Musíme také posoudit vaši schopnost splácet, takzvanou úvěruschopnost. Proto vám sazbu přesně spočítáme online nebo naživo během",
       "sourceUrl": "https://www.unicreditbank.cz/cs/obcane/pujcky/kalkulacka-uveru-presto-na-cokoliv.html",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "cs",
@@ -121,7 +121,7 @@
       "exampleDate": null,
       "example": "Celková výše úvěru 4 500 000 Kč, výše jednotlivých měsíčních splátek 28 927 Kč (splátky zahrnují jistinu a úrok), počet splátek: 300, úroková sazba fixovaná na 3 roky ve výši 5,89 % ročně, poplatky spojené s úvěrem, které jsou součástí celkových nákladů úvěru: správní poplatky za vklad a výmaz zástavního práva do katastru nemovitostí 4 000 Kč, náhrada nákladů spojených s vypracováním odhadu nemovitosti 5 000 Kč, doba trvání úvěru: 25 let, roční procentní sazba nákladů činí 6,17 % a celková částka splatná",
       "sourceUrl": "https://www.csas.cz/cs/osobni-finance/hypoteky/hypoteka",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "csob",
@@ -133,7 +133,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad Pro Hypotéku Poskytovatelem úvěru je ČSOB Hypoteční banka, a.s., výše úvěru 4 500 000 Kč, jednorázové čerpání v době 12 měsíců po podpisu smlouvy, splatnost 30 let, pevná zápůjční úroková sazba 5,79 % p. a. s fixací na 3 roky, roční procentní sazba nákladů 6,23 % p. a., celková částka zaplacená klientem 9 744 110 Kč, měsíční splátka 26 376 Kč, počet splátek 360, úvěr zajištěn zástavním právem k nemovitosti v hodnotě 6 428 571 Kč, o úvěr žádají dvě osoby. Spotřebitel je povinen sjednat",
       "sourceUrl": "https://www.csob.cz/lide/bydleni/hypoteka/reprezentativni-priklad",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "mbank",
@@ -145,7 +145,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad hypotéky ve výši 1 450 000 Kč: při hodnotě nemovitosti nabízené jako zajištění úvěru 2 000 000 Kč, pevné tříleté úrokové sazbě 5,59 % ročně a době splatnosti 40 let (480 splátek) činí pravidelná měsíční splátka 7 567,67 Kč, roční procentní sazba nákladů (RPSN) 5,76 % a celková částka zaplacená spotřebitelem je 3 636 479,28 Kč. Do RPSN jsou započítány následující náklady: vklad a výmaz zástavního práva v katastru nemovitostí 4 000 Kč, poplatek za vedení úvěrového účtu 0 Kč, poplatek za",
       "sourceUrl": "https://www.mbank.cz/osobni/hypoteky/hypoteka-na-bydleni/",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "rb",
@@ -157,7 +157,7 @@
       "exampleDate": null,
       "example": "Pro názornost uvádíme reprezentativní příklad: Výše úvěru 4 000 000 Kč, úvěr je čerpán jednorázově, pevná úroková sazba činí 5,19 % p. a. (po zohlednění slevy 0,1 % za doložení PENB, jinak 5,29 %), RPSN je 5,4 % p. a. Poplatek za ocenění nemovitosti 0 Kč, poplatek za čerpání úvěru na návrh na vklad zástavního práva do katastru nemovitostí 1 900 Kč, jedna splátka úroků 17 300 Kč, 300 měsíčních anuitních splátek 23 829 Kč, měsíční poplatky za vedení běžného účtu 49 Kč (orientační údaj, banka nabízí i běžný účet bez",
       "sourceUrl": "https://www.rb.cz/promo/hypodny",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     },
     {
       "bankId": "ucb",
@@ -169,7 +169,7 @@
       "exampleDate": null,
       "example": "Reprezentativní příklad: Celková výše úvěru 3 000 000 Kč. Doba trvání úvěru 360 měsíců. Úroková sazba 5,69 % p. a., pevná úroková sazba na 3 roky. Výše měsíční splátky 17 551 Kč. Roční procentní sazba nákladů (RPSN) 5,96 % p. a. Do RPSN jsou započítány jednorázové náklady na vklad a výmaz zástavního práva do katastru nemovitostí 4 000 Kč, poplatek za vyhodnocení rizik spojených se zástavou nemovitosti 5 700 Kč, čerpání na základě návrhu na vklad zástavního práva do katastru nemovitostí 1 900 Kč a ověření podpisu",
       "sourceUrl": "https://www.unicreditbank.cz/cs/obcane/hypoteky/hypoteka-nove-penize.html",
-      "fetchedAt": "2026-11-07T05:30:06.600Z"
+      "fetchedAt": "2026-11-08T05:30:06.198Z"
     }
   ],
   "failures": [
@@ -177,13 +177,13 @@
       "key": "kb:mortgage",
       "reason": "kotva příkladu na stránce nenalezena",
       "optional": true,
-      "at": "2026-11-07T05:30:06.600Z"
+      "at": "2026-11-08T05:30:06.198Z"
     },
     {
       "key": "cs:american",
       "reason": "kotva příkladu na stránce nenalezena",
       "optional": true,
-      "at": "2026-11-07T05:30:06.600Z"
+      "at": "2026-11-08T05:30:06.198Z"
     }
   ],
   "warnings": []
