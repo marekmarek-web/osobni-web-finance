@@ -33,7 +33,6 @@ const COPY_DIRS = [
   'podnikatelelp',
   'gdpr',
   'cookies',
-  'financni-analyza',
   'reality',
   'js',
   'images',
